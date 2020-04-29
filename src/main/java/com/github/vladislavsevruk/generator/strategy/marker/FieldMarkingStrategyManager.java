@@ -27,6 +27,8 @@ import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -45,6 +47,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public final class FieldMarkingStrategyManager {
 
     private static final ReadWriteLock STRATEGY_LOCK = new ReentrantReadWriteLock();
+    private static final Logger logger = LogManager.getLogger(FieldMarkingStrategyManager.class);
     private static FieldMarkingStrategy strategy = new AllExceptIgnoredFieldMarkingStrategy();
 
     private FieldMarkingStrategyManager() {
@@ -65,6 +68,7 @@ public final class FieldMarkingStrategyManager {
      */
     public static void useAllExceptIgnoredFieldsStrategy() {
         STRATEGY_LOCK.writeLock().lock();
+        logger.info("Using all fields except ignored ones marking strategy.");
         strategy = new AllExceptIgnoredFieldMarkingStrategy();
         STRATEGY_LOCK.writeLock().unlock();
     }
@@ -75,6 +79,7 @@ public final class FieldMarkingStrategyManager {
      */
     public static void useOnlyMarkedFieldsStrategy() {
         STRATEGY_LOCK.writeLock().lock();
+        logger.info("Using only marked fields marking strategy.");
         strategy = new OnlyMarkedFieldMarkingStrategy();
         STRATEGY_LOCK.writeLock().unlock();
     }

@@ -230,7 +230,7 @@ public class GqlQueryGenerator {
      */
     public static String customQuery(String queryName, Class<?> clazz, FieldsPickingStrategy strategy,
             Iterable<QueryArgument<?>> queryArguments) {
-        return getQueryBodyBuilder(queryName, clazz).build(strategy, queryArguments);
+        return getQueryBodyBuilder(queryName, clazz).generate(strategy, queryArguments);
     }
 
     /**
@@ -260,7 +260,7 @@ public class GqlQueryGenerator {
      */
     public static String customQuery(String queryName, TypeProvider<?> typeProvider, FieldsPickingStrategy strategy,
             Iterable<QueryArgument<?>> queryArguments) {
-        return getQueryBodyBuilder(queryName, typeProvider).build(strategy, queryArguments);
+        return getQueryBodyBuilder(queryName, typeProvider).generate(strategy, queryArguments);
     }
 
     /**

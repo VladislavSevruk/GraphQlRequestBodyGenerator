@@ -37,6 +37,8 @@ import com.github.vladislavsevruk.resolver.type.MappedVariableHierarchy;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import com.github.vladislavsevruk.resolver.type.TypeVariableMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -55,6 +57,7 @@ import java.util.stream.StreamSupport;
 public class GqlQueryBodyGenerator {
 
     private static final String DELIMITER = " ";
+    private static final Logger logger = LogManager.getLogger(GqlQueryBodyGenerator.class);
     private final FieldMarkingStrategy fieldMarkingStrategy;
     private final TypeMeta<?> modelTypeMeta;
     private final String queryName;
@@ -86,8 +89,8 @@ public class GqlQueryBodyGenerator {
      * @param queryArguments        <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String build(FieldsPickingStrategy fieldsPickingStrategy, QueryArgument<?>... queryArguments) {
-        return build(fieldsPickingStrategy, Arrays.asList(queryArguments));
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, QueryArgument<?>... queryArguments) {
+        return generate(fieldsPickingStrategy, Arrays.asList(queryArguments));
     }
 
     /**
@@ -98,13 +101,17 @@ public class GqlQueryBodyGenerator {
      *                              values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String build(FieldsPickingStrategy fieldsPickingStrategy, Iterable<QueryArgument<?>> queryArguments) {
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, Iterable<QueryArgument<?>> queryArguments) {
         Objects.requireNonNull(fieldsPickingStrategy);
         Objects.requireNonNull(queryArguments);
+        String queryArgumentsStr = generateQueryArguments(queryArguments);
+        logger.info(() -> String.format("Generating GraphQL query for '%s' model with%s arguments using '%s' field "
+                        + "marking strategy and '%s' field picking strategy.", modelTypeMeta.getType().getName(),
+                queryArgumentsStr.isEmpty() ? "out" : " " + queryArgumentsStr,
+                fieldMarkingStrategy.getClass().getName(), fieldsPickingStrategy.getClass().getName()));
         MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(modelTypeMeta);
         Set<String> queryParams = collectQueryParameters(hierarchy, modelTypeMeta, fieldsPickingStrategy);
-        return "{\"query\":\"{" + queryName + generateQueryArguments(queryArguments) + "{" + String
-                .join(DELIMITER, queryParams) + "}}\"}";
+        return "{\"query\":\"{" + queryName + queryArgumentsStr + "{" + String.join(DELIMITER, queryParams) + "}}\"}";
     }
 
     private void addEntityQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
@@ -121,10 +128,13 @@ public class GqlQueryBodyGenerator {
     private void addQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
             FieldsPickingStrategy fieldsPickingStrategy) {
         if (field.getAnnotation(GqlDelegate.class) != null) {
+            logger.debug(() -> String.format("'%s' is delegate.", field.getName()));
             queryParams.addAll(collectDelegatedQueryParameters(typeMeta, field, fieldsPickingStrategy));
         } else if (field.getAnnotation(GqlEntity.class) != null) {
+            logger.debug(() -> String.format("'%s' is entity.", field.getName()));
             addEntityQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
         } else {
+            logger.debug(() -> String.format("'%s' is field.", field.getName()));
             queryParams.add(GqlNamePicker.getFieldName(field));
         }
     }
@@ -150,12 +160,16 @@ public class GqlQueryBodyGenerator {
 
     private Set<String> collectQueryParameters(MappedVariableHierarchy hierarchy, TypeMeta<?> typeMeta,
             FieldsPickingStrategy fieldsPickingStrategy) {
+        logger.debug(() -> String
+                .format("Collecting GraphQL query parameters for '%s' model.", typeMeta.getType().getName()));
         Set<String> queryParams = new LinkedHashSet<>();
         for (Field field : typeMeta.getType().getDeclaredFields()) {
             if (field.isSynthetic() || !fieldMarkingStrategy.isMarkedField(field)) {
                 continue;
             }
+            logger.debug(() -> String.format("Marked '%s'.", field.getName()));
             if (fieldsPickingStrategy.shouldBePicked(field)) {
+                logger.debug(() -> String.format("Picked '%s'.", field.getName()));
                 addQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
             }
         }
