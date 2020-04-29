@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Properties>
+        <Property name="basePatternLayout">
+            %d{HH:mm:ss.SSS} [%-5p] (%F: %L - %M) - %m%n
+        </Property>
+        <Property name="fileName">${logFolder}/graphql-request-body-builder.log</Property>
+        <Property name="filePattern">${logFolder}/graphql-request-body-builder-%d{MM-dd-yyyy}.log</Property>
+        <Property name="logFolder">log</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="File" filename="${fileName}" filePattern="${filePattern}" append="true">
+            <PatternLayout pattern="${basePatternLayout}"/>
+            <TimeBasedTriggeringPolicy/>
+        </RollingFile>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{${basePatternLayout}}{ERROR=red,WARN=yellow}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <root level="debug">
+            <appender-ref ref="File"/>
+            <appender-ref ref="Console"/>
+        </root>
+    </Loggers>
+
+</Configuration>
