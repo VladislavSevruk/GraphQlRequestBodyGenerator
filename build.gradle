@@ -1,0 +1,114 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id "org.sonarqube" version "2.8"
+    id 'jacoco'
+    id "io.freefair.lombok" version "5.0.0-rc6"
+    id 'signing'
+}
+
+sourceCompatibility = "${javaVersion}"
+targetCompatibility = "${javaVersion}"
+
+def ossrhCredentials = {
+    username = project.hasProperty('ossrhUsername') ? project.getProperty('ossrhUsername') : ''
+    password = project.hasProperty('ossrhPassword') ? project.getProperty('ossrhPassword') : ''
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        credentials(ossrhCredentials)
+    }
+    maven {
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        credentials(ossrhCredentials)
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+dependencies {
+    implementation (
+            "org.apache.logging.log4j:log4j-api:${log4jVersion}",
+            "org.apache.logging.log4j:log4j-core:${log4jVersion}",
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    testImplementation (
+            "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
+            "org.junit.jupiter:junit-jupiter-params:${junitVersion}",
+            "org.mockito:mockito-core:${mockitoVersion}",
+            "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    )
+    testRuntimeOnly (
+            "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    )
+    api (
+            "com.github.vladislavsevruk:type-resolver:${typeResolverVersion}",
+    )
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "VladislavSevruk_GraphQlRequestBodyGenerator"
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+    }
+}
+
+test {
+    useJUnit()
+    useJUnitPlatform()
+    maxHeapSize = '64m'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = 'graphql-request-body-generator'
+            from components.java
+            pom {
+                name = 'GraphQL Request Body Generator'
+                description = 'This utility library helps to generate body for GraphQL request using POJO and annotations.'
+                url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'uladzislau_seuruk'
+                        name = 'Uladzislau Seuruk'
+                        email = 'vladislavsevruk@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials(ossrhCredentials)
+        }
+        maven {
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            credentials(ossrhCredentials)
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.maven
+}

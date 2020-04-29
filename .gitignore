@@ -1,0 +1,10 @@
+# IDEA files
+.idea
+*.iml
+
+# generated files
+.gradle
+build
+out
+log
+lombok.config
