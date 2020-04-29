@@ -151,7 +151,7 @@ public class GqlQueryBodyGenerator {
             FieldsPickingStrategy fieldsPickingStrategy) {
         Set<String> queryParams = new LinkedHashSet<>();
         for (Field field : typeMeta.getType().getDeclaredFields()) {
-            if (!fieldMarkingStrategy.isMarkedField(field)) {
+            if (field.isSynthetic() || !fieldMarkingStrategy.isMarkedField(field)) {
                 continue;
             }
             if (fieldsPickingStrategy.shouldBePicked(field)) {
