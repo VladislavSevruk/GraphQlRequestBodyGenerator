@@ -70,7 +70,8 @@ public class GqlQueryBodyGenerator {
         this(queryName, new TypeMeta<>(model), fieldMarkingStrategy);
     }
 
-    private GqlQueryBodyGenerator(String queryName, TypeMeta modelTypeMeta, FieldMarkingStrategy fieldMarkingStrategy) {
+    private GqlQueryBodyGenerator(String queryName, TypeMeta<?> modelTypeMeta,
+            FieldMarkingStrategy fieldMarkingStrategy) {
         Objects.requireNonNull(modelTypeMeta);
         Objects.requireNonNull(fieldMarkingStrategy);
         this.modelTypeMeta = modelTypeMeta;
