@@ -242,19 +242,19 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
-        String result = GqlQueryGenerator.withoutNested(TestModelWithAnnotations.class);
+        String result = GqlQueryGenerator.withoutEntities(TestModelWithAnnotations.class);
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation "
                 + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredTypeProviderTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredTypeProviderTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
         String result = GqlQueryGenerator
-                .withoutNested(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {});
+                .withoutEntities(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {});
         String expectedResult = "{\"query\":\"{GenericTestModelWithAnnotations{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
                 + "customNamedMandatoryField}}\"}";
@@ -262,10 +262,10 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredWithCustomNameAndQueryArgumentsTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredWithCustomNameAndQueryArgumentsTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 5);
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName",
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName",
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                 Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{testGqlQueryName(queryArgument:5){collectionField "
@@ -275,10 +275,10 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredWithCustomNameAndQueryArgumentsTypeProviderTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredWithCustomNameAndQueryArgumentsTypeProviderTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 5);
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName", TestModelWithAnnotations.class,
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName", TestModelWithAnnotations.class,
                 Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{testGqlQueryName(queryArgument:5){collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
@@ -287,18 +287,18 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredWithCustomNameTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredWithCustomNameTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName", TestModelWithAnnotations.class);
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName", TestModelWithAnnotations.class);
         String expectedResult = "{\"query\":\"{testGqlQueryName{collectionField fieldWithFieldAnnotation "
                 + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredWithCustomNameTypeProviderTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredWithCustomNameTypeProviderTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName",
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName",
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {});
         String expectedResult = "{\"query\":\"{testGqlQueryName{collectionField fieldWithFieldAnnotation "
                 + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
@@ -306,11 +306,11 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredWithQueryArgumentsTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredWithQueryArgumentsTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 3);
         String result = GqlQueryGenerator
-                .withoutNested(TestModelWithAnnotations.class, Collections.singleton(queryArgument));
+                .withoutEntities(TestModelWithAnnotations.class, Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{customGqlQuery(queryArgument:3){collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
                 + "customNamedMandatoryField}}\"}";
@@ -318,11 +318,11 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptNestedAndIgnoredWithQueryArgumentsTypeProviderTest() {
+    public void generateAllFieldsExceptEntitiesAndIgnoredWithQueryArgumentsTypeProviderTest() {
         FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 3);
         String result = GqlQueryGenerator
-                .withoutNested(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
+                .withoutEntities(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                         Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{GenericTestModelWithAnnotations(queryArgument:3){collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
@@ -331,29 +331,29 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedTest() {
+    public void generateAllMarkedFieldsExceptEntitiesTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
-        String result = GqlQueryGenerator.withoutNested(TestModelWithAnnotations.class);
+        String result = GqlQueryGenerator.withoutEntities(TestModelWithAnnotations.class);
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation "
                 + "idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedTypeProviderTest() {
+    public void generateAllMarkedFieldsExceptEntitiesTypeProviderTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
         String result = GqlQueryGenerator
-                .withoutNested(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {});
+                .withoutEntities(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {});
         String expectedResult = "{\"query\":\"{GenericTestModelWithAnnotations{collectionField "
                 + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedWithCustomNameAndQueryArgumentsTest() {
+    public void generateAllMarkedFieldsExceptEntitiesWithCustomNameAndQueryArgumentsTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 5);
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName",
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName",
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                 Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{testGqlQueryName(queryArgument:5){collectionField "
@@ -362,10 +362,10 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedWithCustomNameAndQueryArgumentsTypeProviderTest() {
+    public void generateAllMarkedFieldsExceptEntitiesWithCustomNameAndQueryArgumentsTypeProviderTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 5);
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName", TestModelWithAnnotations.class,
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName", TestModelWithAnnotations.class,
                 Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{testGqlQueryName(queryArgument:5){collectionField "
                 + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
@@ -373,18 +373,18 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedWithCustomNameTest() {
+    public void generateAllMarkedFieldsExceptEntitiesWithCustomNameTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName", TestModelWithAnnotations.class);
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName", TestModelWithAnnotations.class);
         String expectedResult = "{\"query\":\"{testGqlQueryName{collectionField fieldWithFieldAnnotation "
                 + "idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedWithCustomNameTypeProviderTest() {
+    public void generateAllMarkedFieldsExceptEntitiesWithCustomNameTypeProviderTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
-        String result = GqlQueryGenerator.withoutNested("testGqlQueryName",
+        String result = GqlQueryGenerator.withoutEntities("testGqlQueryName",
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {});
         String expectedResult = "{\"query\":\"{testGqlQueryName{collectionField fieldWithFieldAnnotation "
                 + "idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
@@ -392,22 +392,22 @@ public class GqlQueryGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedWithQueryArgumentsTest() {
+    public void generateAllMarkedFieldsExceptEntitiesWithQueryArgumentsTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 3);
         String result = GqlQueryGenerator
-                .withoutNested(TestModelWithAnnotations.class, Collections.singleton(queryArgument));
+                .withoutEntities(TestModelWithAnnotations.class, Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{customGqlQuery(queryArgument:3){collectionField "
                 + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptNestedWithQueryArgumentsTypeProviderTest() {
+    public void generateAllMarkedFieldsExceptEntitiesWithQueryArgumentsTypeProviderTest() {
         FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
         QueryArgument<Integer> queryArgument = new QueryArgument<>("queryArgument", 3);
         String result = GqlQueryGenerator
-                .withoutNested(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
+                .withoutEntities(new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                         Collections.singleton(queryArgument));
         String expectedResult = "{\"query\":\"{GenericTestModelWithAnnotations(queryArgument:3){collectionField "
                 + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";

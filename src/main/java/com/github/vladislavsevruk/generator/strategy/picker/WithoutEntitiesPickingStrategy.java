@@ -28,9 +28,9 @@ import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import java.lang.reflect.Field;
 
 /**
- * Provides query generation strategy for picking only fields without nested parameters.
+ * Provides query generation strategy for picking only fields that not marked as {@link GqlEntity}.
  */
-public class WithoutNestedFieldsPickingStrategy implements FieldsPickingStrategy {
+public class WithoutEntitiesPickingStrategy implements FieldsPickingStrategy {
 
     /**
      * {@inheritDoc}
