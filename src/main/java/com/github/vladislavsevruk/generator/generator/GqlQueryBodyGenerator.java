@@ -117,10 +117,10 @@ public class GqlQueryBodyGenerator {
     private void addEntityQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
-        Set<String> nestedQueryParams = collectNestedQueryParameters(fieldTypeMeta, fieldsPickingStrategy);
-        if (!nestedQueryParams.isEmpty()) {
+        Set<String> entityQueryParams = collectEntityQueryParameters(fieldTypeMeta, fieldsPickingStrategy);
+        if (!entityQueryParams.isEmpty()) {
             String entityQueryParam = GqlNamePicker.getFieldName(field) + "{" + String
-                    .join(DELIMITER, nestedQueryParams) + "}";
+                    .join(DELIMITER, entityQueryParams) + "}";
             queryParams.add(entityQueryParam);
         }
     }
@@ -146,7 +146,7 @@ public class GqlQueryBodyGenerator {
         return collectQueryParameters(hierarchy, fieldTypeMeta, fieldsPickingStrategy);
     }
 
-    private Set<String> collectNestedQueryParameters(TypeMeta<?> fieldTypeMeta,
+    private Set<String> collectEntityQueryParameters(TypeMeta<?> fieldTypeMeta,
             FieldsPickingStrategy fieldsPickingStrategy) {
         if (Collection.class.isAssignableFrom(fieldTypeMeta.getType())) {
             TypeMeta<?> genericTypeMeta = fieldTypeMeta.getGenericTypes()[0];
