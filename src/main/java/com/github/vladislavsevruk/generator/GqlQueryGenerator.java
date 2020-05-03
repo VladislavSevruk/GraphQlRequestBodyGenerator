@@ -30,7 +30,7 @@ import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy
 import com.github.vladislavsevruk.generator.strategy.picker.AllFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.OnlyIdFieldsPickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.picker.OnlyMandatoryFieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.picker.OnlyNonNullableFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.WithoutEntitiesPickingStrategy;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 
@@ -41,7 +41,7 @@ import java.util.Arrays;
  * for query body generation:<ul>
  * <li> pick all marked fields
  * <li> pick only fields that has name 'id' or entities that have inner 'id' field
- * <li> pick only fields that has 'mandatory' flag
+ * <li> pick only fields that has 'non-nullable' flag
  * <li> pick all fields except entities
  * </ul>
  * Besides predefined ones custom field picking strategies can be provided for query body generation.<br> Fields marking
@@ -365,55 +365,55 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return onlyMandatory(null, clazz, queryArguments);
+    public static String onlyNonNullable(Class<?> clazz, QueryArgument<?>... queryArguments) {
+        return onlyNonNullable(null, clazz, queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return onlyMandatory(null, clazz, queryArguments);
+    public static String onlyNonNullable(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
+        return onlyNonNullable(null, clazz, queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
-        return onlyMandatory(null, typeProvider, queryArguments);
+    public static String onlyNonNullable(TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
+        return onlyNonNullable(null, typeProvider, queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(TypeProvider<?> typeProvider, Iterable<QueryArgument<?>> queryArguments) {
-        return onlyMandatory(null, typeProvider, queryArguments);
+    public static String onlyNonNullable(TypeProvider<?> typeProvider, Iterable<QueryArgument<?>> queryArguments) {
+        return onlyNonNullable(null, typeProvider, queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -421,12 +421,12 @@ public class GqlQueryGenerator {
      * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(String queryName, Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, clazz, new OnlyMandatoryFieldsPickingStrategy(), queryArguments);
+    public static String onlyNonNullable(String queryName, Class<?> clazz, QueryArgument<?>... queryArguments) {
+        return customQuery(queryName, clazz, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -434,12 +434,12 @@ public class GqlQueryGenerator {
      * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(String queryName, Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, clazz, new OnlyMandatoryFieldsPickingStrategy(), queryArguments);
+    public static String onlyNonNullable(String queryName, Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
+        return customQuery(queryName, clazz, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -447,13 +447,13 @@ public class GqlQueryGenerator {
      * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(String queryName, TypeProvider<?> typeProvider,
+    public static String onlyNonNullable(String queryName, TypeProvider<?> typeProvider,
             QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, typeProvider, new OnlyMandatoryFieldsPickingStrategy(), queryArguments);
+        return customQuery(queryName, typeProvider, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with only fields that was marked as mandatory and according to current {@link
+     * Generates GraphQL query body with only fields that was marked as non-nullable and according to current {@link
      * FieldMarkingStrategy }.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -461,9 +461,9 @@ public class GqlQueryGenerator {
      * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyMandatory(String queryName, TypeProvider<?> typeProvider,
+    public static String onlyNonNullable(String queryName, TypeProvider<?> typeProvider,
             Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, typeProvider, new OnlyMandatoryFieldsPickingStrategy(), queryArguments);
+        return customQuery(queryName, typeProvider, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
     }
 
     /**

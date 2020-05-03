@@ -41,10 +41,10 @@ public class NestedTestModelWithAnnotations {
     private Long id;
     @GqlField(name = "id")
     private Long idField;
-    @GqlField(mandatory = true)
-    private Long mandatoryField;
     @GqlField(name = "customNamedField")
     private Long namedField;
-    @GqlField(name = "customNamedMandatoryField", mandatory = true)
-    private Long namedMandatoryField;
+    @GqlField(name = "customNamedNonNullableField", nonNullable = true)
+    private Long namedNonNullableField;
+    @GqlField(nonNullable = true)
+    private Long nonNullableField;
 }

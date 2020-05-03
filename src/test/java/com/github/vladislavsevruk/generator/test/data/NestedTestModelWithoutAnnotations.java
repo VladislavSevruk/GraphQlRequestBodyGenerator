@@ -33,7 +33,7 @@ public class NestedTestModelWithoutAnnotations {
     private Long fieldWithoutAnnotations;
     private Long id;
     private Long idField;
-    private Long mandatoryField;
     private Long namedField;
-    private Long namedMandatoryField;
+    private Long namedNonNullableField;
+    private Long nonNullableField;
 }

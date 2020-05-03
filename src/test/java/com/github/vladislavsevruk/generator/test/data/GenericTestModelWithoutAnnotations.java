@@ -17,12 +17,12 @@ public class GenericTestModelWithoutAnnotations<T> {
     private Long id;
     private Long idField;
     private List<T> listEntity;
-    private T mandatoryEntity;
-    private Long mandatoryField;
     private T namedEntity;
     private Long namedField;
-    private T namedMandatoryEntity;
-    private Long namedMandatoryField;
+    private T namedNonNullableEntity;
+    private Long namedNonNullableField;
+    private T nonNullableEntity;
+    private Long nonNullableField;
     private Queue<T> queueEntity;
     private Set<T> setEntity;
 }

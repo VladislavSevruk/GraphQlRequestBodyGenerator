@@ -30,9 +30,9 @@ import com.github.vladislavsevruk.generator.annotation.GqlField;
 import java.lang.reflect.Field;
 
 /**
- * Provides query generation strategy for picking only mandatory fields.
+ * Provides query generation strategy for picking only non-nullable fields.
  */
-public class OnlyMandatoryFieldsPickingStrategy implements FieldsPickingStrategy {
+public class OnlyNonNullableFieldsPickingStrategy implements FieldsPickingStrategy {
 
     /**
      * {@inheritDoc}
@@ -41,11 +41,11 @@ public class OnlyMandatoryFieldsPickingStrategy implements FieldsPickingStrategy
     public boolean shouldBePicked(Field field) {
         GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
         if (fieldAnnotation != null) {
-            return fieldAnnotation.mandatory();
+            return fieldAnnotation.nonNullable();
         }
         GqlEntity entityAnnotation = field.getAnnotation(GqlEntity.class);
         if (entityAnnotation != null) {
-            return entityAnnotation.mandatory();
+            return entityAnnotation.nonNullable();
         }
         return field.getAnnotation(GqlDelegate.class) != null;
     }

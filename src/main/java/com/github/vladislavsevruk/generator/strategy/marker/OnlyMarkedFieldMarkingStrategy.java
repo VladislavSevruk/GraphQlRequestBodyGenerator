@@ -26,13 +26,12 @@ package com.github.vladislavsevruk.generator.strategy.marker;
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
-import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
 import java.lang.reflect.Field;
 
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlEntity}
- * annotations.
+ * Provides query generation strategy for marking only fields that are marked by {@link GqlField}, {@link GqlEntity} or
+ * {@link GqlDelegate} annotations.
  */
 public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
 
@@ -42,6 +41,6 @@ public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
     @Override
     public boolean isMarkedField(Field field) {
         return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlEntity.class) != null
-                || field.getAnnotation(GqlDelegate.class) != null) && field.getAnnotation(GqlIgnore.class) == null;
+                || field.getAnnotation(GqlDelegate.class) != null);
     }
 }
