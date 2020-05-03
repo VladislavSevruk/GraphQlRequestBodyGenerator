@@ -75,7 +75,7 @@ test {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId = 'graphql-request-body-generator'
+            artifactId = "${rootProject.name}"
             from components.java
             pom {
                 name = 'GraphQL Request Body Generator'

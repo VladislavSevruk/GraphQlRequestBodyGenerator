@@ -590,6 +590,30 @@ public class GqlQueryBodyGeneratorTest {
     }
 
     @Test
+    public void buildQueryWithStringArrayAsArgumentTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
+        QueryArgument<String[]> arrayArgument = new QueryArgument<>("stringArrayArgument", new String[]{ "string value 1", "string value 2" });
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringArrayArgument:[\\\"string value 1\\\",\\\"string value 2\\\"]){collectionEntity{id} id "
+                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
+                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildQueryWithStringIterableAsArgumentTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
+        QueryArgument<List<String>> listArgument = new QueryArgument<>("stringListArgument", Arrays.asList("string value 1", "string value 2"));
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringListArgument:[\\\"string value 1\\\",\\\"string value 2\\\"]){collectionEntity{id} id "
+                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
+                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     public void buildQueryWithNullAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
