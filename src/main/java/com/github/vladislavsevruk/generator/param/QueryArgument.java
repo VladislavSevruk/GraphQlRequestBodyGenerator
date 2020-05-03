@@ -28,7 +28,7 @@ import lombok.Value;
 /**
  * Represents argument for GraphQL query.
  *
- * @param <T>
+ * @param <T> type of value.
  */
 @Value
 public class QueryArgument<T> {

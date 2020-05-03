@@ -139,6 +139,10 @@ public class GqlQueryBodyGenerator {
         }
     }
 
+    private String addQuotesForStringArgument(String value) {
+        return String.format("\\\"%s\\\"", value.replace("\"", "\\\\\\\""));
+    }
+
     private Set<String> collectDelegatedQueryParameters(TypeMeta<?> typeMeta, Field field,
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
@@ -181,8 +185,10 @@ public class GqlQueryBodyGenerator {
         return queryParams;
     }
 
-    private List<String> convertToStringList(Object value) {
-        return createStream(value).map(Object::toString).collect(Collectors.toList());
+    private List<String> convertToStringList(Object elements) {
+        return createStream(elements)
+                .map(value -> CharSequence.class.isAssignableFrom(value.getClass()) ? addQuotesForStringArgument(
+                        value.toString()) : value.toString()).collect(Collectors.toList());
     }
 
     private Stream<?> createStream(Object value) {
@@ -223,8 +229,7 @@ public class GqlQueryBodyGenerator {
         }
         if (CharSequence.class.isAssignableFrom(valueClass)) {
             // add escaped quotes for literals
-            String modifiedValue = String.format("\\\"%s\\\"", value.toString().replace("\"", "\\\\\\\""));
-            return new QueryArgument<>(queryArgument.getName(), modifiedValue);
+            return new QueryArgument<>(queryArgument.getName(), addQuotesForStringArgument(value.toString()));
         }
         return queryArgument;
     }

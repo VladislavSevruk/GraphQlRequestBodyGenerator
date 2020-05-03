@@ -17,12 +17,12 @@
         </RollingFile>
 
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%highlight{${basePatternLayout}}{ERROR=red,WARN=yellow}"/>
+            <PatternLayout pattern="%highlight{${basePatternLayout}}"/>
         </Console>
     </Appenders>
 
     <Loggers>
-        <root level="debug">
+        <root level="info">
             <appender-ref ref="File"/>
             <appender-ref ref="Console"/>
         </root>
