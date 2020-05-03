@@ -40,12 +40,12 @@ public class TestModelWithoutAnnotations {
     private Long id;
     private Long idField;
     private List<NestedTestModelWithoutAnnotations> listEntity;
-    private NestedTestModelWithoutAnnotations mandatoryEntity;
-    private Long mandatoryField;
     private NestedTestModelWithoutAnnotations namedEntity;
     private Long namedField;
-    private NestedTestModelWithoutAnnotations namedMandatoryEntity;
-    private Long namedMandatoryField;
+    private NestedTestModelWithoutAnnotations namedNonNullableEntity;
+    private Long namedNonNullableField;
+    private NestedTestModelWithoutAnnotations nonNullableEntity;
+    private Long nonNullableField;
     private Queue<NestedTestModelWithoutAnnotations> queueEntity;
     private Set<NestedTestModelWithoutAnnotations> setEntity;
 }

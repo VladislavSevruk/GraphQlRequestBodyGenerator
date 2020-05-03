@@ -56,18 +56,18 @@ public class TestModelWithAnnotations {
     private Long idField;
     @GqlEntity
     private List<NestedTestModelWithAnnotations> listEntity;
-    @GqlEntity(mandatory = true)
-    private NestedTestModelWithAnnotations mandatoryEntity;
-    @GqlField(mandatory = true)
-    private Long mandatoryField;
     @GqlEntity(name = "customNamedEntity")
     private NestedTestModelWithAnnotations namedEntity;
     @GqlField(name = "customNamedField")
     private Long namedField;
-    @GqlEntity(name = "customNamedMandatoryEntity", mandatory = true)
-    private NestedTestModelWithAnnotations namedMandatoryEntity;
-    @GqlField(name = "customNamedMandatoryField", mandatory = true)
-    private Long namedMandatoryField;
+    @GqlEntity(name = "customNamedNonNullableEntity", nonNullable = true)
+    private NestedTestModelWithAnnotations namedNonNullableEntity;
+    @GqlField(name = "customNamedNonNullableField", nonNullable = true)
+    private Long namedNonNullableField;
+    @GqlEntity(nonNullable = true)
+    private NestedTestModelWithAnnotations nonNullableEntity;
+    @GqlField(nonNullable = true)
+    private Long nonNullableField;
     @GqlEntity
     private Queue<NestedTestModelWithAnnotations> queueEntity;
     @GqlEntity

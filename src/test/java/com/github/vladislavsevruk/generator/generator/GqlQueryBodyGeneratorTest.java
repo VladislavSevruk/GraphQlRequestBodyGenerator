@@ -28,7 +28,7 @@ import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFiel
 import com.github.vladislavsevruk.generator.strategy.marker.OnlyMarkedFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.AllFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.OnlyIdFieldsPickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.picker.OnlyMandatoryFieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.picker.OnlyNonNullableFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.WithoutEntitiesPickingStrategy;
 import com.github.vladislavsevruk.generator.test.data.GenericTestModelWithAnnotations;
 import com.github.vladislavsevruk.generator.test.data.GenericTestModelWithoutAnnotations;
@@ -55,21 +55,22 @@ public class GqlQueryBodyGeneratorTest {
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField "
                 + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id mandatoryField customNamedField customNamedMandatoryField} "
-                + "listEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} mandatoryEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} customNamedEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id mandatoryField customNamedField customNamedMandatoryField} queueEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} setEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}}\"}";
+                + "id customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullableField nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -81,8 +82,8 @@ public class GqlQueryBodyGeneratorTest {
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity collectionField "
                 + "fieldWithDelegateAnnotation fieldWithEntityAnnotation fieldWithFieldAnnotation "
-                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity mandatoryEntity "
-                + "mandatoryField namedEntity namedField namedMandatoryEntity namedMandatoryField queueEntity "
+                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity namedEntity namedField "
+                + "namedNonNullableEntity namedNonNullableField nonNullableEntity nonNullableField queueEntity "
                 + "setEntity}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -93,23 +94,24 @@ public class GqlQueryBodyGeneratorTest {
                 InheritedTestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{id collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField mandatoryField customNamedField customNamedMandatoryField "
+                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullableField nonNullableField "
                 + "newEntityAtDescendant{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} newFieldAtDescendant "
+                + "customNamedField customNamedNonNullableField nonNullableField} newFieldAtDescendant "
                 + "newFieldWithoutAnnotationAtDescendant collectionEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField} "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
                 + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id mandatoryField customNamedField customNamedMandatoryField} listEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} mandatoryEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "customNamedEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id mandatoryField customNamedField customNamedMandatoryField} queueEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} setEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}}\"}";
+                + "id customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullableField nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -122,8 +124,8 @@ public class GqlQueryBodyGeneratorTest {
                 + "newFieldAtDescendant newFieldWithoutAnnotationAtDescendant newIgnoredFieldAtDescendant "
                 + "collectionEntity collectionField fieldWithDelegateAnnotation fieldWithEntityAnnotation "
                 + "fieldWithFieldAnnotation fieldWithIgnoreAnnotation fieldWithoutAnnotations idField listEntity "
-                + "mandatoryEntity mandatoryField namedEntity namedField namedMandatoryEntity namedMandatoryField "
-                + "queueEntity setEntity}}\"}";
+                + "namedEntity namedField namedNonNullableEntity namedNonNullableField nonNullableEntity "
+                + "nonNullableField queueEntity setEntity}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -133,21 +135,22 @@ public class GqlQueryBodyGeneratorTest {
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField "
                 + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id mandatoryField customNamedField customNamedMandatoryField} "
-                + "listEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} mandatoryEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} customNamedEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id mandatoryField customNamedField customNamedMandatoryField} queueEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} setEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}}\"}";
+                + "id customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullableField nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -158,70 +161,70 @@ public class GqlQueryBodyGeneratorTest {
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity collectionField "
                 + "fieldWithDelegateAnnotation fieldWithEntityAnnotation fieldWithFieldAnnotation "
-                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity mandatoryEntity "
-                + "mandatoryField namedEntity namedField namedMandatoryEntity namedMandatoryField queueEntity "
+                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity namedEntity namedField "
+                + "namedNonNullableEntity namedNonNullableField nonNullableEntity nonNullableField queueEntity "
                 + "setEntity}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void buildMandatoryExceptIgnoredGenericModelWithAnnotationsTest() {
+    public void buildNonNullableExceptIgnoredGenericModelWithAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                 new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{mandatoryField customNamedMandatoryField "
-                + "mandatoryEntity{mandatoryField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{mandatoryField customNamedMandatoryField}}}\"}";
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{customNamedNonNullableField nonNullableField "
+                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
+                + "customNamedNonNullableField nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void buildMandatoryExceptIgnoredGenericModelWithoutAnnotationsTest() {
+    public void buildNonNullableExceptIgnoredGenericModelWithoutAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {},
                 new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void buildMandatoryExceptIgnoredInheritedModelWithAnnotationsTest() {
+    public void buildNonNullableExceptIgnoredInheritedModelWithAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 InheritedTestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{mandatoryField customNamedMandatoryField "
-                + "mandatoryEntity{mandatoryField customNamedMandatoryField} customNamedMandatoryEntity{mandatoryField "
-                + "customNamedMandatoryField}}}\"}";
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{customNamedNonNullableField nonNullableField "
+                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
+                + "customNamedNonNullableField nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void buildMandatoryExceptIgnoredInheritedModelWithoutAnnotationsTest() {
+    public void buildNonNullableExceptIgnoredInheritedModelWithoutAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 InheritedTestModelWithoutAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void buildMandatoryExceptIgnoredModelWithAnnotationsTest() {
+    public void buildNonNullableExceptIgnoredModelWithAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{mandatoryField customNamedMandatoryField "
-                + "mandatoryEntity{mandatoryField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{mandatoryField customNamedMandatoryField}}}\"}";
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{customNamedNonNullableField nonNullableField "
+                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
+                + "customNamedNonNullableField nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void buildMandatoryExceptIgnoredModelWithoutAnnotationsTest() {
+    public void buildNonNullableExceptIgnoredModelWithoutAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithoutAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -232,9 +235,9 @@ public class GqlQueryBodyGeneratorTest {
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id fieldWithEntityAnnotation{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -254,8 +257,8 @@ public class GqlQueryBodyGeneratorTest {
                 InheritedTestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{id newEntityAtDescendant{id} collectionEntity{id} "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
+                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -273,9 +276,9 @@ public class GqlQueryBodyGeneratorTest {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id fieldWithEntityAnnotation{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -295,18 +298,19 @@ public class GqlQueryBodyGeneratorTest {
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "collectionField fieldWithFieldAnnotation idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField} listEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "mandatoryEntity{collectionField fieldWithFieldAnnotation idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} customNamedEntity{collectionField fieldWithFieldAnnotation idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{collectionField fieldWithFieldAnnotation idField id mandatoryField "
-                + "customNamedField customNamedMandatoryField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField} setEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField}}}\"}";
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
+                + "nonNullableField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "nonNullableEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullableField nonNullableField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
+                + "nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -326,9 +330,9 @@ public class GqlQueryBodyGeneratorTest {
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id fieldWithEntityAnnotation{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -348,8 +352,8 @@ public class GqlQueryBodyGeneratorTest {
                 InheritedTestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{id newEntityAtDescendant{id} collectionEntity{id} "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
+                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -367,9 +371,9 @@ public class GqlQueryBodyGeneratorTest {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{id} id fieldWithEntityAnnotation{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -388,20 +392,20 @@ public class GqlQueryBodyGeneratorTest {
                 InheritedTestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{id collectionField fieldWithFieldAnnotation idField "
-                + "mandatoryField customNamedField customNamedMandatoryField newEntityAtDescendant{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField} "
+                + "customNamedField customNamedNonNullableField nonNullableField newEntityAtDescendant{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
                 + "newFieldAtDescendant collectionEntity{collectionField fieldWithFieldAnnotation idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} "
-                + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id mandatoryField "
-                + "customNamedField customNamedMandatoryField} listEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "mandatoryEntity{collectionField fieldWithFieldAnnotation idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} customNamedEntity{collectionField fieldWithFieldAnnotation idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{collectionField fieldWithFieldAnnotation idField id mandatoryField "
-                + "customNamedField customNamedMandatoryField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField} setEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField}}}\"}";
+                + "customNamedField customNamedNonNullableField nonNullableField} fieldWithEntityAnnotation{"
+                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
+                + "nonNullableField} listEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedNonNullableEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "queueEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} setEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullableField nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -415,85 +419,24 @@ public class GqlQueryBodyGeneratorTest {
     }
 
     @Test
-    public void buildOnlyMarkedMandatoryGenericModelWithAnnotationsTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{mandatoryField customNamedMandatoryField "
-                + "mandatoryEntity{mandatoryField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{mandatoryField customNamedMandatoryField}}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void buildOnlyMarkedMandatoryGenericModelWithoutAnnotationsTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {},
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void buildOnlyMarkedMandatoryInheritedModelWithAnnotationsTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                InheritedTestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{mandatoryField customNamedMandatoryField "
-                + "mandatoryEntity{mandatoryField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{mandatoryField customNamedMandatoryField}}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void buildOnlyMarkedMandatoryInheritedModelWithoutAnnotationsTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                InheritedTestModelWithoutAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void buildOnlyMarkedMandatoryModelWithAnnotationsTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                TestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{mandatoryField customNamedMandatoryField "
-                + "mandatoryEntity{mandatoryField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{mandatoryField customNamedMandatoryField}}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void buildOnlyMarkedMandatoryModelWithoutAnnotationsTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                TestModelWithoutAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyMandatoryFieldsPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
     public void buildOnlyMarkedModelWithAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "collectionField fieldWithFieldAnnotation idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField} listEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField} "
-                + "mandatoryEntity{collectionField fieldWithFieldAnnotation idField id mandatoryField customNamedField "
-                + "customNamedMandatoryField} customNamedEntity{collectionField fieldWithFieldAnnotation idField id "
-                + "mandatoryField customNamedField customNamedMandatoryField} "
-                + "customNamedMandatoryEntity{collectionField fieldWithFieldAnnotation idField id mandatoryField "
-                + "customNamedField customNamedMandatoryField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField} setEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id mandatoryField customNamedField customNamedMandatoryField}}}\"}";
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
+                + "nonNullableField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "nonNullableEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullableField nonNullableField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
+                + "nonNullableField}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -507,13 +450,75 @@ public class GqlQueryBodyGeneratorTest {
     }
 
     @Test
+    public void buildOnlyMarkedNonNullableGenericModelWithAnnotationsTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
+                new OnlyMarkedFieldMarkingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{customNamedNonNullableField nonNullableField "
+                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
+                + "customNamedNonNullableField nonNullableField}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildOnlyMarkedNonNullableGenericModelWithoutAnnotationsTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {},
+                new OnlyMarkedFieldMarkingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildOnlyMarkedNonNullableInheritedModelWithAnnotationsTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                InheritedTestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{customNamedNonNullableField nonNullableField "
+                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
+                + "customNamedNonNullableField nonNullableField}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildOnlyMarkedNonNullableInheritedModelWithoutAnnotationsTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                InheritedTestModelWithoutAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildOnlyMarkedNonNullableModelWithAnnotationsTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                TestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{customNamedNonNullableField nonNullableField "
+                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
+                + "customNamedNonNullableField nonNullableField}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildOnlyMarkedNonNullableModelWithoutAnnotationsTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                TestModelWithoutAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
+        String expectedResult = "{\"query\":\"{customGqlQuery{}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     public void buildOnlyMarkedWithoutEntitiesGenericModelWithAnnotationsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {},
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullableField nonNullableField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -532,8 +537,8 @@ public class GqlQueryBodyGeneratorTest {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 InheritedTestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{id collectionField fieldWithFieldAnnotation "
-                + "idField mandatoryField customNamedField customNamedMandatoryField newFieldAtDescendant}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{id collectionField fieldWithFieldAnnotation idField "
+                + "customNamedField customNamedNonNullableField nonNullableField newFieldAtDescendant}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -551,8 +556,8 @@ public class GqlQueryBodyGeneratorTest {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
-        String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation "
-                + "idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullableField nonNullableField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -572,8 +577,8 @@ public class GqlQueryBodyGeneratorTest {
         QueryArgument<Short[]> arrayArgument = new QueryArgument<>("arrayArgument", new Short[]{ 1, 2 });
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(arrayArgument:[1,2]){collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
+                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -584,32 +589,8 @@ public class GqlQueryBodyGeneratorTest {
         QueryArgument<List<Boolean>> listArgument = new QueryArgument<>("listArgument", Arrays.asList(true, false));
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(listArgument:[true,false]){collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void buildQueryWithStringArrayAsArgumentTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<String[]> arrayArgument = new QueryArgument<>("stringArrayArgument", new String[]{ "string value 1", "string value 2" });
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
-        String expectedResult = "{\"query\":\"{customGqlQuery(stringArrayArgument:[\\\"string value 1\\\",\\\"string value 2\\\"]){collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void buildQueryWithStringIterableAsArgumentTest() {
-        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
-                TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<List<String>> listArgument = new QueryArgument<>("stringListArgument", Arrays.asList("string value 1", "string value 2"));
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
-        String expectedResult = "{\"query\":\"{customGqlQuery(stringListArgument:[\\\"string value 1\\\",\\\"string value 2\\\"]){collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
+                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -619,9 +600,9 @@ public class GqlQueryBodyGeneratorTest {
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
         QueryArgument<String> stringArgument = new QueryArgument<>("stringArgument", null);
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringArgument);
-        String expectedResult = "{\"query\":\"{customGqlQuery(stringArgument:null){"
-                + "collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} "
-                + "customNamedEntity{id} customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringArgument:null){collectionEntity{id} id "
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
+                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -636,8 +617,8 @@ public class GqlQueryBodyGeneratorTest {
         arguments.add(secondArgument);
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arguments);
         String expectedResult = "{\"query\":\"{customGqlQuery(firstArgument:5,secondArgument:15){collectionEntity{id} "
-                + "id fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+                + "id fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} "
+                + "customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -648,8 +629,22 @@ public class GqlQueryBodyGeneratorTest {
         QueryArgument<Integer> argument = new QueryArgument<>("intArgument", 5);
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), argument);
         String expectedResult = "{\"query\":\"{customGqlQuery(intArgument:5){collectionEntity{id} id "
-                + "fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} customNamedEntity{id} "
-                + "customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
+                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildQueryWithStringArrayAsArgumentTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
+        QueryArgument<String[]> arrayArgument = new QueryArgument<>("stringArrayArgument",
+                new String[]{ "string value 1", "string value 2" });
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringArrayArgument:[\\\"string value 1\\\","
+                + "\\\"string value 2\\\"]){collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} "
+                + "customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} "
+                + "setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -660,8 +655,22 @@ public class GqlQueryBodyGeneratorTest {
         QueryArgument<String> stringArgument = new QueryArgument<>("stringArgument", "string value");
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(stringArgument:\\\"string value\\\"){"
-                + "collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} mandatoryEntity{id} "
-                + "customNamedEntity{id} customNamedMandatoryEntity{id} queueEntity{id} setEntity{id}}}\"}";
+                + "collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} "
+                + "customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void buildQueryWithStringIterableAsArgumentTest() {
+        GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
+                TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
+        QueryArgument<List<String>> listArgument = new QueryArgument<>("stringListArgument",
+                Arrays.asList("string value 1", "string value 2"));
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringListArgument:[\\\"string value 1\\\","
+                + "\\\"string value 2\\\"]){collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} "
+                + "customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} "
+                + "setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -672,7 +681,8 @@ public class GqlQueryBodyGeneratorTest {
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField "
+                + "nonNullableField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -684,8 +694,8 @@ public class GqlQueryBodyGeneratorTest {
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity collectionField "
                 + "fieldWithDelegateAnnotation fieldWithEntityAnnotation fieldWithFieldAnnotation "
-                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity mandatoryEntity "
-                + "mandatoryField namedEntity namedField namedMandatoryEntity namedMandatoryField queueEntity "
+                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity namedEntity namedField "
+                + "namedNonNullableEntity namedNonNullableField nonNullableEntity nonNullableField queueEntity "
                 + "setEntity}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -696,7 +706,7 @@ public class GqlQueryBodyGeneratorTest {
                 InheritedTestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{id collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField mandatoryField customNamedField customNamedMandatoryField "
+                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullableField nonNullableField "
                 + "newFieldAtDescendant newFieldWithoutAnnotationAtDescendant}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -710,8 +720,8 @@ public class GqlQueryBodyGeneratorTest {
                 + "newFieldAtDescendant newFieldWithoutAnnotationAtDescendant newIgnoredFieldAtDescendant "
                 + "collectionEntity collectionField fieldWithDelegateAnnotation fieldWithEntityAnnotation "
                 + "fieldWithFieldAnnotation fieldWithIgnoreAnnotation fieldWithoutAnnotations idField listEntity "
-                + "mandatoryEntity mandatoryField namedEntity namedField namedMandatoryEntity namedMandatoryField "
-                + "queueEntity setEntity}}\"}";
+                + "namedEntity namedField namedNonNullableEntity namedNonNullableField nonNullableEntity "
+                + "nonNullableField queueEntity setEntity}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -721,7 +731,8 @@ public class GqlQueryBodyGeneratorTest {
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id mandatoryField customNamedField customNamedMandatoryField}}\"}";
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField "
+                + "nonNullableField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -732,8 +743,8 @@ public class GqlQueryBodyGeneratorTest {
         String result = bodyGenerator.generate(new WithoutEntitiesPickingStrategy());
         String expectedResult = "{\"query\":\"{customGqlQuery{collectionEntity collectionField "
                 + "fieldWithDelegateAnnotation fieldWithEntityAnnotation fieldWithFieldAnnotation "
-                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity mandatoryEntity "
-                + "mandatoryField namedEntity namedField namedMandatoryEntity namedMandatoryField queueEntity "
+                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity namedEntity namedField "
+                + "namedNonNullableEntity namedNonNullableField nonNullableEntity nonNullableField queueEntity "
                 + "setEntity}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }

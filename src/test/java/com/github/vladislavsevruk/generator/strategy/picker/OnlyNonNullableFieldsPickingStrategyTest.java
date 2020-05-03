@@ -29,9 +29,9 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
-public class OnlyMandatoryFieldsPickingStrategyTest {
+public class OnlyNonNullableFieldsPickingStrategyTest {
 
-    private OnlyMandatoryFieldsPickingStrategy strategy = new OnlyMandatoryFieldsPickingStrategy();
+    private OnlyNonNullableFieldsPickingStrategy strategy = new OnlyNonNullableFieldsPickingStrategy();
 
     @Test
     public void fieldWithGqlDelegateAnnotationTest() throws NoSuchFieldException {
@@ -64,14 +64,14 @@ public class OnlyMandatoryFieldsPickingStrategyTest {
     }
 
     @Test
-    public void mandatoryEntityTest() throws NoSuchFieldException {
-        Field field = TestModelWithAnnotations.class.getDeclaredField("mandatoryEntity");
+    public void nonNullableEntityTest() throws NoSuchFieldException {
+        Field field = TestModelWithAnnotations.class.getDeclaredField("nonNullableEntity");
         Assertions.assertTrue(strategy.shouldBePicked(field));
     }
 
     @Test
-    public void mandatoryFieldTest() throws NoSuchFieldException {
-        Field field = TestModelWithAnnotations.class.getDeclaredField("mandatoryField");
+    public void nonNullableFieldTest() throws NoSuchFieldException {
+        Field field = TestModelWithAnnotations.class.getDeclaredField("nonNullableField");
         Assertions.assertTrue(strategy.shouldBePicked(field));
     }
 }

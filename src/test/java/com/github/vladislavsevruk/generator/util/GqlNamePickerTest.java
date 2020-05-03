@@ -48,9 +48,9 @@ public class GqlNamePickerTest {
 
     @Test
     public void pickNameForEntityWithAnnotationWithoutNameTest() throws NoSuchFieldException {
-        Field field = TestModelWithAnnotations.class.getDeclaredField("mandatoryEntity");
+        Field field = TestModelWithAnnotations.class.getDeclaredField("nonNullableEntity");
         String pickedName = GqlNamePicker.getFieldName(field);
-        Assertions.assertEquals("mandatoryEntity", pickedName);
+        Assertions.assertEquals("nonNullableEntity", pickedName);
     }
 
     @Test
@@ -62,9 +62,9 @@ public class GqlNamePickerTest {
 
     @Test
     public void pickNameForFieldWithAnnotationWithoutNameTest() throws NoSuchFieldException {
-        Field field = TestModelWithAnnotations.class.getDeclaredField("mandatoryField");
+        Field field = TestModelWithAnnotations.class.getDeclaredField("nonNullableField");
         String pickedName = GqlNamePicker.getFieldName(field);
-        Assertions.assertEquals("mandatoryField", pickedName);
+        Assertions.assertEquals("nonNullableField", pickedName);
     }
 
     @Test

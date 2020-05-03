@@ -31,18 +31,18 @@ public class GenericTestModelWithAnnotations<T> {
     private Long idField;
     @GqlEntity
     private List<T> listEntity;
-    @GqlEntity(mandatory = true)
-    private T mandatoryEntity;
-    @GqlField(mandatory = true)
-    private Long mandatoryField;
     @GqlEntity(name = "customNamedEntity")
     private T namedEntity;
     @GqlField(name = "customNamedField")
     private Long namedField;
-    @GqlEntity(name = "customNamedMandatoryEntity", mandatory = true)
-    private T namedMandatoryEntity;
-    @GqlField(name = "customNamedMandatoryField", mandatory = true)
-    private Long namedMandatoryField;
+    @GqlEntity(name = "customNamedNonNullableEntity", nonNullable = true)
+    private T namedNonNullableEntity;
+    @GqlField(name = "customNamedNonNullableField", nonNullable = true)
+    private Long namedNonNullableField;
+    @GqlEntity(nonNullable = true)
+    private T nonNullableEntity;
+    @GqlField(nonNullable = true)
+    private Long nonNullableField;
     @GqlEntity
     private Queue<T> queueEntity;
     @GqlEntity

@@ -36,9 +36,9 @@ import java.lang.annotation.Target;
 public @interface GqlField {
 
     /**
-     * Indicates if marked field is mandatory.
+     * Indicates if marked field is non-nullable.
      */
-    boolean mandatory() default false;
+    boolean nonNullable() default false;
 
     /**
      * Returns name that should be used for GraphQL query or mutation generation.
