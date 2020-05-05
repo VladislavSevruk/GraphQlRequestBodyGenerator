@@ -43,7 +43,7 @@ implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.0'
 First of all we need to prepare POJO models that will be used for query body generation according to current field 
 marking strategy.
 
-#### Field marking strategy
+### Field marking strategy
 There are two predefined field marking strategy that define the way how builder determine if field should be used for 
 query generation:
   * Use all fields except ones with [GqlIgnore](#gqlignore) annotation \[default]
@@ -58,8 +58,8 @@ or
 FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
 ```
 
-#### Annotations
-##### GqlField
+### Annotations
+#### GqlField
 [GqlField](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlField.java) annotation marks model fields 
 that should be treated as [scalar values field](http://spec.graphql.org/June2018/#sec-Language.Fields). Annotation has 
 methods __name__ and __nonNullable__ that allows to set custom field name that will be used at query generation and mark
@@ -74,7 +74,7 @@ public class User {
     private List<String> withListItemsUrls;
 }
 ```
-##### GqlEntity
+#### GqlEntity
 [GqlEntity](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlEntity.java) annotation marks model fields 
 that should be treated as complex type field that contain [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets)
 with nested fields. Similar to [GqlField](#gqlfield) it has __name__ and __nonNullable__ methods for same purposes:
@@ -100,7 +100,7 @@ public class Order {
     private Boolean isDelivered;
 }
 ```
-##### GqlDelegate
+#### GqlDelegate
 [GqlDelegate](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlDelegate.java) is used for complex fields
 to treat its inner fields like they are declared at same class where field itself declared: 
 ```
@@ -126,7 +126,7 @@ public class User {
 }
 ```
 
-##### GqlIgnore
+#### GqlIgnore
 [GqlIgnore](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlIgnore.java) is used with "all fields 
 except ignored" [field marking strategy](#field-marking-strategy) for marking field that shouldn't be used for query 
 generation:
@@ -138,7 +138,7 @@ public class UserInfo {
     private String lastName;
 }
 ```
-##### GqlQuery
+#### GqlQuery
 [GqlQuery](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlQuery.java) is designed to set default query
 name that will be used for query generation:
 ```
