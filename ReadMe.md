@@ -3,7 +3,7 @@
 [![Code Coverage](https://sonarcloud.io/api/project_badges/measure?project=VladislavSevruk_GraphQlRequestBodyGenerator&metric=coverage)](https://sonarcloud.io/component_measures?id=VladislavSevruk_GraphQlRequestBodyGenerator&metric=coverage)
 
 # GraphQL Request Body Generator
-This utility library helps to generate request body for [GraphQL](http://spec.graphql.org) queries using POJOs.
+This utility library helps to generate request body for [GraphQL](http://spec.graphql.org/June2018/) queries using POJOs.
 
 * [Getting started](#getting-started)
   * [Maven](#maven)
