@@ -162,7 +162,7 @@ String queryBody = GqlQueryGenerator.onlyId(User.class);
 ```
 String queryBody = GqlQueryGenerator.onlyNonNullable(User.class);
 ```
-- pick all except entities
+- pick all except [entities]((#gqlentity))
 ```
 String queryBody = GqlQueryGenerator.withoutEntities(User.class);
 ```
@@ -187,7 +187,7 @@ String queryBody = GqlQueryGenerator.allFields("active_users", User.class);
 ```
 
 #### Arguments
-Some queries may require query arguments (to query a specific item or filter items list, for example) so you can provide
+Some queries may require query arguments (to pick specific item or filter items list, for example) so you can provide
 necessary arguments to query using [QueryArgument](src/main/java/com/github/vladislavsevruk/generator/param/QueryArgument.java)
 class:
 ```
