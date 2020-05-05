@@ -52,9 +52,7 @@ query generation:
 Current strategy can be set using [FieldMarkingStrategyManager](src/main/java/com/github/vladislavsevruk/generator/strategy/marker/FieldMarkingStrategyManager.java):
 ```
 FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
-```
-or
-```
+// or
 FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
 ```
 
