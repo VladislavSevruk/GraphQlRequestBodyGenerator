@@ -24,7 +24,7 @@
 package com.github.vladislavsevruk.generator;
 
 import com.github.vladislavsevruk.generator.generator.GqlQueryBodyGenerator;
-import com.github.vladislavsevruk.generator.param.QueryArgument;
+import com.github.vladislavsevruk.generator.param.QueryVariable;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategyManager;
 import com.github.vladislavsevruk.generator.strategy.picker.AllFieldsPickingStrategy;
@@ -58,56 +58,44 @@ public class GqlQueryGenerator {
      * Generates GraphQL query body with all fields according to current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String allFields(Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return allFields(null, clazz, queryArguments);
+    public static String allFields(Class<?> clazz, QueryVariable<?>... queryVariables) {
+        return allFields(null, clazz, queryVariables);
     }
 
     /**
      * Generates GraphQL query body with all fields according to current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String allFields(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return allFields(null, clazz, queryArguments);
+    public static String allFields(Class<?> clazz, Iterable<QueryVariable<?>> queryVariables) {
+        return allFields(null, clazz, queryVariables);
     }
 
     /**
      * Generates GraphQL query body with all fields according to current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String allFields(TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
-        return allFields(null, typeProvider, queryArguments);
+    public static String allFields(TypeProvider<?> typeProvider, QueryVariable<?>... queryVariables) {
+        return allFields(null, typeProvider, queryVariables);
     }
 
     /**
      * Generates GraphQL query body with all fields according to current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String allFields(TypeProvider<?> typeProvider, Iterable<QueryArgument<?>> queryArguments) {
-        return allFields(null, typeProvider, queryArguments);
-    }
-
-    /**
-     * Generates GraphQL query body with all fields according to current {@link FieldMarkingStrategy}.
-     *
-     * @param queryName      <code>String</code> with custom query name.
-     * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
-     * @return <code>String</code> with generated GraphQL query.
-     */
-    public static String allFields(String queryName, Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, clazz, new AllFieldsPickingStrategy(), queryArguments);
+    public static String allFields(TypeProvider<?> typeProvider, Iterable<QueryVariable<?>> queryVariables) {
+        return allFields(null, typeProvider, queryVariables);
     }
 
     /**
@@ -115,11 +103,23 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String allFields(String queryName, Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, clazz, new AllFieldsPickingStrategy(), queryArguments);
+    public static String allFields(String queryName, Class<?> clazz, QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, clazz, new AllFieldsPickingStrategy(), queryVariables);
+    }
+
+    /**
+     * Generates GraphQL query body with all fields according to current {@link FieldMarkingStrategy}.
+     *
+     * @param queryName      <code>String</code> with custom query name.
+     * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
+     * @return <code>String</code> with generated GraphQL query.
+     */
+    public static String allFields(String queryName, Class<?> clazz, Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, clazz, new AllFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -127,11 +127,11 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String allFields(String queryName, TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, typeProvider, new AllFieldsPickingStrategy(), queryArguments);
+    public static String allFields(String queryName, TypeProvider<?> typeProvider, QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, typeProvider, new AllFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -139,12 +139,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String allFields(String queryName, TypeProvider<?> typeProvider,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, typeProvider, new AllFieldsPickingStrategy(), queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, typeProvider, new AllFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -153,12 +153,12 @@ public class GqlQueryGenerator {
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(Class<?> clazz, FieldsPickingStrategy strategy,
-            QueryArgument<?>... queryArguments) {
-        return customQuery(null, clazz, strategy, queryArguments);
+            QueryVariable<?>... queryVariables) {
+        return customQuery(null, clazz, strategy, queryVariables);
     }
 
     /**
@@ -167,12 +167,12 @@ public class GqlQueryGenerator {
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(Class<?> clazz, FieldsPickingStrategy strategy,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(null, clazz, strategy, queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(null, clazz, strategy, queryVariables);
     }
 
     /**
@@ -181,12 +181,12 @@ public class GqlQueryGenerator {
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(TypeProvider<?> typeProvider, FieldsPickingStrategy strategy,
-            QueryArgument<?>... queryArguments) {
-        return customQuery(null, typeProvider, strategy, queryArguments);
+            QueryVariable<?>... queryVariables) {
+        return customQuery(null, typeProvider, strategy, queryVariables);
     }
 
     /**
@@ -195,12 +195,12 @@ public class GqlQueryGenerator {
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(TypeProvider<?> typeProvider, FieldsPickingStrategy strategy,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(null, typeProvider, strategy, queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(null, typeProvider, strategy, queryVariables);
     }
 
     /**
@@ -210,12 +210,12 @@ public class GqlQueryGenerator {
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(String queryName, Class<?> clazz, FieldsPickingStrategy strategy,
-            QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, clazz, strategy, Arrays.asList(queryArguments));
+            QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, clazz, strategy, Arrays.asList(queryVariables));
     }
 
     /**
@@ -225,12 +225,12 @@ public class GqlQueryGenerator {
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(String queryName, Class<?> clazz, FieldsPickingStrategy strategy,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return getQueryBodyBuilder(queryName, clazz).generate(strategy, queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return getQueryBodyBuilder(queryName, clazz).generate(strategy, queryVariables);
     }
 
     /**
@@ -240,12 +240,12 @@ public class GqlQueryGenerator {
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(String queryName, TypeProvider<?> typeProvider, FieldsPickingStrategy strategy,
-            QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, typeProvider, strategy, Arrays.asList(queryArguments));
+            QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, typeProvider, strategy, Arrays.asList(queryVariables));
     }
 
     /**
@@ -255,12 +255,12 @@ public class GqlQueryGenerator {
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param strategy       <code>FieldsPickingStrategy</code> with custom strategy for fields picking.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String customQuery(String queryName, TypeProvider<?> typeProvider, FieldsPickingStrategy strategy,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return getQueryBodyBuilder(queryName, typeProvider).generate(strategy, queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return getQueryBodyBuilder(queryName, typeProvider).generate(strategy, queryVariables);
     }
 
     /**
@@ -268,11 +268,11 @@ public class GqlQueryGenerator {
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyId(Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return onlyId(null, clazz, queryArguments);
+    public static String onlyId(Class<?> clazz, QueryVariable<?>... queryVariables) {
+        return onlyId(null, clazz, queryVariables);
     }
 
     /**
@@ -280,11 +280,11 @@ public class GqlQueryGenerator {
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyId(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return onlyId(null, clazz, queryArguments);
+    public static String onlyId(Class<?> clazz, Iterable<QueryVariable<?>> queryVariables) {
+        return onlyId(null, clazz, queryVariables);
     }
 
     /**
@@ -292,11 +292,11 @@ public class GqlQueryGenerator {
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyId(TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
-        return onlyId(null, typeProvider, queryArguments);
+    public static String onlyId(TypeProvider<?> typeProvider, QueryVariable<?>... queryVariables) {
+        return onlyId(null, typeProvider, queryVariables);
     }
 
     /**
@@ -304,11 +304,11 @@ public class GqlQueryGenerator {
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyId(TypeProvider<?> typeProvider, Iterable<QueryArgument<?>> queryArguments) {
-        return onlyId(null, typeProvider, queryArguments);
+    public static String onlyId(TypeProvider<?> typeProvider, Iterable<QueryVariable<?>> queryVariables) {
+        return onlyId(null, typeProvider, queryVariables);
     }
 
     /**
@@ -317,11 +317,11 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyId(String queryName, Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, clazz, new OnlyIdFieldsPickingStrategy(), queryArguments);
+    public static String onlyId(String queryName, Class<?> clazz, QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, clazz, new OnlyIdFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -330,11 +330,11 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyId(String queryName, Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, clazz, new OnlyIdFieldsPickingStrategy(), queryArguments);
+    public static String onlyId(String queryName, Class<?> clazz, Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, clazz, new OnlyIdFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -343,11 +343,11 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyId(String queryName, TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, typeProvider, new OnlyIdFieldsPickingStrategy(), queryArguments);
+    public static String onlyId(String queryName, TypeProvider<?> typeProvider, QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, typeProvider, new OnlyIdFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -356,12 +356,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String onlyId(String queryName, TypeProvider<?> typeProvider,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, typeProvider, new OnlyIdFieldsPickingStrategy(), queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, typeProvider, new OnlyIdFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -369,11 +369,11 @@ public class GqlQueryGenerator {
      * FieldMarkingStrategy }.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyNonNullable(Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return onlyNonNullable(null, clazz, queryArguments);
+    public static String onlyNonNullable(Class<?> clazz, QueryVariable<?>... queryVariables) {
+        return onlyNonNullable(null, clazz, queryVariables);
     }
 
     /**
@@ -381,11 +381,11 @@ public class GqlQueryGenerator {
      * FieldMarkingStrategy }.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyNonNullable(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return onlyNonNullable(null, clazz, queryArguments);
+    public static String onlyNonNullable(Class<?> clazz, Iterable<QueryVariable<?>> queryVariables) {
+        return onlyNonNullable(null, clazz, queryVariables);
     }
 
     /**
@@ -393,11 +393,11 @@ public class GqlQueryGenerator {
      * FieldMarkingStrategy }.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyNonNullable(TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
-        return onlyNonNullable(null, typeProvider, queryArguments);
+    public static String onlyNonNullable(TypeProvider<?> typeProvider, QueryVariable<?>... queryVariables) {
+        return onlyNonNullable(null, typeProvider, queryVariables);
     }
 
     /**
@@ -405,11 +405,11 @@ public class GqlQueryGenerator {
      * FieldMarkingStrategy }.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyNonNullable(TypeProvider<?> typeProvider, Iterable<QueryArgument<?>> queryArguments) {
-        return onlyNonNullable(null, typeProvider, queryArguments);
+    public static String onlyNonNullable(TypeProvider<?> typeProvider, Iterable<QueryVariable<?>> queryVariables) {
+        return onlyNonNullable(null, typeProvider, queryVariables);
     }
 
     /**
@@ -418,11 +418,11 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyNonNullable(String queryName, Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, clazz, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
+    public static String onlyNonNullable(String queryName, Class<?> clazz, QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, clazz, new OnlyNonNullableFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -431,11 +431,11 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String onlyNonNullable(String queryName, Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, clazz, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
+    public static String onlyNonNullable(String queryName, Class<?> clazz, Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, clazz, new OnlyNonNullableFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -444,12 +444,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String onlyNonNullable(String queryName, TypeProvider<?> typeProvider,
-            QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, typeProvider, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
+            QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, typeProvider, new OnlyNonNullableFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -458,12 +458,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String onlyNonNullable(String queryName, TypeProvider<?> typeProvider,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, typeProvider, new OnlyNonNullableFieldsPickingStrategy(), queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, typeProvider, new OnlyNonNullableFieldsPickingStrategy(), queryVariables);
     }
 
     /**
@@ -471,11 +471,11 @@ public class GqlQueryGenerator {
      * current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String withoutFieldsWithSelectionSet(Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return withoutFieldsWithSelectionSet(null, clazz, queryArguments);
+    public static String withoutFieldsWithSelectionSet(Class<?> clazz, QueryVariable<?>... queryVariables) {
+        return withoutFieldsWithSelectionSet(null, clazz, queryVariables);
     }
 
     /**
@@ -483,11 +483,11 @@ public class GqlQueryGenerator {
      * current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String withoutFieldsWithSelectionSet(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return withoutFieldsWithSelectionSet(null, clazz, queryArguments);
+    public static String withoutFieldsWithSelectionSet(Class<?> clazz, Iterable<QueryVariable<?>> queryVariables) {
+        return withoutFieldsWithSelectionSet(null, clazz, queryVariables);
     }
 
     /**
@@ -495,12 +495,12 @@ public class GqlQueryGenerator {
      * current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String withoutFieldsWithSelectionSet(TypeProvider<?> typeProvider,
-            QueryArgument<?>... queryArguments) {
-        return withoutFieldsWithSelectionSet(null, typeProvider, queryArguments);
+            QueryVariable<?>... queryVariables) {
+        return withoutFieldsWithSelectionSet(null, typeProvider, queryVariables);
     }
 
     /**
@@ -508,12 +508,12 @@ public class GqlQueryGenerator {
      * current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String withoutFieldsWithSelectionSet(TypeProvider<?> typeProvider,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return withoutFieldsWithSelectionSet(null, typeProvider, queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return withoutFieldsWithSelectionSet(null, typeProvider, queryVariables);
     }
 
     /**
@@ -522,12 +522,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String withoutFieldsWithSelectionSet(String queryName, Class<?> clazz,
-            QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, clazz, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
+            QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, clazz, new WithoutFieldsWithSelectionSetPickingStrategy(), queryVariables);
     }
 
     /**
@@ -536,12 +536,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String withoutFieldsWithSelectionSet(String queryName, Class<?> clazz,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, clazz, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, clazz, new WithoutFieldsWithSelectionSetPickingStrategy(), queryVariables);
     }
 
     /**
@@ -550,12 +550,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String withoutFieldsWithSelectionSet(String queryName, TypeProvider<?> typeProvider,
-            QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, typeProvider, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
+            QueryVariable<?>... queryVariables) {
+        return customQuery(queryName, typeProvider, new WithoutFieldsWithSelectionSetPickingStrategy(), queryVariables);
     }
 
     /**
@@ -564,12 +564,12 @@ public class GqlQueryGenerator {
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @param queryVariables <code>Iterable</code> of <code>QueryVariable</code> with query variable names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
     public static String withoutFieldsWithSelectionSet(String queryName, TypeProvider<?> typeProvider,
-            Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, typeProvider, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
+            Iterable<QueryVariable<?>> queryVariables) {
+        return customQuery(queryName, typeProvider, new WithoutFieldsWithSelectionSetPickingStrategy(), queryVariables);
     }
 
     private static GqlQueryBodyGenerator getQueryBodyBuilder(String queryName, Class<?> clazz) {
