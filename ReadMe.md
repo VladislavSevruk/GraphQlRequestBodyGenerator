@@ -72,9 +72,9 @@ public class User {
     private Long id;
     @GqlField
     private String sex;
-    @GqlField(name = "wish_list_items_urls")
-    private List<String> withListItemsUrls;
-    @GqlField(name = "user_contacts", withSelectionSet = true)
+    @GqlField(name = "wishListItemsUrls")
+    private List<String> wishListItems;
+    @GqlField(name = "userContacts", withSelectionSet = true)
     private Contacts contacts;
     @GqlField(nonNullable = true, withSelectionSet = true)
     private List<Order> orders;
@@ -83,14 +83,14 @@ public class User {
 public class Contacts {
     @GqlField(nonNullable = true)
     private String email;
-    @GqlField(name = "phone_number")
+    @GqlField(name = "mobilePhoneNumber")
     private String phoneNumber;
 }
 
 public class Order {
     @GqlField(nonNullable = true)
     private Long id;
-    @GqlField(nonNullable = true, name = "is_delivered")
+    @GqlField(nonNullable = true, name = "delivered")
     private Boolean isDelivered;
 }
 ```
@@ -105,18 +105,14 @@ public class User {
 } 
 
 public class UserInfo {
-    @GqlField(name = "first_name")
     private String firstName;
-    @GqlField(name = "last_name")
     private String lastName;
 }
 ```
 is equivalent to:
 ```java
 public class User {
-    @GqlField(name = "first_name")
     private String firstName;
-    @GqlField(name = "last_name")
     private String lastName;
 }
 ```
@@ -182,7 +178,7 @@ Some queries may have similar structure so it may be convenient to use same POJO
 different names setting it through [GqlQuery](#gqlquery) annotation may not make a trick so you can provide query name 
 to method directly:
 ```kotlin
-String queryBody = GqlQueryGenerator.allFields("active_users", User.class);
+String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class);
 ```
 
 #### Arguments
@@ -195,19 +191,19 @@ String queryBody = GqlQueryGenerator.allFields("user", User.class, idArgument);
 ```
 If you need to provide several arguments you can use varargs:
 ```kotlin
-QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("last_name",
+QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("lastName",
         Arrays.asList("John", "Jane"));
-QueryArgument<String> lastNameArgument = new QueryArgument<>("last_name", "Doe");
-String queryBody = GqlQueryGenerator.allFields("active_users", User.class,
+QueryArgument<String> lastNameArgument = new QueryArgument<>("lastName", "Doe");
+String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class,
         firstNameArgument, lastNameArgument);
 ```
 or iterables:
 ```kotlin
-QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("last_name",
+QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("lastName",
         Arrays.asList("John", "Jane"));
-QueryArgument<String> lastNameArgument = new QueryArgument<>("last_name", "Doe");
+QueryArgument<String> lastNameArgument = new QueryArgument<>("lastName", "Doe");
 List<QueryArgument<?>> arguments = Arrays.asList(firstNameArgument, lastNameArgument);
-String queryBody = GqlQueryGenerator.allFields("active_users", User.class, arguments);
+String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class, arguments);
 ```
 
 ## License
