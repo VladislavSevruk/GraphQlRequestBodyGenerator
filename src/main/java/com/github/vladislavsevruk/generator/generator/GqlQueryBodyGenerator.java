@@ -23,30 +23,18 @@
  */
 package com.github.vladislavsevruk.generator.generator;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-import com.github.vladislavsevruk.generator.param.QueryArgument;
+import com.github.vladislavsevruk.generator.param.QueryVariable;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.util.GqlNamePicker;
-import com.github.vladislavsevruk.resolver.context.ResolvingContext;
-import com.github.vladislavsevruk.resolver.context.ResolvingContextManager;
-import com.github.vladislavsevruk.resolver.resolver.FieldTypeResolver;
-import com.github.vladislavsevruk.resolver.resolver.FieldTypeResolverImpl;
-import com.github.vladislavsevruk.resolver.type.MappedVariableHierarchy;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
-import com.github.vladislavsevruk.resolver.type.TypeVariableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -56,13 +44,9 @@ import java.util.stream.StreamSupport;
  */
 public class GqlQueryBodyGenerator {
 
-    private static final String DELIMITER = " ";
     private static final Logger logger = LogManager.getLogger(GqlQueryBodyGenerator.class);
-    private final FieldMarkingStrategy fieldMarkingStrategy;
-    private final TypeMeta<?> modelTypeMeta;
     private final String queryName;
-    private final ResolvingContext resolvingContext = ResolvingContextManager.getContext();
-    private final FieldTypeResolver fieldTypeResolver = new FieldTypeResolverImpl(resolvingContext);
+    private final SelectionSetGenerator selectionSetGenerator;
 
     public GqlQueryBodyGenerator(String queryName, TypeProvider<?> typeProvider,
             FieldMarkingStrategy fieldMarkingStrategy) {
@@ -75,123 +59,45 @@ public class GqlQueryBodyGenerator {
 
     private GqlQueryBodyGenerator(String queryName, TypeMeta<?> modelTypeMeta,
             FieldMarkingStrategy fieldMarkingStrategy) {
-        Objects.requireNonNull(modelTypeMeta);
-        Objects.requireNonNull(fieldMarkingStrategy);
-        this.modelTypeMeta = modelTypeMeta;
+        this.selectionSetGenerator = new SelectionSetGenerator(modelTypeMeta, fieldMarkingStrategy);
         this.queryName = queryName != null ? queryName : GqlNamePicker.getQueryName(modelTypeMeta.getType());
-        this.fieldMarkingStrategy = fieldMarkingStrategy;
     }
 
     /**
-     * Builds GraphQL query body with received query arguments according to received field picking strategy.
+     * Builds GraphQL query body with received query variables according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param queryArguments        <code>QueryArgument</code> vararg with query argument names and values.
+     * @param queryVariables        <code>QueryVariable</code> vararg with query variable names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, QueryArgument<?>... queryArguments) {
-        return generate(fieldsPickingStrategy, Arrays.asList(queryArguments));
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, QueryVariable<?>... queryVariables) {
+        return generate(fieldsPickingStrategy, Arrays.asList(queryVariables));
     }
 
     /**
-     * Builds GraphQL query body with received query arguments according to received field picking strategy.
+     * Builds GraphQL query body with received query variables according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param queryArguments        <code>Iterable</code> of <code>QueryArgument</code> with query argument names and
+     * @param queryVariables        <code>Iterable</code> of <code>QueryVariable</code> with query variable names and
      *                              values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, Iterable<QueryArgument<?>> queryArguments) {
-        Objects.requireNonNull(fieldsPickingStrategy);
-        Objects.requireNonNull(queryArguments);
-        String queryArgumentsStr = generateQueryArguments(queryArguments);
-        logger.info(() -> String.format("Generating GraphQL query for '%s' model with%s arguments using '%s' field "
-                        + "marking strategy and '%s' field picking strategy.", modelTypeMeta.getType().getName(),
-                queryArgumentsStr.isEmpty() ? "out" : " " + queryArgumentsStr,
-                fieldMarkingStrategy.getClass().getName(), fieldsPickingStrategy.getClass().getName()));
-        MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(modelTypeMeta);
-        Set<String> queryParams = collectQueryParameters(hierarchy, modelTypeMeta, fieldsPickingStrategy);
-        return "{\"query\":\"{" + queryName + queryArgumentsStr + "{" + String.join(DELIMITER, queryParams) + "}}\"}";
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, Iterable<QueryVariable<?>> queryVariables) {
+        Objects.requireNonNull(queryVariables);
+        String queryVariablesStr = generateQueryVariables(queryVariables);
+        logger.info(() -> String.format("Generating '%s' GraphQL query with%s variables.", queryName,
+                queryVariablesStr.isEmpty() ? "out" : " " + queryVariablesStr));
+        return "{\"query\":\"{" + queryName + queryVariablesStr + selectionSetGenerator.generate(fieldsPickingStrategy)
+                + "}\"}";
     }
 
-    private void addFieldWithSelectionSetQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
-            FieldsPickingStrategy fieldsPickingStrategy) {
-        TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
-        Set<String> fieldWithSelectionSetQueryParams = collectFieldWithSelectionSetQueryParameters(fieldTypeMeta,
-                fieldsPickingStrategy);
-        if (!fieldWithSelectionSetQueryParams.isEmpty()) {
-            String fieldWithSelectionSetQueryParam = GqlNamePicker.getFieldName(field) + "{" + String
-                    .join(DELIMITER, fieldWithSelectionSetQueryParams) + "}";
-            queryParams.add(fieldWithSelectionSetQueryParam);
-        }
-    }
-
-    private void addQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
-            FieldsPickingStrategy fieldsPickingStrategy) {
-        if (field.getAnnotation(GqlDelegate.class) != null) {
-            logger.debug(() -> String.format("'%s' is delegate.", field.getName()));
-            queryParams.addAll(collectDelegatedQueryParameters(typeMeta, field, fieldsPickingStrategy));
-        } else {
-            GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
-            if (fieldAnnotation != null && fieldAnnotation.withSelectionSet()) {
-                logger.debug(() -> String.format("'%s' is field with selection set.", field.getName()));
-                addFieldWithSelectionSetQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
-            } else {
-                logger.debug(() -> String.format("'%s' is field.", field.getName()));
-                queryParams.add(GqlNamePicker.getFieldName(field));
-            }
-        }
-    }
-
-    private String addQuotesForStringArgument(String value) {
+    private String addQuotesForStringVariable(String value) {
         return String.format("\\\"%s\\\"", value.replace("\"", "\\\\\\\""));
-    }
-
-    private Set<String> collectDelegatedQueryParameters(TypeMeta<?> typeMeta, Field field,
-            FieldsPickingStrategy fieldsPickingStrategy) {
-        TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
-        MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(fieldTypeMeta);
-        return collectQueryParameters(hierarchy, fieldTypeMeta, fieldsPickingStrategy);
-    }
-
-    private Set<String> collectFieldWithSelectionSetQueryParameters(TypeMeta<?> fieldTypeMeta,
-            FieldsPickingStrategy fieldsPickingStrategy) {
-        if (Collection.class.isAssignableFrom(fieldTypeMeta.getType())) {
-            TypeMeta<?> genericTypeMeta = fieldTypeMeta.getGenericTypes()[0];
-            MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
-                    .get(genericTypeMeta);
-            return collectQueryParameters(hierarchy, genericTypeMeta, fieldsPickingStrategy);
-        }
-        MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(fieldTypeMeta);
-        return collectQueryParameters(hierarchy, fieldTypeMeta, fieldsPickingStrategy);
-    }
-
-    private Set<String> collectQueryParameters(MappedVariableHierarchy hierarchy, TypeMeta<?> typeMeta,
-            FieldsPickingStrategy fieldsPickingStrategy) {
-        logger.debug(() -> String
-                .format("Collecting GraphQL query parameters for '%s' model.", typeMeta.getType().getName()));
-        Set<String> queryParams = new LinkedHashSet<>();
-        for (Field field : typeMeta.getType().getDeclaredFields()) {
-            if (field.isSynthetic() || !fieldMarkingStrategy.isMarkedField(field)) {
-                continue;
-            }
-            logger.debug(() -> String.format("Marked '%s'.", field.getName()));
-            if (fieldsPickingStrategy.shouldBePicked(field)) {
-                logger.debug(() -> String.format("Picked '%s'.", field.getName()));
-                addQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
-            }
-        }
-        Class<?> superclass = typeMeta.getType().getSuperclass();
-        if (superclass != null && !Object.class.equals(superclass)) {
-            queryParams.addAll(collectQueryParameters(hierarchy, getTypeMeta(hierarchy, superclass),
-                    fieldsPickingStrategy));
-        }
-        return queryParams;
     }
 
     private List<String> convertToStringList(Object elements) {
         return createStream(elements)
-                .map(value -> CharSequence.class.isAssignableFrom(value.getClass()) ? addQuotesForStringArgument(
+                .map(value -> CharSequence.class.isAssignableFrom(value.getClass()) ? addQuotesForStringVariable(
                         value.toString()) : value.toString()).collect(Collectors.toList());
     }
 
@@ -202,39 +108,34 @@ public class GqlQueryBodyGenerator {
         return Arrays.stream((Object[]) value);
     }
 
-    private String generateQueryArguments(Iterable<QueryArgument<?>> argumentValue) {
-        if (!argumentValue.iterator().hasNext()) {
+    private String generateQueryVariables(Iterable<QueryVariable<?>> variableValue) {
+        if (!variableValue.iterator().hasNext()) {
             return "";
         }
-        return "(" + StreamSupport.stream(argumentValue.spliterator(), false).map(this::performArgumentModifications)
-                .map(argument -> argument.getName() + ":" + argument.getValue()).collect(Collectors.joining(",")) + ")";
-    }
-
-    private TypeMeta<?> getTypeMeta(MappedVariableHierarchy hierarchy, Class<?> clazz) {
-        TypeVariableMap typeVariableMap = hierarchy.getTypeVariableMap(clazz);
-        return resolvingContext.getTypeResolverPicker().pickTypeResolver(clazz).resolve(typeVariableMap, clazz);
+        return "(" + StreamSupport.stream(variableValue.spliterator(), false).map(this::performVariableModifications)
+                .map(variable -> variable.getName() + ":" + variable.getValue()).collect(Collectors.joining(",")) + ")";
     }
 
     /**
-     * Performs modifications for arguments, e.g. - escapes quotes for literals: { "key", "literalValue" } -> { "key",
+     * Performs modifications for variables, e.g. - escapes quotes for literals: { "key", "literalValue" } -> { "key",
      * "\"literalValue\"" }, { "key", "literal"With"Quotes" } -> { "key", "\"literal\\\"With\\\"Quotes\"" } - compose
      * iterables or arrays to string: { "key", [ value1, value2 ] } -> { "key", "[value1,value2]" }
      */
-    private QueryArgument<?> performArgumentModifications(QueryArgument<?> queryArgument) {
-        Object value = queryArgument.getValue();
+    private QueryVariable<?> performVariableModifications(QueryVariable<?> queryVariable) {
+        Object value = queryVariable.getValue();
         if (value == null) {
-            return queryArgument;
+            return queryVariable;
         }
         Class<?> valueClass = value.getClass();
         if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
             // compose all elements through the comma and surround by square brackets
             String modifiedValue = "[" + String.join(",", convertToStringList(value)) + "]";
-            return new QueryArgument<>(queryArgument.getName(), modifiedValue);
+            return new QueryVariable<>(queryVariable.getName(), modifiedValue);
         }
         if (CharSequence.class.isAssignableFrom(valueClass)) {
             // add escaped quotes for literals
-            return new QueryArgument<>(queryArgument.getName(), addQuotesForStringArgument(value.toString()));
+            return new QueryVariable<>(queryVariable.getName(), addQuotesForStringVariable(value.toString()));
         }
-        return queryArgument;
+        return queryVariable;
     }
 }
