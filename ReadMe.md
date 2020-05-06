@@ -5,6 +5,7 @@
 # GraphQL Request Body Generator
 This utility library helps to generate request body for [GraphQL](http://spec.graphql.org/June2018/) queries using POJOs.
 
+## Table of contents
 * [Getting started](#getting-started)
   * [Maven](#maven)
   * [Gradle](#gradle)
@@ -23,6 +24,8 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
 * [License](#license)
 
 ## Getting started
+To add library to your project perform next steps:
+
 ### Maven
 Add the following dependency to your pom.xml:
 ```
