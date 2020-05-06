@@ -14,7 +14,6 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
     * [Field marking strategy](#field-marking-strategy)
     * [Annotations](#annotations)
       * [GqlField](#gqlfield)
-      * [GqlEntity](#gqlentity)
       * [GqlDelegate](#gqldelegate)
       * [GqlIgnore](#gqlignore)
       * [GqlQuery](#gqlquery)
@@ -50,7 +49,7 @@ marking strategy.
 There are two predefined field marking strategy that define the way how builder determine if field should be used for 
 query generation:
   * Use all fields except ones with [GqlIgnore](#gqlignore) annotation \[default]
-  * Use only fields with one of [GqlField](#gqlfield), [GqlEntity](#gqlentity) or [GqlDelegate](#gqldelegate) annotations
+  * Use only fields with one of [GqlField](#gqlfield) or [GqlDelegate](#gqldelegate) annotations
 
 Current strategy can be set using [FieldMarkingStrategyManager](src/main/java/com/github/vladislavsevruk/generator/strategy/marker/FieldMarkingStrategyManager.java):
 ```kotlin
@@ -62,9 +61,11 @@ FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
 ### Annotations
 #### GqlField
 [GqlField](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlField.java) annotation marks model fields 
-that should be treated as [scalar values field](http://spec.graphql.org/June2018/#sec-Language.Fields). Annotation has 
-methods __name__ and __nonNullable__ that allows to set custom field name that will be used at query generation and mark
-field that was denoted as [non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null) at GraphQL schema:
+that should be treated as [GraphQL field](http://spec.graphql.org/June2018/#sec-Language.Fields). By default field name 
+will be used for query generation but you can override it using __name__ method. If you mark field using 
+__withSelectionSet__ method it will be treated as field that have [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets) 
+with nested fields. Annotation also has method __nonNullable__ that allow to mark field that was denoted as 
+[non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null) at GraphQL schema:
 ```java
 public class User {
     @GqlField(nonNullable = true)
@@ -73,17 +74,9 @@ public class User {
     private String sex;
     @GqlField(name = "wish_list_items_urls")
     private List<String> withListItemsUrls;
-}
-```
-#### GqlEntity
-[GqlEntity](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlEntity.java) annotation marks model fields 
-that should be treated as complex type field that contain [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets)
-with nested fields. Similar to [GqlField](#gqlfield) it has __name__ and __nonNullable__ methods for same purposes:
-```java
-public class User {
-    @GqlEntity(name = "user_contacts")
+    @GqlField(name = "user_contacts", withSelectionSet = true)
     private Contacts contacts;
-    @GqlEntity(nonNullable = true)
+    @GqlField(nonNullable = true, withSelectionSet = true)
     private List<Order> orders;
 }
 
@@ -101,6 +94,7 @@ public class Order {
     private Boolean isDelivered;
 }
 ```
+
 #### GqlDelegate
 [GqlDelegate](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlDelegate.java) is used for complex fields
 to treat its inner fields like they are declared at same class where field itself declared: 
@@ -139,6 +133,7 @@ public class UserInfo {
     private String lastName;
 }
 ```
+
 #### GqlQuery
 [GqlQuery](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlQuery.java) is designed to set default query
 name that will be used for query generation:
@@ -157,17 +152,17 @@ This class has several predefined methods with different fields picking strategi
 ```kotlin
 String queryBody = GqlQueryGenerator.allFields(User.class);
 ```
-- pick only fields with __id__ name or entities that have inner field with __id__ name
+- pick only fields with __id__ name or fields that have nested field with __id__ name
 ```kotlin
 String queryBody = GqlQueryGenerator.onlyId(User.class);
 ```
-- pick only fields that are marked as non-nullable
+- pick only fields that are marked as [non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null)
 ```kotlin
 String queryBody = GqlQueryGenerator.onlyNonNullable(User.class);
 ```
-- pick all except [entities]((#gqlentity))
+- pick all except fields with [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets) 
 ```kotlin
-String queryBody = GqlQueryGenerator.withoutEntities(User.class);
+String queryBody = GqlQueryGenerator.withoutFieldsWithSelectionSet(User.class);
 ```
 
 Also you can provide your own custom fields picking strategy that implements [FieldsPickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/FieldsPickingStrategy.java)
