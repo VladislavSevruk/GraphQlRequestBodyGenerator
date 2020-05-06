@@ -23,7 +23,6 @@
  */
 package com.github.vladislavsevruk.generator.util;
 
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlQuery;
 
@@ -39,8 +38,7 @@ public class GqlNamePicker {
     }
 
     /**
-     * Gets name for GraphQL query from {@link GqlField} or {@link GqlEntity} annotations if present or using field
-     * name.
+     * Gets name for GraphQL query from {@link GqlField}  annotation if present or using field name.
      *
      * @param field <code>Field</code> to get name for.
      * @return <code>String</code> with field name.
@@ -49,10 +47,6 @@ public class GqlNamePicker {
         GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
         if (fieldAnnotation != null && !fieldAnnotation.name().isEmpty()) {
             return fieldAnnotation.name();
-        }
-        GqlEntity entityAnnotation = field.getAnnotation(GqlEntity.class);
-        if (entityAnnotation != null && !entityAnnotation.name().isEmpty()) {
-            return entityAnnotation.name();
         }
         return field.getName();
     }

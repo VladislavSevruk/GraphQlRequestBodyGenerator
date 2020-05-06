@@ -1,7 +1,6 @@
 package com.github.vladislavsevruk.generator.test.data;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
@@ -12,13 +11,13 @@ import java.util.Set;
 
 public class GenericTestModelWithAnnotations<T> {
 
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private Collection<T> collectionEntity;
     @GqlField
     private Collection<T> collectionField;
     @GqlDelegate
     private T fieldWithDelegateAnnotation;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private T fieldWithEntityAnnotation;
     @GqlField
     private Long fieldWithFieldAnnotation;
@@ -29,22 +28,22 @@ public class GenericTestModelWithAnnotations<T> {
     private Long id;
     @GqlField(name = "id")
     private Long idField;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private List<T> listEntity;
-    @GqlEntity(name = "customNamedEntity")
+    @GqlField(name = "customNamedEntity", withSelectionSet = true)
     private T namedEntity;
     @GqlField(name = "customNamedField")
     private Long namedField;
-    @GqlEntity(name = "customNamedNonNullableEntity", nonNullable = true)
+    @GqlField(name = "customNamedNonNullableEntity", nonNullable = true, withSelectionSet = true)
     private T namedNonNullableEntity;
     @GqlField(name = "customNamedNonNullableField", nonNullable = true)
     private Long namedNonNullableField;
-    @GqlEntity(nonNullable = true)
+    @GqlField(nonNullable = true, withSelectionSet = true)
     private T nonNullableEntity;
     @GqlField(nonNullable = true)
     private Long nonNullableField;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private Queue<T> queueEntity;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private Set<T> setEntity;
 }

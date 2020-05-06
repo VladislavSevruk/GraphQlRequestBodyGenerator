@@ -23,12 +23,12 @@
  */
 package com.github.vladislavsevruk.generator.strategy.picker;
 
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
 
 import java.lang.reflect.Field;
 
 /**
- * Provides query generation strategy for picking only fields that not marked as {@link GqlEntity}.
+ * Provides query generation strategy for picking only fields that does not have sub-fields.
  */
 public class WithoutEntitiesPickingStrategy implements FieldsPickingStrategy {
 
@@ -37,6 +37,7 @@ public class WithoutEntitiesPickingStrategy implements FieldsPickingStrategy {
      */
     @Override
     public boolean shouldBePicked(Field field) {
-        return field.getAnnotation(GqlEntity.class) == null;
+        GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
+        return fieldAnnotation == null || !fieldAnnotation.withSelectionSet();
     }
 }

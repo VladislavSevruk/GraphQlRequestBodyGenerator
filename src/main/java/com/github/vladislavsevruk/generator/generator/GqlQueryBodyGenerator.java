@@ -24,7 +24,7 @@
 package com.github.vladislavsevruk.generator.generator;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.param.QueryArgument;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.FieldsPickingStrategy;
@@ -130,12 +130,15 @@ public class GqlQueryBodyGenerator {
         if (field.getAnnotation(GqlDelegate.class) != null) {
             logger.debug(() -> String.format("'%s' is delegate.", field.getName()));
             queryParams.addAll(collectDelegatedQueryParameters(typeMeta, field, fieldsPickingStrategy));
-        } else if (field.getAnnotation(GqlEntity.class) != null) {
-            logger.debug(() -> String.format("'%s' is entity.", field.getName()));
-            addEntityQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
         } else {
-            logger.debug(() -> String.format("'%s' is field.", field.getName()));
-            queryParams.add(GqlNamePicker.getFieldName(field));
+            GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
+            if (fieldAnnotation != null && fieldAnnotation.withSelectionSet()) {
+                logger.debug(() -> String.format("'%s' is entity.", field.getName()));
+                addEntityQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
+            } else {
+                logger.debug(() -> String.format("'%s' is field.", field.getName()));
+                queryParams.add(GqlNamePicker.getFieldName(field));
+            }
         }
     }
 

@@ -36,12 +36,17 @@ import java.lang.annotation.Target;
 public @interface GqlField {
 
     /**
+     * Returns name that should be used for GraphQL query or mutation generation.
+     */
+    String name() default "";
+
+    /**
      * Indicates if marked field is non-nullable.
      */
     boolean nonNullable() default false;
 
     /**
-     * Returns name that should be used for GraphQL query or mutation generation.
+     * Returns <code>true</code> if field has selection set with nested fields, <code>false</code> otherwise.
      */
-    String name() default "";
+    boolean withSelectionSet() default false;
 }

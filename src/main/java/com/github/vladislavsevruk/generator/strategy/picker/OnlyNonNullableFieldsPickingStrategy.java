@@ -24,7 +24,6 @@
 package com.github.vladislavsevruk.generator.strategy.picker;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 
 import java.lang.reflect.Field;
@@ -42,10 +41,6 @@ public class OnlyNonNullableFieldsPickingStrategy implements FieldsPickingStrate
         GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
         if (fieldAnnotation != null) {
             return fieldAnnotation.nonNullable();
-        }
-        GqlEntity entityAnnotation = field.getAnnotation(GqlEntity.class);
-        if (entityAnnotation != null) {
-            return entityAnnotation.nonNullable();
         }
         return field.getAnnotation(GqlDelegate.class) != null;
     }
