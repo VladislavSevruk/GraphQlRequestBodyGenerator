@@ -28,7 +28,7 @@ To add library to your project perform next steps:
 
 ### Maven
 Add the following dependency to your pom.xml:
-```
+```xml
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
@@ -37,7 +37,7 @@ Add the following dependency to your pom.xml:
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
-```
+```groovy
 implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.0'
 ```
 
@@ -53,7 +53,7 @@ query generation:
   * Use only fields with one of [GqlField](#gqlfield), [GqlEntity](#gqlentity) or [GqlDelegate](#gqldelegate) annotations
 
 Current strategy can be set using [FieldMarkingStrategyManager](src/main/java/com/github/vladislavsevruk/generator/strategy/marker/FieldMarkingStrategyManager.java):
-```
+```kotlin
 FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
 // or
 FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
@@ -65,7 +65,7 @@ FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
 that should be treated as [scalar values field](http://spec.graphql.org/June2018/#sec-Language.Fields). Annotation has 
 methods __name__ and __nonNullable__ that allows to set custom field name that will be used at query generation and mark
 field that was denoted as [non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null) at GraphQL schema:
-```
+```java
 public class User {
     @GqlField(nonNullable = true)
     private Long id;
@@ -79,7 +79,7 @@ public class User {
 [GqlEntity](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlEntity.java) annotation marks model fields 
 that should be treated as complex type field that contain [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets)
 with nested fields. Similar to [GqlField](#gqlfield) it has __name__ and __nonNullable__ methods for same purposes:
-```
+```java
 public class User {
     @GqlEntity(name = "user_contacts")
     private Contacts contacts;
@@ -104,7 +104,7 @@ public class Order {
 #### GqlDelegate
 [GqlDelegate](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlDelegate.java) is used for complex fields
 to treat its inner fields like they are declared at same class where field itself declared: 
-```
+```java
 public class User {
     @GqlDelegate
     private UserInfo userInfo;
@@ -118,7 +118,7 @@ public class UserInfo {
 }
 ```
 is equivalent to:
-```
+```java
 public class User {
     @GqlField(name = "first_name")
     private String firstName;
@@ -131,7 +131,7 @@ public class User {
 [GqlIgnore](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlIgnore.java) is used with "all fields 
 except ignored" [field marking strategy](#field-marking-strategy) for marking field that shouldn't be used for query 
 generation:
-```
+```java
 public class UserInfo {
     private String firstName;
     @GqlIgnore
@@ -142,7 +142,7 @@ public class UserInfo {
 #### GqlQuery
 [GqlQuery](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlQuery.java) is designed to set default query
 name that will be used for query generation:
-```
+```java
 @GqlQuery(name = "users")
 public class User {
     ...
@@ -154,30 +154,31 @@ If query name was not set class name will be used instead.
 Once POJO models are ready we can generate GraphQL query using [GqlQueryGenerator](src/main/java/com/github/vladislavsevruk/generator/GqlQueryGenerator.java).
 This class has several predefined methods with different fields picking strategies for query body generation, like:
 - pick all marked fields
-```
+```kotlin
 String queryBody = GqlQueryGenerator.allFields(User.class);
 ```
 - pick only fields with __id__ name or entities that have inner field with __id__ name
-```
+```kotlin
 String queryBody = GqlQueryGenerator.onlyId(User.class);
 ```
 - pick only fields that are marked as non-nullable
-```
+```kotlin
 String queryBody = GqlQueryGenerator.onlyNonNullable(User.class);
 ```
 - pick all except [entities]((#gqlentity))
-```
+```kotlin
 String queryBody = GqlQueryGenerator.withoutEntities(User.class);
 ```
 
 Also you can provide your own custom fields picking strategy that implements [FieldsPickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/FieldsPickingStrategy.java)
 functional interface:
-```
-String queryBody = GqlQueryGenerator.customQuery(User.class, field -> field.getName().contains("Name"));
+```kotlin
+String queryBody = GqlQueryGenerator.customQuery(User.class,
+        field -> field.getName().contains("Name"));
 ```
 
 If you want to use generic models it's recommended to provide them via [TypeProvider](https://github.com/VladislavSevruk/TypeResolver/blob/develop/src/main/java/com/github/vladislavsevruk/resolver/type/TypeProvider.java):
-```
+```kotlin
 String queryBody = GqlQueryGenerator.allFields(new TypeProvider<User<UserInfo>>() {});
 ```
 
@@ -185,7 +186,7 @@ String queryBody = GqlQueryGenerator.allFields(new TypeProvider<User<UserInfo>>(
 Some queries may have similar structure so it may be convenient to use same POJO models for them. But as they have 
 different names setting it through [GqlQuery](#gqlquery) annotation may not make a trick so you can provide query name 
 to method directly:
-```
+```kotlin
 String queryBody = GqlQueryGenerator.allFields("active_users", User.class);
 ```
 
@@ -193,19 +194,22 @@ String queryBody = GqlQueryGenerator.allFields("active_users", User.class);
 Some queries may require query arguments (to pick specific item or filter items list, for example) so you can provide
 necessary arguments to query using [QueryArgument](src/main/java/com/github/vladislavsevruk/generator/param/QueryArgument.java)
 class:
-```
+```kotlin
 QueryArgument<Long> idArgument = new QueryArgument<>("id", 1L);
 String queryBody = GqlQueryGenerator.allFields("user", User.class, idArgument);
 ```
 If you need to provide several arguments you can use varargs:
-```
-QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("last_name", Arrays.asList("John", "Jane"));
+```kotlin
+QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("last_name",
+        Arrays.asList("John", "Jane"));
 QueryArgument<String> lastNameArgument = new QueryArgument<>("last_name", "Doe");
-String queryBody = GqlQueryGenerator.allFields("active_users", User.class, firstNameArgument, lastNameArgument);
+String queryBody = GqlQueryGenerator.allFields("active_users", User.class,
+        firstNameArgument, lastNameArgument);
 ```
 or iterables:
-```
-QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("last_name", Arrays.asList("John", "Jane"));
+```kotlin
+QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("last_name",
+        Arrays.asList("John", "Jane"));
 QueryArgument<String> lastNameArgument = new QueryArgument<>("last_name", "Doe");
 List<QueryArgument<?>> arguments = Arrays.asList(firstNameArgument, lastNameArgument);
 String queryBody = GqlQueryGenerator.allFields("active_users", User.class, arguments);
