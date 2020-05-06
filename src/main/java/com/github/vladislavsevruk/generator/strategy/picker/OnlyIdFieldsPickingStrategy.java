@@ -30,7 +30,7 @@ import com.github.vladislavsevruk.generator.util.GqlNamePicker;
 import java.lang.reflect.Field;
 
 /**
- * Provides query generation strategy for picking only 'id' fields itself or entities with inner 'id' field.
+ * Provides query generation strategy for picking only 'id' fields itself or fields with nested 'id' field.
  */
 public class OnlyIdFieldsPickingStrategy implements FieldsPickingStrategy {
 

@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 
 public class WithoutNestedFieldsPickingStrategyTest {
 
-    private WithoutEntitiesPickingStrategy strategy = new WithoutEntitiesPickingStrategy();
+    private WithoutFieldsWithSelectionSetPickingStrategy strategy = new WithoutFieldsWithSelectionSetPickingStrategy();
 
     @Test
     public void fieldWithGqlDelegateAnnotationTest() throws NoSuchFieldException {

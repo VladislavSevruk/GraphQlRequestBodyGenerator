@@ -28,9 +28,9 @@ import com.github.vladislavsevruk.generator.annotation.GqlField;
 import java.lang.reflect.Field;
 
 /**
- * Provides query generation strategy for picking only fields that does not have sub-fields.
+ * Provides query generation strategy for picking only fields that does not have nested fields.
  */
-public class WithoutEntitiesPickingStrategy implements FieldsPickingStrategy {
+public class WithoutFieldsWithSelectionSetPickingStrategy implements FieldsPickingStrategy {
 
     /**
      * {@inheritDoc}
