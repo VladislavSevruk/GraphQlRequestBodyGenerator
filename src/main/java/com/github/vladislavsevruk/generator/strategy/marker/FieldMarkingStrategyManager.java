@@ -24,7 +24,6 @@
 package com.github.vladislavsevruk.generator.strategy.marker;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 import org.apache.logging.log4j.LogManager;
@@ -36,11 +35,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Manages model fields picking strategies.<br> There are two field marking strategies for query body generation:<ul>
  * <li> pick all fields except ones that have {@link GqlIgnore} annotation
- * <li> pick only fields that have {@link GqlField}, {@link GqlEntity} or {@link GqlDelegate} annotations
+ * <li> pick only fields that have {@link GqlField} or {@link GqlDelegate} annotations
  * </ul>
  *
  * @see GqlField
- * @see GqlEntity
  * @see GqlDelegate
  * @see GqlIgnore
  */
@@ -74,8 +72,8 @@ public final class FieldMarkingStrategyManager {
     }
 
     /**
-     * Set picking only fields that marked by {@link GqlField}, {@link GqlEntity} or {@link GqlDelegate} annotations as
-     * current picking strategy.
+     * Set picking only fields that marked by {@link GqlField} or {@link GqlDelegate} annotations as current picking
+     * strategy.
      */
     public static void useOnlyMarkedFieldsStrategy() {
         STRATEGY_LOCK.writeLock().lock();

@@ -31,7 +31,7 @@ import com.github.vladislavsevruk.generator.strategy.picker.AllFieldsPickingStra
 import com.github.vladislavsevruk.generator.strategy.picker.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.OnlyIdFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.OnlyNonNullableFieldsPickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.picker.WithoutEntitiesPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.picker.WithoutFieldsWithSelectionSetPickingStrategy;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 
 import java.util.Arrays;
@@ -40,9 +40,9 @@ import java.util.Arrays;
  * Generates bodies for GraphQL queries using received POJOs.<br> There are several predefined field picking strategies
  * for query body generation:<ul>
  * <li> pick all marked fields
- * <li> pick only fields that has name 'id' or entities that have inner 'id' field
+ * <li> pick only fields that has name 'id' or fields that have nested 'id' field
  * <li> pick only fields that has 'non-nullable' flag
- * <li> pick all fields except entities
+ * <li> pick all fields except fields with selection set
  * </ul>
  * Besides predefined ones custom field picking strategies can be provided for query body generation.<br> Fields marking
  * strategies are managed by {@link FieldMarkingStrategyManager}
@@ -264,7 +264,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
@@ -276,7 +276,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
@@ -288,7 +288,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
@@ -300,7 +300,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
@@ -312,7 +312,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -325,7 +325,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -338,7 +338,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -351,7 +351,7 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with only fields that has name 'id' or entities that have inner field with name 'id'
+     * Generates GraphQL query body with only fields that has name 'id' or fields that have nested field with name 'id'
      * according to current {@link FieldMarkingStrategy}.
      *
      * @param queryName      <code>String</code> with custom query name.
@@ -467,97 +467,109 @@ public class GqlQueryGenerator {
     }
 
     /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String withoutEntities(Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return withoutEntities(null, clazz, queryArguments);
+    public static String withoutFieldsWithSelectionSet(Class<?> clazz, QueryArgument<?>... queryArguments) {
+        return withoutFieldsWithSelectionSet(null, clazz, queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
      *
      * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
      * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String withoutEntities(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return withoutEntities(null, clazz, queryArguments);
+    public static String withoutFieldsWithSelectionSet(Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
+        return withoutFieldsWithSelectionSet(null, clazz, queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
      *
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String withoutEntities(TypeProvider<?> typeProvider, QueryArgument<?>... queryArguments) {
-        return withoutEntities(null, typeProvider, queryArguments);
-    }
-
-    /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
-     *
-     * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
-     * @return <code>String</code> with generated GraphQL query.
-     */
-    public static String withoutEntities(TypeProvider<?> typeProvider, Iterable<QueryArgument<?>> queryArguments) {
-        return withoutEntities(null, typeProvider, queryArguments);
-    }
-
-    /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
-     *
-     * @param queryName      <code>String</code> with custom query name.
-     * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
-     * @return <code>String</code> with generated GraphQL query.
-     */
-    public static String withoutEntities(String queryName, Class<?> clazz, QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, clazz, new WithoutEntitiesPickingStrategy(), queryArguments);
-    }
-
-    /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
-     *
-     * @param queryName      <code>String</code> with custom query name.
-     * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
-     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
-     * @return <code>String</code> with generated GraphQL query.
-     */
-    public static String withoutEntities(String queryName, Class<?> clazz, Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, clazz, new WithoutEntitiesPickingStrategy(), queryArguments);
-    }
-
-    /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
-     *
-     * @param queryName      <code>String</code> with custom query name.
-     * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
-     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
-     * @return <code>String</code> with generated GraphQL query.
-     */
-    public static String withoutEntities(String queryName, TypeProvider<?> typeProvider,
+    public static String withoutFieldsWithSelectionSet(TypeProvider<?> typeProvider,
             QueryArgument<?>... queryArguments) {
-        return customQuery(queryName, typeProvider, new WithoutEntitiesPickingStrategy(), queryArguments);
+        return withoutFieldsWithSelectionSet(null, typeProvider, queryArguments);
     }
 
     /**
-     * Generates GraphQL query body with all fields except entities according to current {@link FieldMarkingStrategy}.
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
+     *
+     * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
+     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @return <code>String</code> with generated GraphQL query.
+     */
+    public static String withoutFieldsWithSelectionSet(TypeProvider<?> typeProvider,
+            Iterable<QueryArgument<?>> queryArguments) {
+        return withoutFieldsWithSelectionSet(null, typeProvider, queryArguments);
+    }
+
+    /**
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
+     *
+     * @param queryName      <code>String</code> with custom query name.
+     * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
+     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @return <code>String</code> with generated GraphQL query.
+     */
+    public static String withoutFieldsWithSelectionSet(String queryName, Class<?> clazz,
+            QueryArgument<?>... queryArguments) {
+        return customQuery(queryName, clazz, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
+    }
+
+    /**
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
+     *
+     * @param queryName      <code>String</code> with custom query name.
+     * @param clazz          <code>Class</code> of POJO to generate GraphQL query body for.
+     * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
+     * @return <code>String</code> with generated GraphQL query.
+     */
+    public static String withoutFieldsWithSelectionSet(String queryName, Class<?> clazz,
+            Iterable<QueryArgument<?>> queryArguments) {
+        return customQuery(queryName, clazz, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
+    }
+
+    /**
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
+     *
+     * @param queryName      <code>String</code> with custom query name.
+     * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
+     * @param queryArguments <code>QueryArgument</code> vararg with query argument names and values.
+     * @return <code>String</code> with generated GraphQL query.
+     */
+    public static String withoutFieldsWithSelectionSet(String queryName, TypeProvider<?> typeProvider,
+            QueryArgument<?>... queryArguments) {
+        return customQuery(queryName, typeProvider, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
+    }
+
+    /**
+     * Generates GraphQL query body with all fields except ones that have selection set with nested fields according to
+     * current {@link FieldMarkingStrategy}.
      *
      * @param queryName      <code>String</code> with custom query name.
      * @param typeProvider   <code>TypeProvider</code> with POJO class to generate GraphQL query body for.
      * @param queryArguments <code>Iterable</code> of <code>QueryArgument</code> with query argument names and values.
      * @return <code>String</code> with generated GraphQL query.
      */
-    public static String withoutEntities(String queryName, TypeProvider<?> typeProvider,
+    public static String withoutFieldsWithSelectionSet(String queryName, TypeProvider<?> typeProvider,
             Iterable<QueryArgument<?>> queryArguments) {
-        return customQuery(queryName, typeProvider, new WithoutEntitiesPickingStrategy(), queryArguments);
+        return customQuery(queryName, typeProvider, new WithoutFieldsWithSelectionSetPickingStrategy(), queryArguments);
     }
 
     private static GqlQueryBodyGenerator getQueryBodyBuilder(String queryName, Class<?> clazz) {

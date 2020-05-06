@@ -24,7 +24,6 @@
 package com.github.vladislavsevruk.generator.test.data;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 import com.github.vladislavsevruk.generator.annotation.GqlQuery;
@@ -37,13 +36,13 @@ import java.util.Set;
 @GqlQuery(name = "customGqlQuery")
 public class TestModelWithAnnotations {
 
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private Collection<NestedTestModelWithAnnotations> collectionEntity;
     @GqlField
     private Collection<NestedTestModelWithAnnotations> collectionField;
     @GqlDelegate
     private NestedTestModelWithAnnotations fieldWithDelegateAnnotation;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private NestedTestModelWithAnnotations fieldWithEntityAnnotation;
     @GqlField
     private Long fieldWithFieldAnnotation;
@@ -54,22 +53,22 @@ public class TestModelWithAnnotations {
     private Long id;
     @GqlField(name = "id")
     private Long idField;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private List<NestedTestModelWithAnnotations> listEntity;
-    @GqlEntity(name = "customNamedEntity")
+    @GqlField(name = "customNamedEntity", withSelectionSet = true)
     private NestedTestModelWithAnnotations namedEntity;
     @GqlField(name = "customNamedField")
     private Long namedField;
-    @GqlEntity(name = "customNamedNonNullableEntity", nonNullable = true)
+    @GqlField(name = "customNamedNonNullableEntity", nonNullable = true, withSelectionSet = true)
     private NestedTestModelWithAnnotations namedNonNullableEntity;
     @GqlField(name = "customNamedNonNullableField", nonNullable = true)
     private Long namedNonNullableField;
-    @GqlEntity(nonNullable = true)
+    @GqlField(nonNullable = true, withSelectionSet = true)
     private NestedTestModelWithAnnotations nonNullableEntity;
     @GqlField(nonNullable = true)
     private Long nonNullableField;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private Queue<NestedTestModelWithAnnotations> queueEntity;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private Set<NestedTestModelWithAnnotations> setEntity;
 }

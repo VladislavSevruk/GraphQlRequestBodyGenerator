@@ -24,7 +24,7 @@
 package com.github.vladislavsevruk.generator.generator;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.param.QueryArgument;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.FieldsPickingStrategy;
@@ -114,14 +114,15 @@ public class GqlQueryBodyGenerator {
         return "{\"query\":\"{" + queryName + queryArgumentsStr + "{" + String.join(DELIMITER, queryParams) + "}}\"}";
     }
 
-    private void addEntityQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
+    private void addFieldWithSelectionSetQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
-        Set<String> entityQueryParams = collectEntityQueryParameters(fieldTypeMeta, fieldsPickingStrategy);
-        if (!entityQueryParams.isEmpty()) {
-            String entityQueryParam = GqlNamePicker.getFieldName(field) + "{" + String
-                    .join(DELIMITER, entityQueryParams) + "}";
-            queryParams.add(entityQueryParam);
+        Set<String> fieldWithSelectionSetQueryParams = collectFieldWithSelectionSetQueryParameters(fieldTypeMeta,
+                fieldsPickingStrategy);
+        if (!fieldWithSelectionSetQueryParams.isEmpty()) {
+            String fieldWithSelectionSetQueryParam = GqlNamePicker.getFieldName(field) + "{" + String
+                    .join(DELIMITER, fieldWithSelectionSetQueryParams) + "}";
+            queryParams.add(fieldWithSelectionSetQueryParam);
         }
     }
 
@@ -130,12 +131,15 @@ public class GqlQueryBodyGenerator {
         if (field.getAnnotation(GqlDelegate.class) != null) {
             logger.debug(() -> String.format("'%s' is delegate.", field.getName()));
             queryParams.addAll(collectDelegatedQueryParameters(typeMeta, field, fieldsPickingStrategy));
-        } else if (field.getAnnotation(GqlEntity.class) != null) {
-            logger.debug(() -> String.format("'%s' is entity.", field.getName()));
-            addEntityQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
         } else {
-            logger.debug(() -> String.format("'%s' is field.", field.getName()));
-            queryParams.add(GqlNamePicker.getFieldName(field));
+            GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
+            if (fieldAnnotation != null && fieldAnnotation.withSelectionSet()) {
+                logger.debug(() -> String.format("'%s' is field with selection set.", field.getName()));
+                addFieldWithSelectionSetQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
+            } else {
+                logger.debug(() -> String.format("'%s' is field.", field.getName()));
+                queryParams.add(GqlNamePicker.getFieldName(field));
+            }
         }
     }
 
@@ -150,7 +154,7 @@ public class GqlQueryBodyGenerator {
         return collectQueryParameters(hierarchy, fieldTypeMeta, fieldsPickingStrategy);
     }
 
-    private Set<String> collectEntityQueryParameters(TypeMeta<?> fieldTypeMeta,
+    private Set<String> collectFieldWithSelectionSetQueryParameters(TypeMeta<?> fieldTypeMeta,
             FieldsPickingStrategy fieldsPickingStrategy) {
         if (Collection.class.isAssignableFrom(fieldTypeMeta.getType())) {
             TypeMeta<?> genericTypeMeta = fieldTypeMeta.getGenericTypes()[0];

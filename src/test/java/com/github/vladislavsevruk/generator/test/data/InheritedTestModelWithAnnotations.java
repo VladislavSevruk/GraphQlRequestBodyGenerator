@@ -24,7 +24,6 @@
 package com.github.vladislavsevruk.generator.test.data;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
@@ -34,7 +33,7 @@ public class InheritedTestModelWithAnnotations extends GenericTestModelWithAnnot
     private Long id;
     @GqlDelegate
     private NestedTestModelWithAnnotations newDelegateAtDescendant;
-    @GqlEntity
+    @GqlField(withSelectionSet = true)
     private NestedTestModelWithAnnotations newEntityAtDescendant;
     @GqlField
     private Long newFieldAtDescendant;
