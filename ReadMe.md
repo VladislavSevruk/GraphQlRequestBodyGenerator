@@ -182,9 +182,9 @@ String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class);
 ```
 
 #### Arguments
-Some queries may require query arguments (to pick specific item or filter items list, for example) so you can provide
-necessary arguments to query using [QueryArgument](src/main/java/com/github/vladislavsevruk/generator/param/QueryArgument.java)
-class:
+Some queries may require [query arguments](http://spec.graphql.org/June2018/#sec-Language.Arguments) (to pick specific 
+item or filter items list, for example) so you can provide necessary arguments to query using 
+[QueryArgument](src/main/java/com/github/vladislavsevruk/generator/param/QueryArgument.java) class:
 ```kotlin
 QueryArgument<Long> idArgument = new QueryArgument<>("id", 1L);
 String queryBody = GqlQueryGenerator.allFields("user", User.class, idArgument);
