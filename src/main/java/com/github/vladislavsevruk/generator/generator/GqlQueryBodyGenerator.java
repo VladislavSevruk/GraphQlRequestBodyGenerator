@@ -23,7 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.generator;
 
-import com.github.vladislavsevruk.generator.param.QueryVariable;
+import com.github.vladislavsevruk.generator.param.QueryArgument;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.util.GqlNamePicker;
@@ -64,40 +64,40 @@ public class GqlQueryBodyGenerator {
     }
 
     /**
-     * Builds GraphQL query body with received query variables according to received field picking strategy.
+     * Builds GraphQL query body with received query arguments according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param queryVariables        <code>QueryVariable</code> vararg with query variable names and values.
+     * @param queryArguments        <code>QueryArgument</code> vararg with query argument names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, QueryVariable<?>... queryVariables) {
-        return generate(fieldsPickingStrategy, Arrays.asList(queryVariables));
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, QueryArgument<?>... queryArguments) {
+        return generate(fieldsPickingStrategy, Arrays.asList(queryArguments));
     }
 
     /**
-     * Builds GraphQL query body with received query variables according to received field picking strategy.
+     * Builds GraphQL query body with received query arguments according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param queryVariables        <code>Iterable</code> of <code>QueryVariable</code> with query variable names and
+     * @param queryArguments        <code>Iterable</code> of <code>QueryArgument</code> with query argument names and
      *                              values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, Iterable<QueryVariable<?>> queryVariables) {
-        Objects.requireNonNull(queryVariables);
-        String queryVariablesStr = generateQueryVariables(queryVariables);
-        logger.info(() -> String.format("Generating '%s' GraphQL query with%s variables.", queryName,
-                queryVariablesStr.isEmpty() ? "out" : " " + queryVariablesStr));
-        return "{\"query\":\"{" + queryName + queryVariablesStr + selectionSetGenerator.generate(fieldsPickingStrategy)
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, Iterable<QueryArgument<?>> queryArguments) {
+        Objects.requireNonNull(queryArguments);
+        String queryArgumentsStr = generateQueryArguments(queryArguments);
+        logger.info(() -> String.format("Generating '%s' GraphQL query with%s arguments.", queryName,
+                queryArgumentsStr.isEmpty() ? "out" : " " + queryArgumentsStr));
+        return "{\"query\":\"{" + queryName + queryArgumentsStr + selectionSetGenerator.generate(fieldsPickingStrategy)
                 + "}\"}";
     }
 
-    private String addQuotesForStringVariable(String value) {
+    private String addQuotesForStringArgument(String value) {
         return String.format("\\\"%s\\\"", value.replace("\"", "\\\\\\\""));
     }
 
     private List<String> convertToStringList(Object elements) {
         return createStream(elements)
-                .map(value -> CharSequence.class.isAssignableFrom(value.getClass()) ? addQuotesForStringVariable(
+                .map(value -> CharSequence.class.isAssignableFrom(value.getClass()) ? addQuotesForStringArgument(
                         value.toString()) : value.toString()).collect(Collectors.toList());
     }
 
@@ -108,34 +108,34 @@ public class GqlQueryBodyGenerator {
         return Arrays.stream((Object[]) value);
     }
 
-    private String generateQueryVariables(Iterable<QueryVariable<?>> variableValue) {
-        if (!variableValue.iterator().hasNext()) {
+    private String generateQueryArguments(Iterable<QueryArgument<?>> argumentValue) {
+        if (!argumentValue.iterator().hasNext()) {
             return "";
         }
-        return "(" + StreamSupport.stream(variableValue.spliterator(), false).map(this::performVariableModifications)
-                .map(variable -> variable.getName() + ":" + variable.getValue()).collect(Collectors.joining(",")) + ")";
+        return "(" + StreamSupport.stream(argumentValue.spliterator(), false).map(this::performArgumentModifications)
+                .map(argument -> argument.getName() + ":" + argument.getValue()).collect(Collectors.joining(",")) + ")";
     }
 
     /**
-     * Performs modifications for variables, e.g. - escapes quotes for literals: { "key", "literalValue" } -> { "key",
+     * Performs modifications for arguments, e.g. - escapes quotes for literals: { "key", "literalValue" } -> { "key",
      * "\"literalValue\"" }, { "key", "literal"With"Quotes" } -> { "key", "\"literal\\\"With\\\"Quotes\"" } - compose
      * iterables or arrays to string: { "key", [ value1, value2 ] } -> { "key", "[value1,value2]" }
      */
-    private QueryVariable<?> performVariableModifications(QueryVariable<?> queryVariable) {
-        Object value = queryVariable.getValue();
+    private QueryArgument<?> performArgumentModifications(QueryArgument<?> queryArgument) {
+        Object value = queryArgument.getValue();
         if (value == null) {
-            return queryVariable;
+            return queryArgument;
         }
         Class<?> valueClass = value.getClass();
         if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
             // compose all elements through the comma and surround by square brackets
             String modifiedValue = "[" + String.join(",", convertToStringList(value)) + "]";
-            return new QueryVariable<>(queryVariable.getName(), modifiedValue);
+            return new QueryArgument<>(queryArgument.getName(), modifiedValue);
         }
         if (CharSequence.class.isAssignableFrom(valueClass)) {
             // add escaped quotes for literals
-            return new QueryVariable<>(queryVariable.getName(), addQuotesForStringVariable(value.toString()));
+            return new QueryArgument<>(queryArgument.getName(), addQuotesForStringArgument(value.toString()));
         }
-        return queryVariable;
+        return queryArgument;
     }
 }
