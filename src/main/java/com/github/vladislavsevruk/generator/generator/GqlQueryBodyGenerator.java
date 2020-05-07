@@ -67,7 +67,7 @@ public class GqlQueryBodyGenerator {
      * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param arguments        <code>GqlArgument</code> varargs with argument names and values.
+     * @param arguments             <code>GqlArgument</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
     public String generate(FieldsPickingStrategy fieldsPickingStrategy, GqlArgument<?>... arguments) {
@@ -78,7 +78,7 @@ public class GqlQueryBodyGenerator {
      * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param arguments        <code>Iterable</code> of <code>GqlArgument</code> with argument names and
+     * @param arguments             <code>Iterable</code> of <code>GqlArgument</code> with argument names and
      *                              values.
      * @return <code>String</code> with resulted GraphQL query.
      */
