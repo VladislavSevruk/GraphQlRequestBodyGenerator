@@ -26,12 +26,12 @@ package com.github.vladislavsevruk.generator.param;
 import lombok.Value;
 
 /**
- * Represents argument for GraphQL query.
+ * Represents argument for GraphQL operations.
  *
  * @param <T> type of value.
  */
 @Value
-public class QueryArgument<T> {
+public class GqlArgument<T> {
 
     String name;
     T value;

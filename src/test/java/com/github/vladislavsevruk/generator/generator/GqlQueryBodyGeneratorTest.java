@@ -23,7 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.generator;
 
-import com.github.vladislavsevruk.generator.param.QueryArgument;
+import com.github.vladislavsevruk.generator.param.GqlArgument;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.OnlyMarkedFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.AllFieldsPickingStrategy;
@@ -174,7 +174,7 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithArrayAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<Short[]> arrayArgument = new QueryArgument<>("arrayArgument", new Short[]{ 1, 2 });
+        GqlArgument<Short[]> arrayArgument = new GqlArgument<>("arrayArgument", new Short[]{ 1, 2 });
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(arrayArgument:[1,2]){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
@@ -186,7 +186,7 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithIterableAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<List<Boolean>> listArgument = new QueryArgument<>("listArgument", Arrays.asList(true, false));
+        GqlArgument<List<Boolean>> listArgument = new GqlArgument<>("listArgument", Arrays.asList(true, false));
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(listArgument:[true,false]){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
@@ -198,7 +198,7 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithNullAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<String> stringArgument = new QueryArgument<>("stringArgument", null);
+        GqlArgument<String> stringArgument = new GqlArgument<>("stringArgument", null);
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(stringArgument:null){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
@@ -210,9 +210,9 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithSeveralArgumentsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        List<QueryArgument<?>> arguments = new ArrayList<>(2);
-        QueryArgument<Integer> firstArgument = new QueryArgument<>("firstArgument", 5);
-        QueryArgument<Long> secondArgument = new QueryArgument<>("secondArgument", 15L);
+        List<GqlArgument<?>> arguments = new ArrayList<>(2);
+        GqlArgument<Integer> firstArgument = new GqlArgument<>("firstArgument", 5);
+        GqlArgument<Long> secondArgument = new GqlArgument<>("secondArgument", 15L);
         arguments.add(firstArgument);
         arguments.add(secondArgument);
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arguments);
@@ -226,7 +226,7 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithSingleArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<Integer> argument = new QueryArgument<>("intArgument", 5);
+        GqlArgument<Integer> argument = new GqlArgument<>("intArgument", 5);
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), argument);
         String expectedResult = "{\"query\":\"{customGqlQuery(intArgument:5){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
@@ -238,7 +238,7 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithStringArrayAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<String[]> arrayArgument = new QueryArgument<>("stringArrayArgument",
+        GqlArgument<String[]> arrayArgument = new GqlArgument<>("stringArrayArgument",
                 new String[]{ "string value 1", "string value 2" });
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(stringArrayArgument:[\\\"string value 1\\\","
@@ -252,7 +252,7 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithStringAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<String> stringArgument = new QueryArgument<>("stringArgument", "string value");
+        GqlArgument<String> stringArgument = new GqlArgument<>("stringArgument", "string value");
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(stringArgument:\\\"string value\\\"){"
                 + "collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} "
@@ -264,7 +264,7 @@ public class GqlQueryBodyGeneratorTest {
     public void generateQueryWithStringIterableAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryArgument<List<String>> listArgument = new QueryArgument<>("stringListArgument",
+        GqlArgument<List<String>> listArgument = new GqlArgument<>("stringListArgument",
                 Arrays.asList("string value 1", "string value 2"));
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
         String expectedResult = "{\"query\":\"{customGqlQuery(stringListArgument:[\\\"string value 1\\\","
