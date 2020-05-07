@@ -23,7 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.generator;
 
-import com.github.vladislavsevruk.generator.param.QueryArgument;
+import com.github.vladislavsevruk.generator.param.GqlArgument;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.util.GqlNamePicker;
@@ -64,30 +64,30 @@ public class GqlQueryBodyGenerator {
     }
 
     /**
-     * Builds GraphQL query body with received query arguments according to received field picking strategy.
+     * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param queryArguments        <code>QueryArgument</code> vararg with query argument names and values.
+     * @param arguments        <code>GqlArgument</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, QueryArgument<?>... queryArguments) {
-        return generate(fieldsPickingStrategy, Arrays.asList(queryArguments));
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, GqlArgument<?>... arguments) {
+        return generate(fieldsPickingStrategy, Arrays.asList(arguments));
     }
 
     /**
-     * Builds GraphQL query body with received query arguments according to received field picking strategy.
+     * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
      * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param queryArguments        <code>Iterable</code> of <code>QueryArgument</code> with query argument names and
+     * @param arguments        <code>Iterable</code> of <code>GqlArgument</code> with argument names and
      *                              values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, Iterable<QueryArgument<?>> queryArguments) {
-        Objects.requireNonNull(queryArguments);
-        String queryArgumentsStr = generateQueryArguments(queryArguments);
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, Iterable<GqlArgument<?>> arguments) {
+        Objects.requireNonNull(arguments);
+        String argumentsStr = generateGqlArguments(arguments);
         logger.info(() -> String.format("Generating '%s' GraphQL query with%s arguments.", queryName,
-                queryArgumentsStr.isEmpty() ? "out" : " " + queryArgumentsStr));
-        return "{\"query\":\"{" + queryName + queryArgumentsStr + selectionSetGenerator.generate(fieldsPickingStrategy)
+                argumentsStr.isEmpty() ? "out" : " " + argumentsStr));
+        return "{\"query\":\"{" + queryName + argumentsStr + selectionSetGenerator.generate(fieldsPickingStrategy)
                 + "}\"}";
     }
 
@@ -108,7 +108,7 @@ public class GqlQueryBodyGenerator {
         return Arrays.stream((Object[]) value);
     }
 
-    private String generateQueryArguments(Iterable<QueryArgument<?>> argumentValue) {
+    private String generateGqlArguments(Iterable<GqlArgument<?>> argumentValue) {
         if (!argumentValue.iterator().hasNext()) {
             return "";
         }
@@ -121,21 +121,21 @@ public class GqlQueryBodyGenerator {
      * "\"literalValue\"" }, { "key", "literal"With"Quotes" } -> { "key", "\"literal\\\"With\\\"Quotes\"" } - compose
      * iterables or arrays to string: { "key", [ value1, value2 ] } -> { "key", "[value1,value2]" }
      */
-    private QueryArgument<?> performArgumentModifications(QueryArgument<?> queryArgument) {
-        Object value = queryArgument.getValue();
+    private GqlArgument<?> performArgumentModifications(GqlArgument<?> argument) {
+        Object value = argument.getValue();
         if (value == null) {
-            return queryArgument;
+            return argument;
         }
         Class<?> valueClass = value.getClass();
         if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
             // compose all elements through the comma and surround by square brackets
             String modifiedValue = "[" + String.join(",", convertToStringList(value)) + "]";
-            return new QueryArgument<>(queryArgument.getName(), modifiedValue);
+            return new GqlArgument<>(argument.getName(), modifiedValue);
         }
         if (CharSequence.class.isAssignableFrom(valueClass)) {
             // add escaped quotes for literals
-            return new QueryArgument<>(queryArgument.getName(), addQuotesForStringArgument(value.toString()));
+            return new GqlArgument<>(argument.getName(), addQuotesForStringArgument(value.toString()));
         }
-        return queryArgument;
+        return argument;
     }
 }
