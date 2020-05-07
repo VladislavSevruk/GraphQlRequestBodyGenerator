@@ -48,7 +48,7 @@ public class SelectionSetGenerator {
      */
     public String generate(FieldsPickingStrategy fieldsPickingStrategy) {
         Objects.requireNonNull(fieldsPickingStrategy);
-        logger.info(() -> String.format("Generating selection set for '%s' model using '%s' field marking strategy and "
+        logger.debug(() -> String.format("Generating selection set for '%s' model using '%s' field marking strategy and "
                         + "'%s' field picking strategy.", modelTypeMeta.getType().getName(),
                 fieldMarkingStrategy.getClass().getName(), fieldsPickingStrategy.getClass().getName()));
         MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(modelTypeMeta);

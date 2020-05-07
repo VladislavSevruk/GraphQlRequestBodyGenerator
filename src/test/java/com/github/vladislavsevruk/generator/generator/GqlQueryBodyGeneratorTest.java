@@ -23,7 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.generator;
 
-import com.github.vladislavsevruk.generator.param.QueryVariable;
+import com.github.vladislavsevruk.generator.param.QueryArgument;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.OnlyMarkedFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.AllFieldsPickingStrategy;
@@ -171,77 +171,77 @@ public class GqlQueryBodyGeneratorTest {
     }
 
     @Test
-    public void generateQueryWithArrayAsVariableTest() {
+    public void generateQueryWithArrayAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryVariable<Short[]> arrayVariable = new QueryVariable<>("arrayVariable", new Short[]{ 1, 2 });
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayVariable);
-        String expectedResult = "{\"query\":\"{customGqlQuery(arrayVariable:[1,2]){collectionEntity{id} id "
+        QueryArgument<Short[]> arrayArgument = new QueryArgument<>("arrayArgument", new Short[]{ 1, 2 });
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(arrayArgument:[1,2]){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
                 + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateQueryWithIterableAsVariableTest() {
+    public void generateQueryWithIterableAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryVariable<List<Boolean>> listVariable = new QueryVariable<>("listVariable", Arrays.asList(true, false));
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listVariable);
-        String expectedResult = "{\"query\":\"{customGqlQuery(listVariable:[true,false]){collectionEntity{id} id "
+        QueryArgument<List<Boolean>> listArgument = new QueryArgument<>("listArgument", Arrays.asList(true, false));
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(listArgument:[true,false]){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
                 + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateQueryWithNullAsVariableTest() {
+    public void generateQueryWithNullAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryVariable<String> stringVariable = new QueryVariable<>("stringVariable", null);
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringVariable);
-        String expectedResult = "{\"query\":\"{customGqlQuery(stringVariable:null){collectionEntity{id} id "
+        QueryArgument<String> stringArgument = new QueryArgument<>("stringArgument", null);
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringArgument:null){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
                 + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateQueryWithSeveralVariablesTest() {
+    public void generateQueryWithSeveralArgumentsTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        List<QueryVariable<?>> variables = new ArrayList<>(2);
-        QueryVariable<Integer> firstVariable = new QueryVariable<>("firstVariable", 5);
-        QueryVariable<Long> secondVariable = new QueryVariable<>("secondVariable", 15L);
-        variables.add(firstVariable);
-        variables.add(secondVariable);
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), variables);
-        String expectedResult = "{\"query\":\"{customGqlQuery(firstVariable:5,secondVariable:15){collectionEntity{id} "
+        List<QueryArgument<?>> arguments = new ArrayList<>(2);
+        QueryArgument<Integer> firstArgument = new QueryArgument<>("firstArgument", 5);
+        QueryArgument<Long> secondArgument = new QueryArgument<>("secondArgument", 15L);
+        arguments.add(firstArgument);
+        arguments.add(secondArgument);
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arguments);
+        String expectedResult = "{\"query\":\"{customGqlQuery(firstArgument:5,secondArgument:15){collectionEntity{id} "
                 + "id fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} "
                 + "customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateQueryWithSingleVariableTest() {
+    public void generateQueryWithSingleArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryVariable<Integer> variable = new QueryVariable<>("intVariable", 5);
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), variable);
-        String expectedResult = "{\"query\":\"{customGqlQuery(intVariable:5){collectionEntity{id} id "
+        QueryArgument<Integer> argument = new QueryArgument<>("intArgument", 5);
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), argument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(intArgument:5){collectionEntity{id} id "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
                 + "nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateQueryWithStringArrayAsVariableTest() {
+    public void generateQueryWithStringArrayAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryVariable<String[]> arrayVariable = new QueryVariable<>("stringArrayVariable",
+        QueryArgument<String[]> arrayArgument = new QueryArgument<>("stringArrayArgument",
                 new String[]{ "string value 1", "string value 2" });
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayVariable);
-        String expectedResult = "{\"query\":\"{customGqlQuery(stringArrayVariable:[\\\"string value 1\\\","
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), arrayArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringArrayArgument:[\\\"string value 1\\\","
                 + "\\\"string value 2\\\"]){collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} "
                 + "customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} "
                 + "setEntity{id}}}\"}";
@@ -249,25 +249,25 @@ public class GqlQueryBodyGeneratorTest {
     }
 
     @Test
-    public void generateQueryWithStringAsVariableTest() {
+    public void generateQueryWithStringAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryVariable<String> stringVariable = new QueryVariable<>("stringVariable", "string value");
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringVariable);
-        String expectedResult = "{\"query\":\"{customGqlQuery(stringVariable:\\\"string value\\\"){"
+        QueryArgument<String> stringArgument = new QueryArgument<>("stringArgument", "string value");
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), stringArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringArgument:\\\"string value\\\"){"
                 + "collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} "
                 + "customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} setEntity{id}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateQueryWithStringIterableAsVariableTest() {
+    public void generateQueryWithStringIterableAsArgumentTest() {
         GqlQueryBodyGenerator bodyGenerator = new GqlQueryBodyGenerator("customGqlQuery",
                 TestModelWithAnnotations.class, new AllExceptIgnoredFieldMarkingStrategy());
-        QueryVariable<List<String>> listVariable = new QueryVariable<>("stringListVariable",
+        QueryArgument<List<String>> listArgument = new QueryArgument<>("stringListArgument",
                 Arrays.asList("string value 1", "string value 2"));
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listVariable);
-        String expectedResult = "{\"query\":\"{customGqlQuery(stringListVariable:[\\\"string value 1\\\","
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy(), listArgument);
+        String expectedResult = "{\"query\":\"{customGqlQuery(stringListArgument:[\\\"string value 1\\\","
                 + "\\\"string value 2\\\"]){collectionEntity{id} id fieldWithEntityAnnotation{id} listEntity{id} "
                 + "customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} queueEntity{id} "
                 + "setEntity{id}}}\"}";
