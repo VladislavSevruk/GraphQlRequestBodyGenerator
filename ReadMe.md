@@ -182,27 +182,25 @@ String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class);
 ```
 
 #### Arguments
-Some queries may require [query arguments](http://spec.graphql.org/June2018/#sec-Language.Arguments) (to pick specific 
-item or filter items list, for example) so you can provide necessary arguments to query using 
-[QueryArgument](src/main/java/com/github/vladislavsevruk/generator/param/QueryArgument.java) class:
+Some queries may require [arguments](http://spec.graphql.org/June2018/#sec-Language.Arguments) (to pick specific item 
+or filter items list, for example) so you can provide necessary arguments to query using 
+[GqlArgument](src/main/java/com/github/vladislavsevruk/generator/param/GqlArgument.java) class:
 ```kotlin
-QueryArgument<Long> idArgument = new QueryArgument<>("id", 1L);
+GqlArgument<Long> idArgument = new GqlArgument<>("id", 1L);
 String queryBody = GqlQueryGenerator.allFields("user", User.class, idArgument);
 ```
 If you need to provide several arguments you can use varargs:
 ```kotlin
-QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("lastName",
-        Arrays.asList("John", "Jane"));
-QueryArgument<String> lastNameArgument = new QueryArgument<>("lastName", "Doe");
+GqlArgument<List<String>> firstNameArgument = new GqlArgument<>("lastName", Arrays.asList("John", "Jane"));
+GqlArgument<String> lastNameArgument = new GqlArgument<>("lastName", "Doe");
 String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class,
         firstNameArgument, lastNameArgument);
 ```
 or iterables:
 ```kotlin
-QueryArgument<List<String>> firstNameArgument = new QueryArgument<>("lastName",
-        Arrays.asList("John", "Jane"));
-QueryArgument<String> lastNameArgument = new QueryArgument<>("lastName", "Doe");
-List<QueryArgument<?>> arguments = Arrays.asList(firstNameArgument, lastNameArgument);
+GqlArgument<List<String>> firstNameArgument = new GqlArgument<>("lastName", Arrays.asList("John", "Jane"));
+GqlArgument<String> lastNameArgument = new GqlArgument<>("lastName", "Doe");
+List<GqlArgument<?>> arguments = Arrays.asList(firstNameArgument, lastNameArgument);
 String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class, arguments);
 ```
 
