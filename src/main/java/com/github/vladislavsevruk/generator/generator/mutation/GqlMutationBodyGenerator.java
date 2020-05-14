@@ -148,6 +148,10 @@ public class GqlMutationBodyGenerator {
                 collectValuesForField(value, field, inputFieldsPickingStrategy, mutationValues);
             }
         }
+        Class<?> superclass = valueClass.getSuperclass();
+        if (superclass != null && !Object.class.equals(superclass)) {
+            collectValuesByFields(value, superclass, inputFieldsPickingStrategy, mutationValues);
+        }
     }
 
     private void collectValuesByMethods(Object value, Class<?> valueClass,
@@ -219,10 +223,6 @@ public class GqlMutationBodyGenerator {
         logger.debug(() -> "Generating mutation value for " + valueClass.getName());
         collectValuesByFields(value, valueClass, inputFieldsPickingStrategy, mutationValues);
         collectValuesByMethods(value, valueClass, inputFieldsPickingStrategy, mutationValues);
-        Class<?> superclass = valueClass.getSuperclass();
-        if (superclass != null && !Object.class.equals(superclass)) {
-            mutationValues.putAll(collectValuesForModel(value, superclass, inputFieldsPickingStrategy, mutationValues));
-        }
         return mutationValues;
     }
 
