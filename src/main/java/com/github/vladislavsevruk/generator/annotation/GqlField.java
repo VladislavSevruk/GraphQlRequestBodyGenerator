@@ -41,9 +41,9 @@ public @interface GqlField {
     String name() default "";
 
     /**
-     * Indicates if marked field is non-nullable.
+     * Indicates if marked field is non-null.
      */
-    boolean nonNullable() default false;
+    boolean nonNull() default false;
 
     /**
      * Returns <code>true</code> if field has selection set with nested fields, <code>false</code> otherwise.

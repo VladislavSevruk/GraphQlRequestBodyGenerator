@@ -21,18 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator;
 
-import lombok.Value;
+import com.github.vladislavsevruk.generator.generator.mutation.GqlMutationGenerator;
+import com.github.vladislavsevruk.generator.generator.query.GqlQueryGenerator;
 
 /**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
+ * TODO
  */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+public class GqlRequestBodyGenerator {
 
-    String name;
-    T value;
+    private GqlRequestBodyGenerator() {
+    }
+
+    /**
+     * TODO
+     */
+    public static GqlMutationGenerator mutation(String queryName) {
+        return new GqlMutationGenerator(queryName);
+    }
+
+    /**
+     * TODO
+     */
+    public static GqlQueryGenerator query(String queryName) {
+        return new GqlQueryGenerator(queryName);
+    }
 }

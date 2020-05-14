@@ -21,18 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
-
-import lombok.Value;
+package com.github.vladislavsevruk.generator.strategy.marker;
 
 /**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
+ * TODO
  */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+public final class FieldMarkingStrategySourceManager {
 
-    String name;
-    T value;
+    private static final FieldMarkingStrategyManager INPUT_MANAGER = new FieldMarkingStrategyManagerImpl();
+    private static final FieldMarkingStrategyManager SELECTION_SET_MANAGER = new FieldMarkingStrategyManagerImpl();
+
+    private FieldMarkingStrategySourceManager() {
+    }
+
+    /**
+     * Returns {@link FieldMarkingStrategyManager} for inputs.
+     */
+    public static FieldMarkingStrategyManager input() {
+        return INPUT_MANAGER;
+    }
+
+    /**
+     * Returns {@link FieldMarkingStrategyManager} for selection sets.
+     */
+    public static FieldMarkingStrategyManager selectionSet() {
+        return SELECTION_SET_MANAGER;
+    }
 }
