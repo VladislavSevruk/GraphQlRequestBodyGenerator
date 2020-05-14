@@ -28,7 +28,18 @@ package com.github.vladislavsevruk.generator.strategy.picker.selection;
 import lombok.Getter;
 
 /**
- * TODO
+ * Contains predefined {@link FieldsPickingStrategy} for selection set:<ul>
+ * <li> pick all fields
+ * <li> pick only 'id' fields itself or fields with nested 'id' field
+ * <li> pick only ones that was marked as non-null fields
+ * <li> pick only fields that do not have nested fields
+ * </ul>
+ *
+ * @see FieldsPickingStrategy
+ * @see AllFieldsPickingStrategy
+ * @see OnlyIdFieldsPickingStrategy
+ * @see OnlyNonNullFieldsPickingStrategy
+ * @see WithoutFieldsWithSelectionSetPickingStrategy
  */
 public enum SelectionSetGenerationStrategy {
 
@@ -45,35 +56,35 @@ public enum SelectionSetGenerationStrategy {
     }
 
     /**
-     * TODO
+     * Returns strategy for all fields picking.
      */
     public static SelectionSetGenerationStrategy allFields() {
         return ALL_FIELDS;
     }
 
     /**
-     * TODO
+     * Returns default fields picking strategy.
      */
     public static SelectionSetGenerationStrategy defaultStrategy() {
         return allFields();
     }
 
     /**
-     * TODO
+     * Returns strategy for picking only fields that do not have nested fields.
      */
     public static SelectionSetGenerationStrategy fieldsWithoutSelectionSets() {
         return WITHOUT_SELECTION_SETS;
     }
 
     /**
-     * TODO
+     * Returns strategy for picking only 'id' fields itself or fields with nested 'id' field.
      */
     public static SelectionSetGenerationStrategy onlyId() {
         return ONLY_ID;
     }
 
     /**
-     * TODO
+     * Returns strategy for picking only ones that was marked as non-null fields.
      */
     public static SelectionSetGenerationStrategy onlyNonNull() {
         return ONLY_NON_NULL;

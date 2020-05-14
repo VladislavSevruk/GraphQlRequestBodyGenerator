@@ -49,7 +49,20 @@ public final class StringUtil {
      * @return <code>String</code> with generated escaped value.
      */
     public static String addQuotesForStringArgument(String value) {
-        return String.format("\\\"%s\\\"", value.replace("\"", "\\\\\\\""));
+        return String.format("\"%s\"", escapeQuotes(value));
+    }
+
+    /**
+     * Generates escaped value string for parameter values.
+     * <li>escapes quotes for literals:</li><ul>
+     * <li>"literalValue" -> "literalValue"</li>
+     * <li>"literal\"With\"Quotes" -> "literal\\\"With\\\"Quotes"</li></ul>
+     *
+     * @param value <code>String</code> to generated escaped String for.
+     * @return <code>String</code> with generated escaped value.
+     */
+    public static String escapeQuotes(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
     /**

@@ -36,7 +36,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Generates body for GraphQL queries for received model according to different field picking strategies.
+ * Generates body for GraphQL queries with received arguments and selection set according to different field picking
+ * strategies.
  */
 public class GqlQueryBodyGenerator {
 
@@ -75,7 +76,7 @@ public class GqlQueryBodyGenerator {
         logger.info(() -> String.format("Generating '%s' GraphQL query.", queryName));
         String argumentsStr = generateGqlArguments(arguments);
         String selectionSet = selectionSetGenerator.generate(fieldsPickingStrategy);
-        String query = "{\"query\":\"{" + queryName + argumentsStr + selectionSet + "}\"}";
+        String query = "{" + queryName + argumentsStr + selectionSet + "}";
         logger.debug(() -> "Resulted query: " + query);
         return query;
     }

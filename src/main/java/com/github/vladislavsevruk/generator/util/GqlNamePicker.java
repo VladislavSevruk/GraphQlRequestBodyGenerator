@@ -28,7 +28,7 @@ import com.github.vladislavsevruk.generator.annotation.GqlField;
 import java.lang.reflect.Field;
 
 /**
- * Picks name for GraphQL queries and fields.
+ * Picks name for GraphQL items.
  */
 public final class GqlNamePicker {
 

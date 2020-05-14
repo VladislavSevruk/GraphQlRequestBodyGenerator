@@ -28,7 +28,14 @@ package com.github.vladislavsevruk.generator.strategy.picker.mutation;
 import lombok.Getter;
 
 /**
- * TODO
+ * Contains predefined {@link InputFieldsPickingStrategy} for input argument:<ul>
+ * <li> pick all fields
+ * <li> pick only fields that have non-null value
+ * </ul>
+ *
+ * @see InputFieldsPickingStrategy
+ * @see AllInputFieldsPickingStrategy
+ * @see WithoutNullsInputFieldsPickingStrategy
  */
 public enum InputGenerationStrategy {
 
@@ -43,21 +50,21 @@ public enum InputGenerationStrategy {
     }
 
     /**
-     * TODO
+     * Returns strategy for all fields picking.
      */
     public static InputGenerationStrategy allFields() {
         return ALL_FIELDS;
     }
 
     /**
-     * TODO
+     * Returns default input fields picking strategy.
      */
     public static InputGenerationStrategy defaultStrategy() {
         return allFields();
     }
 
     /**
-     * TODO
+     * Returns strategy for picking only fields that have non-null value.
      */
     public static InputGenerationStrategy nonNullsFields() {
         return WITHOUT_NULLS;

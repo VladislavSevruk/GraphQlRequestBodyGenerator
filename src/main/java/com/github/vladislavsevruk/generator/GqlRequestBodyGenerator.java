@@ -23,11 +23,11 @@
  */
 package com.github.vladislavsevruk.generator;
 
-import com.github.vladislavsevruk.generator.generator.mutation.GqlMutationGenerator;
-import com.github.vladislavsevruk.generator.generator.query.GqlQueryGenerator;
+import com.github.vladislavsevruk.generator.generator.mutation.GqlMutationRequestBodyGenerator;
+import com.github.vladislavsevruk.generator.generator.query.GqlQueryRequestBodyGenerator;
 
 /**
- * TODO
+ * Provides generators for GraphQL operations.
  */
 public class GqlRequestBodyGenerator {
 
@@ -35,16 +35,22 @@ public class GqlRequestBodyGenerator {
     }
 
     /**
-     * TODO
+     * Returns new instance of {@link GqlMutationRequestBodyGenerator} with received mutation name.
+     *
+     * @param mutationName <code>String</code> with name of mutation to generate.
+     * @return <code>GqlMutationGenerator</code> with received mutation name.
      */
-    public static GqlMutationGenerator mutation(String queryName) {
-        return new GqlMutationGenerator(queryName);
+    public static GqlMutationRequestBodyGenerator mutation(String mutationName) {
+        return new GqlMutationRequestBodyGenerator(mutationName);
     }
 
     /**
-     * TODO
+     * Returns new instance of {@link GqlQueryRequestBodyGenerator} with received query name.
+     *
+     * @param queryName <code>String</code> with name of query to generate.
+     * @return <code>GqlMutationGenerator</code> with received mutation name.
      */
-    public static GqlQueryGenerator query(String queryName) {
-        return new GqlQueryGenerator(queryName);
+    public static GqlQueryRequestBodyGenerator query(String queryName) {
+        return new GqlQueryRequestBodyGenerator(queryName);
     }
 }

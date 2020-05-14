@@ -45,7 +45,7 @@ public class GqlQueryBodyGeneratorTest {
                 new TypeMeta<>(SimpleSelectionSetTestModel.class), new AllExceptIgnoredFieldMarkingStrategy());
         String result = new GqlQueryBodyGenerator("customGqlQuery", selectionSetGenerator)
                 .generate(new AllFieldsPickingStrategy(), argument);
-        String expectedResult = "{\"query\":\"{customGqlQuery(argument:3){selectionSetField}}\"}";
+        String expectedResult = "{customGqlQuery(argument:3){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 }

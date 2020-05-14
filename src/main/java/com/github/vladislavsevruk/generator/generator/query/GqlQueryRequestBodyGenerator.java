@@ -23,23 +23,32 @@
  *  * SOFTWARE.
  *
  */
-package com.github.vladislavsevruk.generator.strategy.picker.selection;
+package com.github.vladislavsevruk.generator.generator.query;
 
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-
-import java.lang.reflect.Field;
+import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
+import com.github.vladislavsevruk.generator.util.StringUtil;
 
 /**
- * Provides selection set generation strategy for picking only fields that do not have nested fields.
+ * Generates request body for GraphQL queries with received arguments and selection set according to different field
+ * picking strategies.
+ *
+ * @see FieldMarkingStrategySourceManager
  */
-public class WithoutFieldsWithSelectionSetPickingStrategy implements FieldsPickingStrategy {
+public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
+
+    public GqlQueryRequestBodyGenerator(String queryName) {
+        super(queryName);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean shouldBePicked(Field field) {
-        GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
-        return fieldAnnotation == null || !fieldAnnotation.withSelectionSet();
+    public String generate() {
+        String queryBody = new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
+                .generate(getSelectionSetFieldsPickingStrategy(), getArguments());
+        return "{\"query\":\"" + StringUtil.escapeQuotes(queryBody) + "\"}";
     }
 }
+

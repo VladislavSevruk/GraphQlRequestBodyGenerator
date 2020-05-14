@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * TODO
+ * Contains utility methods for stream operations.
  */
 public final class StreamUtil {
 
@@ -36,7 +36,10 @@ public final class StreamUtil {
     }
 
     /**
-     * TODO
+     * Creates new {@link Stream} for received iterables and arrays.
+     *
+     * @param value <code>Object</code> with iterable or array to create stream for.
+     * @return created <code>Stream</code>.
      */
     @SuppressWarnings("java:S1452")
     public static Stream<?> createStream(Object value) {

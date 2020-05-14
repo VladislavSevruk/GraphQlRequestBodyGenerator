@@ -24,7 +24,9 @@
 package com.github.vladislavsevruk.generator.strategy.marker;
 
 /**
- * TODO
+ * Manages model fields marking strategies for input and selection set.
+ *
+ * @see FieldMarkingStrategyManager
  */
 public final class FieldMarkingStrategySourceManager {
 

@@ -54,7 +54,8 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Generates body for GraphQL mutations for received model according to different field picking strategies.
+ * Generates body for GraphQL mutations with received arguments and selection set according to different field picking
+ * strategies.
  */
 public class GqlMutationBodyGenerator {
 
@@ -85,7 +86,7 @@ public class GqlMutationBodyGenerator {
      *                                          mutation input.
      * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for
      *                                          mutation selection set.
-     * @param arguments                         <code>GqlArgument</code> varargs with argument names and values.
+     * @param arguments                         <code>GqlParameterValue</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL mutation.
      */
     public String generate(InputFieldsPickingStrategy inputFieldsPickingStrategy,
@@ -111,7 +112,7 @@ public class GqlMutationBodyGenerator {
         logger.info(() -> String.format("Generating '%s' GraphQL mutation.", mutationName));
         String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, arguments);
         String selectionSet = selectionSetGenerator.generate(selectionSetFieldsPickingStrategy);
-        String mutation = "{\"mutation\":\"{" + mutationName + argumentsStr + selectionSet + "}\"}";
+        String mutation = "{" + mutationName + argumentsStr + selectionSet + "}";
         logger.debug(() -> "Resulted mutation: " + mutation);
         return mutation;
     }
