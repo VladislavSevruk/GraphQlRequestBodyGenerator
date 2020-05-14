@@ -23,7 +23,6 @@
  *  * SOFTWARE.
  *
  */
-
 package com.github.vladislavsevruk.generator.generator;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;

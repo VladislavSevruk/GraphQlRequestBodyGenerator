@@ -23,7 +23,6 @@
  *  * SOFTWARE.
  *
  */
-
 package com.github.vladislavsevruk.generator.strategy.picker.mutation;
 
 /**
