@@ -652,7 +652,7 @@ public class GqlQueryRequestBodyGeneratorTest {
         GqlArgument<String[]> argument = GqlArgument.of("argument", new String[]{ "1", "2" });
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "{\"query\":\"{customGqlQuery(argument:[1,2]){selectionSetField}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery(argument:[\\\"1\\\",\\\"2\\\"]){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
