@@ -41,11 +41,13 @@ import java.util.Objects;
  *
  * @param <T> self type to return subclass type at chain methods.
  */
-@Getter(AccessLevel.PROTECTED)
 public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationRequestBodyGenerator> {
 
+    @Getter(AccessLevel.PROTECTED)
     private Iterable<? extends GqlParameterValue<?>> arguments = Collections.emptyList();
+    @Getter(AccessLevel.PROTECTED)
     private String operationName;
+    @Getter(AccessLevel.PROTECTED)
     private FieldsPickingStrategy selectionSetFieldsPickingStrategy = SelectionSetGenerationStrategy.defaultStrategy()
             .getFieldsPickingStrategy();
     private TypeMeta<?> selectionSetTypeMeta;
