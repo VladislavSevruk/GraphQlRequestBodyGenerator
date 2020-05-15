@@ -50,6 +50,7 @@ public class GqlMutationRequestBodyGenerator extends GqlOperationRequestBodyGene
      * @param arguments <code>GqlParameterValue</code> varargs with argument names and values.
      * @return this.
      */
+    @Override
     public GqlMutationRequestBodyGenerator arguments(GqlParameterValue<?>... arguments) {
         return arguments(InputGenerationStrategy.defaultStrategy(), arguments);
     }
@@ -60,6 +61,7 @@ public class GqlMutationRequestBodyGenerator extends GqlOperationRequestBodyGene
      * @param arguments <code>Iterable</code> of <code>GqlParameterValue</code> with argument names and values.
      * @return this.
      */
+    @Override
     public GqlMutationRequestBodyGenerator arguments(Iterable<? extends GqlParameterValue<?>> arguments) {
         return arguments(InputGenerationStrategy.defaultStrategy(), arguments);
     }

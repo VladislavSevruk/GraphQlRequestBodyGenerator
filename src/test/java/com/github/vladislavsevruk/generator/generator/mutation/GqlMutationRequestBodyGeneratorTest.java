@@ -56,6 +56,17 @@ public class GqlMutationRequestBodyGeneratorTest {
     @Test
     public void argumentsArrayTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
+        String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
+                .arguments(GqlArgument.of("testArgument1", "testValue1"), GqlArgument.of("testArgument2", "testValue2"))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"mutation\":\"{customGqlMutation(testArgument1:\\\"testValue1\\\",testArgument2:"
+                + "\\\"testValue2\\\"){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void argumentsListTest() {
+        FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         List<GqlParameterValue<?>> arguments = Arrays
                 .asList(GqlArgument.of("testArgument1", "testValue1"), GqlArgument.of("testArgument2", "testValue2"));
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation").arguments(arguments)
