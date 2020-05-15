@@ -36,8 +36,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class GqlMutationRequestBodyGeneratorTest {
 
@@ -68,6 +72,13 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod",
+                "fieldWithDelegateAnnotationWithInputMethod:{fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
+                        + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"}");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "fieldFromGetFieldWithDelegateAnnotationWithDelegateMethod:"
                 + "\\\"value from getFieldWithDelegateAnnotationWithDelegateMethod method\\\","
@@ -87,10 +98,7 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithIgnoredMethod:null,"
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
                 + "customFieldWithOverriddenNameWithoutMethod:null,fieldWithPrivateMethod:null,fieldWithoutMethod:null,"
-                + "fieldWithDelegateAnnotationWithInputMethod:{fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
-                + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"},"
-                + "fieldWithIgnoreAnnotationWithInputMethod:null,methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + getMethodValues(methods) + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -101,6 +109,16 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithFieldAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\"");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithDelegateMethod:null,"
                 + "fieldWithDelegatePrivateMethod:null,fieldWithFieldAnnotationWithDelegateMethod:{"
                 + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
@@ -115,12 +133,7 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithIgnoredMethod:null,"
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
                 + "customFieldWithOverriddenNameWithoutMethod:null,fieldWithPrivateMethod:null,fieldWithoutMethod:null,"
-                + "fieldWithDelegateAnnotationWithInputMethod:null,"
-                + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\","
-                + "fieldWithIgnoreAnnotationWithInputMethod:null,nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + getMethodValues(methods) + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -131,6 +144,17 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithIgnoreAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\"");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod",
+                "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithDelegateMethod:null,"
                 + "fieldWithDelegatePrivateMethod:null,fieldWithFieldAnnotationWithDelegateMethod:null,"
                 + "fieldWithFieldAnnotationWithIgnoredMethod:null,fieldWithFieldAnnotationWithInputMethod:null,"
@@ -141,12 +165,7 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithIgnoredMethod:null,"
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
                 + "customFieldWithOverriddenNameWithoutMethod:null,fieldWithPrivateMethod:null,fieldWithoutMethod:null,"
-                + "fieldWithDelegateAnnotationWithInputMethod:null,"
-                + "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\","
-                + "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\","
-                + "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + getMethodValues(methods) + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -157,6 +176,16 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("getFieldWithOverriddenNameWithDelegateMethod",
+                "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
+                        + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithDelegateMethod:null,"
                 + "fieldWithDelegatePrivateMethod:null,fieldWithFieldAnnotationWithDelegateMethod:null,"
                 + "fieldWithFieldAnnotationWithIgnoredMethod:null,fieldWithFieldAnnotationWithInputMethod:null,"
@@ -171,11 +200,7 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "\\\"getFieldWithOverriddenNameWithInputMethod method\\\",customFieldWithOverriddenNameWithMethod:"
                 + "\\\"getFieldWithOverriddenNameWithMethod method\\\",customFieldWithOverriddenNameWithoutMethod:{"
                 + "nestedValue:\\\"fieldWithOverriddenNameWithoutMethod\\\"},fieldWithPrivateMethod:null,"
-                + "fieldWithoutMethod:null,fieldWithDelegateAnnotationWithInputMethod:null,"
-                + "fieldWithIgnoreAnnotationWithInputMethod:null,fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
-                + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\",nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "fieldWithoutMethod:null," + getMethodValues(methods) + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -186,6 +211,15 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithDelegateMethod",
+                "fieldFromFieldWithDelegateMethod:\\\"value from fieldWithDelegateMethod method\\\"");
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithDelegateMethod:{"
                 + "fieldFromFieldWithDelegateMethod:\\\"value from fieldWithDelegateMethod method\\\"},"
                 + "fieldWithDelegatePrivateMethod:{fieldFromFieldWithDelegatePrivateMethod:"
@@ -199,10 +233,7 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
                 + "customFieldWithOverriddenNameWithoutMethod:null,fieldWithPrivateMethod:"
                 + "\\\"fieldWithPrivateMethod\\\",fieldWithoutMethod:{nestedValue:\\\"fieldWithoutMethod\\\"},"
-                + "fieldFromFieldWithDelegateMethod:\\\"value from fieldWithDelegateMethod method\\\","
-                + "fieldWithDelegateAnnotationWithInputMethod:null,fieldWithIgnoreAnnotationWithInputMethod:null,"
-                + "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + getMethodValues(methods) + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -234,6 +265,12 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod",
+                "fieldWithDelegateAnnotationWithInputMethod:{fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
+                        + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"}");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "fieldFromGetFieldWithDelegateAnnotationWithDelegateMethod:"
                 + "\\\"value from getFieldWithDelegateAnnotationWithDelegateMethod method\\\","
@@ -243,11 +280,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\","
                 + "fieldFromGetFieldWithDelegateAnnotationWithMethod:"
                 + "\\\"value from getFieldWithDelegateAnnotationWithMethod method\\\",nestedValue:"
-                + "\\\"fieldWithDelegateAnnotationWithoutMethod\\\","
-                + "fieldWithDelegateAnnotationWithInputMethod:{fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
-                + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"},"
-                + "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}})"
-                + "{selectionSetField}}\"}";
+                + "\\\"fieldWithDelegateAnnotationWithoutMethod\\\"," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -258,6 +292,14 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithFieldAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithFieldAnnotationWithDelegateMethod:{"
                 + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
                 + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\"},"
@@ -265,10 +307,7 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "fieldWithFieldAnnotationWithInputMethod:\\\"getFieldWithFieldAnnotationWithInputMethod method\\\","
                 + "fieldWithFieldAnnotationWithMethod:\\\"getFieldWithFieldAnnotationWithMethod method\\\","
                 + "fieldWithFieldAnnotationWithoutMethod:{nestedValue:\\\"fieldWithFieldAnnotationWithoutMethod\\\"},"
-                + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\",nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + getMethodValues(methods) + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -279,12 +318,18 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
-                + "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\","
-                + "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\","
-                + "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithIgnoreAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\"");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod",
+                "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
+        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{" + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -295,6 +340,14 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithOverriddenNameWithDelegateMethod",
+                "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
+                        + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "customFieldWithOverriddenNameWithDelegateMethod:{"
                 + "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
@@ -303,11 +356,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithInputMethod:"
                 + "\\\"getFieldWithOverriddenNameWithInputMethod method\\\",customFieldWithOverriddenNameWithMethod:"
                 + "\\\"getFieldWithOverriddenNameWithMethod method\\\",customFieldWithOverriddenNameWithoutMethod:{"
-                + "nestedValue:\\\"fieldWithOverriddenNameWithoutMethod\\\"},"
-                + "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
-                + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\",nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{nestedValue:"
-                + "\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "nestedValue:\\\"fieldWithOverriddenNameWithoutMethod\\\"}," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -318,6 +368,13 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithDelegateMethod",
+                "fieldFromFieldWithDelegateMethod:\\\"value from fieldWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithDelegateMethod:{"
                 + "fieldFromFieldWithDelegateMethod:\\\"value from fieldWithDelegateMethod method\\\"},"
                 + "fieldWithDelegatePrivateMethod:{fieldFromFieldWithDelegatePrivateMethod:"
@@ -325,10 +382,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "fieldWithIgnoredPrivateMethod:[2,3],fieldWithInputMethod:\\\"fieldWithInputMethod method\\\","
                 + "fieldWithInputPrivateMethod:\\\"fieldWithInputPrivateMethod\\\",fieldWithMethod:"
                 + "\\\"fieldWithMethod method\\\",fieldWithPrivateMethod:\\\"fieldWithPrivateMethod\\\","
-                + "fieldWithoutMethod:{nestedValue:\\\"fieldWithoutMethod\\\"},fieldFromFieldWithDelegateMethod:"
-                + "\\\"value from fieldWithDelegateMethod method\\\",nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "fieldWithoutMethod:{nestedValue:\\\"fieldWithoutMethod\\\"}," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -360,6 +415,14 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithInputMethod", "fieldWithInputMethod:null");
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod",
+                "fieldWithDelegateAnnotationWithInputMethod:{fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
+                        + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"}");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "fieldFromGetFieldWithDelegateAnnotationWithDelegateMethod:"
                 + "\\\"value from getFieldWithDelegateAnnotationWithDelegateMethod method\\\","
@@ -375,11 +438,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithDelegateMethod:null,"
                 + "customFieldWithOverriddenNameWithIgnoredMethod:null,"
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
-                + "customFieldWithOverriddenNameWithoutMethod:null,fieldWithInputMethod:null,"
-                + "fieldWithDelegateAnnotationWithInputMethod:{fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
-                + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"},"
-                + "fieldWithIgnoreAnnotationWithInputMethod:null,methodWithoutFieldWithInputAnnotation:{nestedValue:"
-                + "\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "customFieldWithOverriddenNameWithoutMethod:null," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -390,6 +450,17 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithInputMethod", "fieldWithInputMethod:null");
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithFieldAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\"");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithFieldAnnotationWithDelegateMethod:{"
                 + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
                 + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\"},"
@@ -400,13 +471,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithDelegateMethod:null,"
                 + "customFieldWithOverriddenNameWithIgnoredMethod:null,"
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
-                + "customFieldWithOverriddenNameWithoutMethod:null,fieldWithInputMethod:null,"
-                + "fieldWithDelegateAnnotationWithInputMethod:null,"
-                + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\","
-                + "fieldWithIgnoreAnnotationWithInputMethod:null,nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "customFieldWithOverriddenNameWithoutMethod:null," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -417,19 +483,26 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithInputMethod", "fieldWithInputMethod:null");
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithIgnoreAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\"");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod",
+                "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "fieldWithFieldAnnotationWithDelegateMethod:null,fieldWithFieldAnnotationWithIgnoredMethod:null,"
                 + "fieldWithFieldAnnotationWithInputMethod:null,fieldWithFieldAnnotationWithMethod:null,"
                 + "fieldWithFieldAnnotationWithoutMethod:null,customFieldWithOverriddenNameWithDelegateMethod:null,"
                 + "customFieldWithOverriddenNameWithIgnoredMethod:null,"
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
-                + "customFieldWithOverriddenNameWithoutMethod:null,fieldWithInputMethod:null,"
-                + "fieldWithDelegateAnnotationWithInputMethod:null,"
-                + "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\","
-                + "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\","
-                + "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "customFieldWithOverriddenNameWithoutMethod:null," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -440,6 +513,17 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithInputMethod", "fieldWithInputMethod:null");
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("getFieldWithOverriddenNameWithDelegateMethod",
+                "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
+                        + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "fieldWithFieldAnnotationWithDelegateMethod:null,fieldWithFieldAnnotationWithIgnoredMethod:null,"
                 + "fieldWithFieldAnnotationWithInputMethod:null,fieldWithFieldAnnotationWithMethod:null,"
@@ -450,12 +534,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "customFieldWithOverriddenNameWithInputMethod:"
                 + "\\\"getFieldWithOverriddenNameWithInputMethod method\\\",customFieldWithOverriddenNameWithMethod:"
                 + "\\\"getFieldWithOverriddenNameWithMethod method\\\",customFieldWithOverriddenNameWithoutMethod:{"
-                + "nestedValue:\\\"fieldWithOverriddenNameWithoutMethod\\\"},fieldWithInputMethod:null,"
-                + "fieldWithDelegateAnnotationWithInputMethod:null,fieldWithIgnoreAnnotationWithInputMethod:null,"
-                + "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
-                + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\",nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{nestedValue:"
-                + "\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "nestedValue:\\\"fieldWithOverriddenNameWithoutMethod\\\"}," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -466,18 +546,24 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.allFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithDelegateMethod",
+                "fieldFromFieldWithDelegateMethod:\\\"value from fieldWithDelegateMethod method\\\"");
+        methods.put("fieldWithInputMethod", "fieldWithInputMethod:\\\"fieldWithInputMethod method\\\"");
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod", "fieldWithDelegateAnnotationWithInputMethod:null");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod", "fieldWithIgnoreAnnotationWithInputMethod:null");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "fieldWithFieldAnnotationWithDelegateMethod:null,fieldWithFieldAnnotationWithIgnoredMethod:null,"
                 + "fieldWithFieldAnnotationWithInputMethod:null,fieldWithFieldAnnotationWithMethod:null,"
                 + "fieldWithFieldAnnotationWithoutMethod:null,customFieldWithOverriddenNameWithDelegateMethod:null,"
                 + "customFieldWithOverriddenNameWithIgnoredMethod:null,"
                 + "customFieldWithOverriddenNameWithInputMethod:null,customFieldWithOverriddenNameWithMethod:null,"
-                + "customFieldWithOverriddenNameWithoutMethod:null,fieldFromFieldWithDelegateMethod:"
-                + "\\\"value from fieldWithDelegateMethod method\\\",fieldWithInputMethod:"
-                + "\\\"fieldWithInputMethod method\\\",fieldWithDelegateAnnotationWithInputMethod:null,"
-                + "fieldWithIgnoreAnnotationWithInputMethod:null,nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "customFieldWithOverriddenNameWithoutMethod:null," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -488,6 +574,12 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithDelegateAnnotationWithInputMethod",
+                "fieldWithDelegateAnnotationWithInputMethod:{fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
+                        + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"}");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "fieldFromGetFieldWithDelegateAnnotationWithDelegateMethod:"
                 + "\\\"value from getFieldWithDelegateAnnotationWithDelegateMethod method\\\","
@@ -497,11 +589,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\","
                 + "fieldFromGetFieldWithDelegateAnnotationWithMethod:"
                 + "\\\"value from getFieldWithDelegateAnnotationWithMethod method\\\",nestedValue:\\\""
-                + "fieldWithDelegateAnnotationWithoutMethod\\\",fieldWithDelegateAnnotationWithInputMethod:{"
-                + "fieldFromGetFieldWithDelegateAnnotationWithInputMethod:"
-                + "\\\"value from getFieldWithDelegateAnnotationWithInputMethod method\\\"},"
-                + "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}})"
-                + "{selectionSetField}}\"}";
+                + "fieldWithDelegateAnnotationWithoutMethod\\\"," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -512,6 +601,14 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithFieldAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldWithFieldAnnotationWithDelegateMethod:{"
                 + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
                 + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\"},"
@@ -519,10 +616,7 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "fieldWithFieldAnnotationWithInputMethod:\\\"getFieldWithFieldAnnotationWithInputMethod method\\\","
                 + "fieldWithFieldAnnotationWithMethod:\\\"getFieldWithFieldAnnotationWithMethod method\\\","
                 + "fieldWithFieldAnnotationWithoutMethod:{nestedValue:\\\"fieldWithFieldAnnotationWithoutMethod\\\"},"
-                + "fieldFromGetFieldWithFieldAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithFieldAnnotationWithDelegateMethod method\\\",nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{nestedValue:"
-                + "\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + getMethodValues(methods) + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -533,12 +627,18 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
-                + "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
-                + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\","
-                + "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\","
-                + "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{"
-                + "nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithIgnoreAnnotationWithDelegateMethod",
+                "fieldFromGetFieldWithIgnoreAnnotationWithDelegateMethod:"
+                        + "\\\"value from getFieldWithIgnoreAnnotationWithDelegateMethod method\\\"");
+        methods.put("getFieldWithIgnoreAnnotationWithInputMethod",
+                "fieldWithIgnoreAnnotationWithInputMethod:\\\"getFieldWithIgnoreAnnotationWithInputMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
+        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{" + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -549,6 +649,14 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        Map<String, String> methods = new HashMap<>();
+        methods.put("getFieldWithOverriddenNameWithDelegateMethod",
+                "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
+                        + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{"
                 + "customFieldWithOverriddenNameWithDelegateMethod:{"
                 + "fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
@@ -558,10 +666,8 @@ public class GqlMutationRequestBodyGeneratorTest {
                 + "\\\"getFieldWithOverriddenNameWithInputMethod method\\\","
                 + "customFieldWithOverriddenNameWithMethod:\\\"getFieldWithOverriddenNameWithMethod method\\\","
                 + "customFieldWithOverriddenNameWithoutMethod:{nestedValue:"
-                + "\\\"fieldWithOverriddenNameWithoutMethod\\\"},fieldFromGetFieldWithOverriddenNameWithDelegateMethod:"
-                + "\\\"value from getFieldWithOverriddenNameWithDelegateMethod method\\\",nestedValue:"
-                + "\\\"methodWithoutFieldWithDelegateAnnotation\\\",methodWithoutFieldWithInputAnnotation:{nestedValue:"
-                + "\\\"methodWithoutFieldWithInputAnnotation\\\"}}){selectionSetField}}\"}";
+                + "\\\"fieldWithOverriddenNameWithoutMethod\\\"}," + getMethodValues(methods)
+                + "}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -572,10 +678,15 @@ public class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{fieldFromFieldWithDelegateMethod:"
-                + "\\\"value from fieldWithDelegateMethod method\\\",fieldWithInputMethod:"
-                + "\\\"fieldWithInputMethod method\\\",nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\","
-                + "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}})"
+        Map<String, String> methods = new HashMap<>();
+        methods.put("fieldWithInputMethod", "fieldWithInputMethod:\\\"fieldWithInputMethod method\\\"");
+        methods.put("fieldWithDelegateMethod",
+                "fieldFromFieldWithDelegateMethod:\\\"value from fieldWithDelegateMethod method\\\"");
+        methods.put("methodWithoutFieldWithDelegateAnnotation",
+                "nestedValue:\\\"methodWithoutFieldWithDelegateAnnotation\\\"");
+        methods.put("methodWithoutFieldWithInputAnnotation",
+                "methodWithoutFieldWithInputAnnotation:{nestedValue:\\\"methodWithoutFieldWithInputAnnotation\\\"}");
+        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{" + getMethodValues(methods) + "})"
                 + "{selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -597,5 +708,17 @@ public class GqlMutationRequestBodyGeneratorTest {
         String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{subClassField:\\\"subClassFieldValue\\\","
                 + "testField:\\\"testFieldValue\\\"},testArgument:\\\"testValue\\\"){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
+    }
+
+    // method to guarantee methods order match
+    private String getMethodValues(Map<String, String> methodNameValues) {
+        List<String> values = new ArrayList<>(methodNameValues.size());
+        for (Method method : TestInputModel.class.getMethods()) {
+            String methodName = method.getName();
+            if (methodNameValues.containsKey(methodName)) {
+                values.add(methodNameValues.get(methodName));
+            }
+        }
+        return String.join(",", values);
     }
 }
