@@ -41,9 +41,8 @@ public final class StringUtil {
 
     /**
      * Generates escaped value string for parameter values, e.g.<ul>
-     * <li>escapes quotes for literals:</li><ul>
-     * <li>"literalValue" -> "\"literalValue\""</li>
-     * <li>"literal\"With\"Quotes" -> "\"literal\\\"With\\\"Quotes\""</li></ul>
+     * <li>"literalValue" -&gt; "\"literalValue\""</li>
+     * <li>"literal\"With\"Quotes" -&gt; "\"literal\\\"With\\\"Quotes\""</li></ul>
      *
      * @param value <code>String</code> to generated escaped String for.
      * @return <code>String</code> with generated escaped value.
@@ -53,10 +52,9 @@ public final class StringUtil {
     }
 
     /**
-     * Generates escaped value string for parameter values.
-     * <li>escapes quotes for literals:</li><ul>
-     * <li>"literalValue" -> "literalValue"</li>
-     * <li>"literal\"With\"Quotes" -> "literal\\\"With\\\"Quotes"</li></ul>
+     * Generates escaped value string for parameter values, e.g.<ul>
+     * <li>"literalValue" -&gt; "literalValue"</li>
+     * <li>"literal\"With\"Quotes" -&gt; "literal\\\"With\\\"Quotes"</li></ul>
      *
      * @param value <code>String</code> to generated escaped String for.
      * @return <code>String</code> with generated escaped value.
@@ -67,13 +65,13 @@ public final class StringUtil {
 
     /**
      * Generates escaped value string for parameter values, e.g.<ul>
-     * <li>escapes quotes for literals:</li><ul>
-     * <li>"literalValue" -> "\"literalValue\""</li>
-     * <li>"literal\"With\"Quotes" -> "\"literal\\\"With\\\"Quotes\""</li></ul>
+     * <li>escapes quotes for literals:<ul>
+     * <li>"literalValue" -&gt; "\"literalValue\""</li>
+     * <li>"literal\"With\"Quotes" -&gt; "\"literal\\\"With\\\"Quotes\""</li></ul></li>
      * <li>compose iterables or arrays to string:<ul>
-     * <li>[ value1, value2 ] -> "[value1,value2]"</li>
-     * <li>[ "literalValue1", "literalValue2" ] -> "[\"literalValue1\",\"literalValue2\"]"</li>
-     * <li>[ "literalValue", "literal\"With\"Quotes" ] -> "[\"literalValue\",\"literal\\\"With\\\"Quotes\"]"</li></ul>
+     * <li>[ value1, value2 ] -&gt; "[value1,value2]"</li>
+     * <li>[ "literalValue1", "literalValue2" ] -&gt; "[\"literalValue1\",\"literalValue2\"]"</li>
+     * <li>[ "literalValue", "literal\"With\"Quotes" ] -&gt; "[\"literalValue\",\"literal\\\"With\\\"Quotes\"]"</li></ul>
      * </ul>
      *
      * @param value <code>Object</code> to generated escaped String for.

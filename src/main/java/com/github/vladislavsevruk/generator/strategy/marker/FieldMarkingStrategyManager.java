@@ -52,6 +52,8 @@ public interface FieldMarkingStrategyManager {
 
     /**
      * Sets custom marking strategy.
+     *
+     * @param customStrategy custom <code>FieldMarkingStrategy</code> to use for field marking.
      */
     void useCustomStrategy(FieldMarkingStrategy customStrategy);
 
