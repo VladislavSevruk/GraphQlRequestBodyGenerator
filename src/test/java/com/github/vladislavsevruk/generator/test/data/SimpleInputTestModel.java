@@ -25,7 +25,9 @@ package com.github.vladislavsevruk.generator.test.data;
 
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
+@Accessors(chain = true)
 @Data
 public class SimpleInputTestModel {
 

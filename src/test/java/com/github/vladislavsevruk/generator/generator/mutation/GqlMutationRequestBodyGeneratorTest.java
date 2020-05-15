@@ -30,6 +30,7 @@ import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputGenerationStrategy;
 import com.github.vladislavsevruk.generator.test.data.InheritedInputTestModel;
+import com.github.vladislavsevruk.generator.test.data.SimpleInputTestModel;
 import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestModel;
 import com.github.vladislavsevruk.generator.test.data.TestInputModel;
 import org.junit.jupiter.api.AfterAll;
@@ -73,6 +74,20 @@ public class GqlMutationRequestBodyGeneratorTest {
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "{\"mutation\":\"{customGqlMutation(testArgument1:\\\"testValue1\\\",testArgument2:"
                 + "\\\"testValue2\\\"){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void arrayAsInputArgumentTest() {
+        FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
+        SimpleInputTestModel simpleInputTestModel1 = new SimpleInputTestModel().setTestField("testValue1");
+        SimpleInputTestModel simpleInputTestModel2 = new SimpleInputTestModel().setTestField("testValue2");
+        GqlInputArgument<SimpleInputTestModel[]> inputArgument = GqlInputArgument
+                .of(new SimpleInputTestModel[]{ simpleInputTestModel1, simpleInputTestModel2 });
+        String result = new GqlMutationRequestBodyGenerator("customGqlMutation").arguments(inputArgument)
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:[{testField:\\\"testValue1\\\"},"
+                + "{testField:\\\"testValue2\\\"}]){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -706,6 +721,20 @@ public class GqlMutationRequestBodyGeneratorTest {
     public void generateWithoutSelectionSetTest() {
         Assertions.assertThrows(NullPointerException.class,
                 () -> new GqlMutationRequestBodyGenerator("customGqlMutation").generate());
+    }
+
+    @Test
+    public void listAsInputArgumentTest() {
+        FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
+        SimpleInputTestModel simpleInputTestModel1 = new SimpleInputTestModel().setTestField("testValue1");
+        SimpleInputTestModel simpleInputTestModel2 = new SimpleInputTestModel().setTestField("testValue2");
+        GqlInputArgument<List<SimpleInputTestModel>> inputArgument = GqlInputArgument
+                .of(Arrays.asList(simpleInputTestModel1, simpleInputTestModel2));
+        String result = new GqlMutationRequestBodyGenerator("customGqlMutation").arguments(inputArgument)
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:[{testField:\\\"testValue1\\\"},"
+                + "{testField:\\\"testValue2\\\"}]){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
