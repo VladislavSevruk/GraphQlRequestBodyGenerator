@@ -21,17 +21,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.annotation;
+package com.github.vladislavsevruk.generator.test.data;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
-/**
- * Annotation that marks model fields that should be treated as delegate i.e. field itself won't be present at query but
- * its sub-fields will be added at field layer.
- */
-@Target({ ElementType.FIELD, ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface GqlDelegate {}
+public class InheritedTestModel extends GenericTestModel<NestedTestModel> {
+
+    @GqlField
+    private Long id;
+    @GqlDelegate
+    private NestedTestModel newDelegateAtDescendant;
+    @GqlField(withSelectionSet = true)
+    private NestedTestModel newEntityAtDescendant;
+    @GqlField
+    private Long newFieldAtDescendant;
+    private Long newFieldWithoutAnnotationAtDescendant;
+    @GqlIgnore
+    private Long newIgnoredFieldAtDescendant;
+}

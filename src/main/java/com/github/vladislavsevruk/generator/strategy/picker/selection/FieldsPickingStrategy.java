@@ -21,18 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.strategy.picker.selection;
 
-import lombok.Value;
+import java.lang.reflect.Field;
 
 /**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
+ * Provides fields picking strategy for selection set generation.
  */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+@FunctionalInterface
+public interface FieldsPickingStrategy {
 
-    String name;
-    T value;
+    /**
+     * Checks if received field should be picked according to current strategy.
+     *
+     * @param field <code>Field</code> to check.
+     * @return <code>true</code> if received field should be picked according to current strategy, <code>false</code>
+     * otherwise.
+     */
+    boolean shouldBePicked(Field field);
 }

@@ -26,13 +26,19 @@ package com.github.vladislavsevruk.generator.param;
 import lombok.Value;
 
 /**
- * Represents argument for GraphQL operations.
+ * Represents input for GraphQL mutations.
  *
  * @param <T> type of value.
  */
 @Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+public class GqlInputArgument<T> implements GqlParameterValue<T> {
 
-    String name;
+    private static final String NAME = "input";
+
     T value;
+
+    @Override
+    public String getName() {
+        return NAME;
+    }
 }

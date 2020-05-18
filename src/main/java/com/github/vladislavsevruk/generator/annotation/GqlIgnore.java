@@ -31,6 +31,6 @@ import java.lang.annotation.Target;
 /**
  * Annotation that marks model fields that should be ignored by builder.
  */
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GqlIgnore {}

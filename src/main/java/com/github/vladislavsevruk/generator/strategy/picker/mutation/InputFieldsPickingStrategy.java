@@ -21,18 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
-
-import lombok.Value;
+package com.github.vladislavsevruk.generator.strategy.picker.mutation;
 
 /**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
+ * Provides fields picking strategy for mutation input generation.
  */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+@FunctionalInterface
+public interface InputFieldsPickingStrategy {
 
-    String name;
-    T value;
+    /**
+     * Checks if received field should be picked according to current strategy.
+     *
+     * @param fieldName  <code>String</code> with input field to check.
+     * @param fieldValue <code>String</code> with resulted <code>Field</code> value.
+     * @return <code>true</code> if received field should be picked according to current strategy, <code>false</code>
+     * otherwise.
+     */
+    boolean shouldBePicked(String fieldName, String fieldValue);
 }

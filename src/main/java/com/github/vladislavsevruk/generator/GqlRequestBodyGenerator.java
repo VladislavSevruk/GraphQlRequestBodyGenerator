@@ -21,32 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.annotation;
+package com.github.vladislavsevruk.generator;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.github.vladislavsevruk.generator.generator.mutation.GqlMutationRequestBodyGenerator;
+import com.github.vladislavsevruk.generator.generator.query.GqlQueryRequestBodyGenerator;
 
 /**
- * Annotation that marks model fields that should be treated as simple type field.
+ * Provides generators for GraphQL operations.
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface GqlField {
+public class GqlRequestBodyGenerator {
+
+    private GqlRequestBodyGenerator() {
+    }
 
     /**
-     * Returns name that should be used for GraphQL query or mutation generation.
+     * Returns new instance of {@link GqlMutationRequestBodyGenerator} with received mutation name.
+     *
+     * @param mutationName <code>String</code> with name of mutation to generate.
+     * @return <code>GqlMutationGenerator</code> with received mutation name.
      */
-    String name() default "";
+    public static GqlMutationRequestBodyGenerator mutation(String mutationName) {
+        return new GqlMutationRequestBodyGenerator(mutationName);
+    }
 
     /**
-     * Indicates if marked field is non-null.
+     * Returns new instance of {@link GqlQueryRequestBodyGenerator} with received query name.
+     *
+     * @param queryName <code>String</code> with name of query to generate.
+     * @return <code>GqlMutationGenerator</code> with received mutation name.
      */
-    boolean nonNull() default false;
-
-    /**
-     * Returns <code>true</code> if field has selection set with nested fields, <code>false</code> otherwise.
-     */
-    boolean withSelectionSet() default false;
+    public static GqlQueryRequestBodyGenerator query(String queryName) {
+        return new GqlQueryRequestBodyGenerator(queryName);
+    }
 }

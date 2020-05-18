@@ -1,672 +1,400 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2020 Uladzislau Seuruk
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package com.github.vladislavsevruk.generator.generator;
 
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.OnlyMarkedFieldMarkingStrategy;
-import com.github.vladislavsevruk.generator.strategy.picker.AllFieldsPickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.picker.OnlyIdFieldsPickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.picker.OnlyNonNullableFieldsPickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.picker.WithoutFieldsWithSelectionSetPickingStrategy;
-import com.github.vladislavsevruk.generator.test.data.GenericTestModelWithAnnotations;
-import com.github.vladislavsevruk.generator.test.data.GenericTestModelWithoutAnnotations;
-import com.github.vladislavsevruk.generator.test.data.InheritedTestModelWithAnnotations;
-import com.github.vladislavsevruk.generator.test.data.InheritedTestModelWithoutAnnotations;
-import com.github.vladislavsevruk.generator.test.data.NestedTestModelWithAnnotations;
-import com.github.vladislavsevruk.generator.test.data.NestedTestModelWithoutAnnotations;
-import com.github.vladislavsevruk.generator.test.data.TestModelWithAnnotations;
-import com.github.vladislavsevruk.generator.test.data.TestModelWithoutAnnotations;
+import com.github.vladislavsevruk.generator.strategy.picker.selection.AllFieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.picker.selection.OnlyIdFieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.picker.selection.OnlyNonNullFieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.picker.selection.WithoutFieldsWithSelectionSetPickingStrategy;
+import com.github.vladislavsevruk.generator.test.data.GenericTestModel;
+import com.github.vladislavsevruk.generator.test.data.InheritedTestModel;
+import com.github.vladislavsevruk.generator.test.data.NestedTestModel;
+import com.github.vladislavsevruk.generator.test.data.TestModel;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SelectionSetGeneratorTest {
+class SelectionSetGeneratorTest {
 
     @Test
-    public void generateAllExceptIgnoredGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateAllExceptIgnoredGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
-                + "idField id customNamedField customNamedNonNullableField nonNullableField} collectionField "
+                + "idField id customNamedField customNamedNonNullField nonNullField} collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField fieldWithEntityAnnotation{collectionField "
+                + "customNamedNonNullField nonNullField fieldWithEntityAnnotation{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} listEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedNonNullField nonNullField} listEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
                 + "customNamedEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{"
+                + "customNamedField customNamedNonNullField nonNullField} customNamedNonNullEntity{"
                 + "collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
+                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
                 + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField}}";
+                + "customNamedField customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllExceptIgnoredGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{collectionEntity collectionField fieldWithDelegateAnnotation "
-                + "fieldWithEntityAnnotation fieldWithFieldAnnotation fieldWithIgnoreAnnotation "
-                + "fieldWithoutAnnotations id idField listEntity namedEntity namedField namedNonNullableEntity "
-                + "namedNonNullableField nonNullableEntity nonNullableField queueEntity setEntity}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateAllExceptIgnoredInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
+    void generateAllExceptIgnoredInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullableField nonNullableField "
+                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullField nonNullField "
                 + "newEntityAtDescendant{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField} newFieldAtDescendant "
+                + "customNamedField customNamedNonNullField nonNullField} newFieldAtDescendant "
                 + "newFieldWithoutAnnotationAtDescendant collectionEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
                 + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
+                + "id customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} customNamedEntity{collectionField "
+                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
+                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
+                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
                 + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField}}";
+                + "customNamedField customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllExceptIgnoredInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id newDelegateAtDescendant newEntityAtDescendant "
-                + "newFieldAtDescendant newFieldWithoutAnnotationAtDescendant newIgnoredFieldAtDescendant "
-                + "collectionEntity collectionField fieldWithDelegateAnnotation fieldWithEntityAnnotation "
-                + "fieldWithFieldAnnotation fieldWithIgnoreAnnotation fieldWithoutAnnotations idField listEntity "
-                + "namedEntity namedField namedNonNullableEntity namedNonNullableField nonNullableEntity "
-                + "nonNullableField queueEntity setEntity}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateAllExceptIgnoredModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
+    void generateAllExceptIgnoredModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField "
+                + "customNamedNonNullField nonNullField} collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField "
                 + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
+                + "id customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} customNamedEntity{collectionField "
+                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
+                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
+                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
                 + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField}}";
+                + "customNamedField customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateAllExceptIgnoredModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
+    void generateNonNullExceptIgnoredGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{collectionEntity collectionField "
-                + "fieldWithDelegateAnnotation fieldWithEntityAnnotation fieldWithFieldAnnotation "
-                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity namedEntity namedField "
-                + "namedNonNullableEntity namedNonNullableField nonNullableEntity nonNullableField queueEntity "
-                + "setEntity}";
+        String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
+        String expectedResult = "{customNamedNonNullField nonNullField "
+                + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateNonNullableExceptIgnoredGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateNonNullExceptIgnoredInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{customNamedNonNullableField nonNullableField "
-                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
-                + "customNamedNonNullableField nonNullableField}}";
+        String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
+        String expectedResult = "{customNamedNonNullField nonNullField "
+                + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateNonNullableExceptIgnoredGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
+    void generateNonNullExceptIgnoredModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{}";
+        String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
+        String expectedResult = "{customNamedNonNullField nonNullField "
+                + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateNonNullableExceptIgnoredInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{customNamedNonNullableField nonNullableField "
-                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
-                + "customNamedNonNullableField nonNullableField}}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateNonNullableExceptIgnoredInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateNonNullableExceptIgnoredModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{customNamedNonNullableField nonNullableField "
-                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
-                + "customNamedNonNullableField nonNullableField}}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateNonNullableExceptIgnoredModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyIdExceptIgnoredGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateOnlyIdExceptIgnoredGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
-                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
                 + "queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyIdExceptIgnoredGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{id}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyIdExceptIgnoredInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
+    void generateOnlyIdExceptIgnoredInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{id newEntityAtDescendant{id} collectionEntity{id} "
-                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
-                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}";
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} "
+                + "nonNullEntity{id} queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyIdExceptIgnoredInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{id}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyIdExceptIgnoredModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
+    void generateOnlyIdExceptIgnoredModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
-                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
                 + "queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyIdExceptIgnoredModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{id}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateOnlyMarkedGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
-                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
-                + "nonNullableField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField "
+                + "nonNullField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
                 + "customNamedEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
-                + "nonNullableEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id customNamedField customNamedNonNullableField nonNullableField} setEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
-                + "nonNullableField}}";
+                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "nonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField " + "nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedIdGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateOnlyMarkedIdGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
-                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
                 + "queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedIdGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedIdInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
+    void generateOnlyMarkedIdInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{id newEntityAtDescendant{id} collectionEntity{id} "
-                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} "
-                + "nonNullableEntity{id} queueEntity{id} setEntity{id}}";
+                + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} "
+                + "nonNullEntity{id} queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedIdInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedIdModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
+    void generateOnlyMarkedIdModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
-                + "listEntity{id} customNamedEntity{id} customNamedNonNullableEntity{id} nonNullableEntity{id} "
+                + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
                 + "queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedIdModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
+    void generateOnlyMarkedInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation idField "
-                + "customNamedField customNamedNonNullableField nonNullableField newEntityAtDescendant{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedField customNamedNonNullField nonNullField newEntityAtDescendant{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
                 + "newFieldAtDescendant collectionEntity{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField} fieldWithEntityAnnotation{"
-                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
-                + "nonNullableField} listEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} customNamedEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
-                + "customNamedNonNullableEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} nonNullableEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "customNamedField customNamedNonNullField nonNullField} fieldWithEntityAnnotation{"
+                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField "
+                + "nonNullField} listEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "customNamedNonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
                 + "queueEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} setEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id customNamedField customNamedNonNullableField nonNullableField}}";
+                + "customNamedNonNullField nonNullField} setEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
+    void generateOnlyMarkedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
-                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
-                + "nonNullableField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField} listEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField "
+                + "nonNullField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
                 + "customNamedEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} customNamedNonNullableEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField nonNullableField} "
-                + "nonNullableEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullableField nonNullableField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id customNamedField customNamedNonNullableField nonNullableField} setEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullableField "
-                + "nonNullableField}}";
+                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "nonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField " + "nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
+    void generateOnlyMarkedNonNullGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{}";
+        String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
+        String expectedResult = "{customNamedNonNullField nonNullField "
+                + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedNonNullableGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateOnlyMarkedNonNullInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{customNamedNonNullableField nonNullableField "
-                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
-                + "customNamedNonNullableField nonNullableField}}";
+        String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
+        String expectedResult = "{customNamedNonNullField nonNullField "
+                + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedNonNullableGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
+    void generateOnlyMarkedNonNullModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{}";
+        String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
+        String expectedResult = "{customNamedNonNullField nonNullField "
+                + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedNonNullableInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{customNamedNonNullableField nonNullableField "
-                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
-                + "customNamedNonNullableField nonNullableField}}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedNonNullableInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedNonNullableModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{customNamedNonNullableField nonNullableField "
-                + "customNamedNonNullableEntity{customNamedNonNullableField nonNullableField} nonNullableEntity{"
-                + "customNamedNonNullableField nonNullableField}}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedNonNullableModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new OnlyNonNullableFieldsPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateOnlyMarkedWithoutFieldsWithSelectionSetGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField}";
+                + "customNamedField customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
+    void generateOnlyMarkedWithoutFieldsWithSelectionSetInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation idField "
-                + "customNamedField customNamedNonNullableField nonNullableField newFieldAtDescendant}";
+                + "customNamedField customNamedNonNullField nonNullField newFieldAtDescendant}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
+    void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField}";
+                + "customNamedField customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new OnlyMarkedFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredGenericModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModelWithAnnotations<NestedTestModelWithAnnotations>>() {}
-                .getTypeMeta();
+    void generateWithoutFieldsWithSelectionSetExceptIgnoredGenericModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullableField "
-                + "nonNullableField}";
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField " + "nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredGenericModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta
-                = new TypeProvider<GenericTestModelWithoutAnnotations<NestedTestModelWithoutAnnotations>>() {}
-                .getTypeMeta();
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{collectionEntity collectionField "
-                + "fieldWithDelegateAnnotation fieldWithEntityAnnotation fieldWithFieldAnnotation "
-                + "fieldWithIgnoreAnnotation fieldWithoutAnnotations id idField listEntity namedEntity namedField "
-                + "namedNonNullableEntity namedNonNullableField nonNullableEntity nonNullableField queueEntity "
-                + "setEntity}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredInheritedModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithAnnotations.class);
+    void generateWithoutFieldsWithSelectionSetExceptIgnoredInheritedModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullableField nonNullableField "
+                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullField nonNullField "
                 + "newFieldAtDescendant newFieldWithoutAnnotationAtDescendant}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredInheritedModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{id newDelegateAtDescendant newEntityAtDescendant "
-                + "newFieldAtDescendant newFieldWithoutAnnotationAtDescendant newIgnoredFieldAtDescendant "
-                + "collectionEntity collectionField fieldWithDelegateAnnotation fieldWithEntityAnnotation "
-                + "fieldWithFieldAnnotation fieldWithIgnoreAnnotation fieldWithoutAnnotations idField listEntity "
-                + "namedEntity namedField namedNonNullableEntity namedNonNullableField nonNullableEntity "
-                + "nonNullableField queueEntity setEntity}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredModelWithAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithAnnotations.class);
+    void generateWithoutFieldsWithSelectionSetExceptIgnoredModelWithAnnotationsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullableField nonNullableField}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredModelWithoutAnnotationsTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithoutAnnotations.class);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy());
-        String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{collectionEntity collectionField fieldWithDelegateAnnotation "
-                + "fieldWithEntityAnnotation fieldWithFieldAnnotation fieldWithIgnoreAnnotation "
-                + "fieldWithoutAnnotations id idField listEntity namedEntity namedField namedNonNullableEntity "
-                + "namedNonNullableField nonNullableEntity nonNullableField queueEntity setEntity}";
+                + "customNamedField customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
 }

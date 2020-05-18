@@ -21,18 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.strategy.marker;
 
-import lombok.Value;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-/**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
- */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+class FieldMarkingStrategyManagerImplTest {
 
-    String name;
-    T value;
+    @Test
+    void useCustomStrategyTest() {
+        FieldMarkingStrategy mockedStrategy = Mockito.mock(FieldMarkingStrategy.class);
+        FieldMarkingStrategySourceManager.input().useCustomStrategy(mockedStrategy);
+        Assertions.assertSame(mockedStrategy, FieldMarkingStrategySourceManager.input().getStrategy());
+    }
 }

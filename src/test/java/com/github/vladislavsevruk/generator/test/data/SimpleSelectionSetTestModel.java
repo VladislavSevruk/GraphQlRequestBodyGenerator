@@ -21,18 +21,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.test.data;
 
-import lombok.Value;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
 
-/**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
- */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+public class SimpleSelectionSetTestModel {
 
-    String name;
-    T value;
+    @GqlField
+    private String selectionSetField;
 }

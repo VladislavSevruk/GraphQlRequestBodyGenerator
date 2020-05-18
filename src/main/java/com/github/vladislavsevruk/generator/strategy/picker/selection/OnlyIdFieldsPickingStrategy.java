@@ -21,18 +21,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.strategy.picker.selection;
 
-import lombok.Value;
+import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.util.GqlNamePicker;
+
+import java.lang.reflect.Field;
 
 /**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
+ * Provides selection set generation strategy for picking only 'id' fields itself or fields with nested 'id' field.
  */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+public class OnlyIdFieldsPickingStrategy implements FieldsPickingStrategy {
 
-    String name;
-    T value;
+    private static final String ID = "id";
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean shouldBePicked(Field field) {
+        if (field.getAnnotation(GqlDelegate.class) != null) {
+            return true;
+        }
+        GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
+        if (fieldAnnotation != null && fieldAnnotation.withSelectionSet()) {
+            return true;
+        }
+        return GqlNamePicker.getFieldName(field).equals(ID);
+    }
 }

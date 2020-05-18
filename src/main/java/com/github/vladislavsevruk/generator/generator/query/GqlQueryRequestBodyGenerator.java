@@ -21,18 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.generator.query;
 
-import lombok.Value;
+import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 
 /**
- * Represents argument for GraphQL operations.
+ * Generates request body for GraphQL queries with received arguments and selection set according to different field
+ * picking strategies.
  *
- * @param <T> type of value.
+ * @see FieldMarkingStrategySourceManager
  */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
 
-    String name;
-    T value;
+    public GqlQueryRequestBodyGenerator(String queryName) {
+        super(queryName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String generate() {
+        String queryBody = new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
+                .generate(getSelectionSetFieldsPickingStrategy(), getArguments());
+        return wrapForRequestBody(queryBody);
+    }
 }
+

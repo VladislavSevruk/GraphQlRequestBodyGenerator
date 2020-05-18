@@ -21,18 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.test.data;
 
-import lombok.Value;
+public enum TestEnum {
 
-/**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
- */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
-
-    String name;
-    T value;
+    TEST_VALUE_1,
+    TEST_VALUE_2,
 }

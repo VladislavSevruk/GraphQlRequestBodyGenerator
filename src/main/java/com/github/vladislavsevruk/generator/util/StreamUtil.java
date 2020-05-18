@@ -21,18 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.util;
 
-import lombok.Value;
+import java.util.Arrays;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
- * Represents argument for GraphQL operations.
- *
- * @param <T> type of value.
+ * Contains utility methods for stream operations.
  */
-@Value(staticConstructor = "of")
-public class GqlArgument<T> implements GqlParameterValue<T> {
+public final class StreamUtil {
 
-    String name;
-    T value;
+    private StreamUtil() {
+    }
+
+    /**
+     * Creates new {@link Stream} for received iterables and arrays.
+     *
+     * @param value <code>Object</code> with iterable or array to create stream for.
+     * @return created <code>Stream</code>.
+     */
+    @SuppressWarnings("java:S1452")
+    public static Stream<?> createStream(Object value) {
+        if (Iterable.class.isAssignableFrom(value.getClass())) {
+            return StreamSupport.stream(((Iterable<?>) value).spliterator(), false);
+        }
+        return Arrays.stream((Object[]) value);
+    }
 }
