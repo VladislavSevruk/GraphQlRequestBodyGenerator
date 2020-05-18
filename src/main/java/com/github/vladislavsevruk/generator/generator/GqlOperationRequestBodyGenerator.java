@@ -27,6 +27,7 @@ import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.SelectionSetGenerationStrategy;
+import com.github.vladislavsevruk.generator.util.StringUtil;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import lombok.AccessLevel;
@@ -162,6 +163,10 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
         Objects.requireNonNull(selectionSetTypeMeta, "Selection set model wasn't set.");
         return new SelectionSetGenerator(selectionSetTypeMeta,
                 FieldMarkingStrategySourceManager.selectionSet().getStrategy());
+    }
+
+    protected String wrapForRequestBody(String operationBody) {
+        return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
     }
 
     private T selectionSet(TypeMeta<?> typeMeta) {

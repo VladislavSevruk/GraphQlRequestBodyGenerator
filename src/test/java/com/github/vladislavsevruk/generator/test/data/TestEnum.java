@@ -21,31 +21,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.generator.query;
+package com.github.vladislavsevruk.generator.test.data;
 
-import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
-import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
+public enum TestEnum {
 
-/**
- * Generates request body for GraphQL queries with received arguments and selection set according to different field
- * picking strategies.
- *
- * @see FieldMarkingStrategySourceManager
- */
-public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
-
-    public GqlQueryRequestBodyGenerator(String queryName) {
-        super(queryName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String generate() {
-        String queryBody = new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
-                .generate(getSelectionSetFieldsPickingStrategy(), getArguments());
-        return wrapForRequestBody(queryBody);
-    }
+    TEST_VALUE_1,
+    TEST_VALUE_2,
 }
-

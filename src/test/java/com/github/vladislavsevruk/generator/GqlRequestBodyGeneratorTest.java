@@ -37,8 +37,8 @@ public class GqlRequestBodyGeneratorTest {
         inputModel.setTestField("testFieldValue");
         String result = GqlRequestBodyGenerator.mutation("customGqlMutation").arguments(GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "{\"mutation\":\"{customGqlMutation(input:{subClassField:\\\"subClassFieldValue\\\","
-                + "testField:\\\"testFieldValue\\\"}){selectionSetField}}\"}";
+        String expectedResult = "{\"query\":\"mutation{customGqlMutation(input:{subClassField:"
+                + "\\\"subClassFieldValue\\\",testField:\\\"testFieldValue\\\"}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 

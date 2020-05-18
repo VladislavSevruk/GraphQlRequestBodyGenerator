@@ -30,6 +30,7 @@ import com.github.vladislavsevruk.generator.strategy.picker.selection.SelectionS
 import com.github.vladislavsevruk.generator.test.data.GenericTestModel;
 import com.github.vladislavsevruk.generator.test.data.NestedTestModel;
 import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestModel;
+import com.github.vladislavsevruk.generator.test.data.TestEnum;
 import com.github.vladislavsevruk.generator.test.data.TestModel;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import org.junit.jupiter.api.AfterAll;
@@ -653,6 +654,40 @@ public class GqlQueryRequestBodyGeneratorTest {
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "{\"query\":\"{customGqlQuery(argument:[\\\"1\\\",\\\"2\\\"]){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void generateWithEnumArgument() {
+        FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
+        GqlArgument<TestEnum> argument = GqlArgument.of("argument", TestEnum.TEST_VALUE_1);
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery(argument:TEST_VALUE_1){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void generateWithEnumAsArrayArgument() {
+        FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
+        GqlArgument<List<TestEnum>> argument = GqlArgument
+                .of("argument", Arrays.asList(TestEnum.TEST_VALUE_1, TestEnum.TEST_VALUE_2));
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery(argument:[TEST_VALUE_1,TEST_VALUE_2])"
+                + "{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    public void generateWithEnumAsIterableArgument() {
+        FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
+        GqlArgument<TestEnum[]> argument = GqlArgument
+                .of("argument", new TestEnum[]{ TestEnum.TEST_VALUE_1, TestEnum.TEST_VALUE_2 });
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery(argument:[TEST_VALUE_1,TEST_VALUE_2])"
+                + "{selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 

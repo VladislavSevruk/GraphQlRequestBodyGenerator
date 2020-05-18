@@ -46,7 +46,7 @@ public class GqlMutationBodyGeneratorTest {
         String result = new GqlMutationBodyGenerator("customGqlMutation", selectionSetGenerator,
                 new AllExceptIgnoredFieldMarkingStrategy())
                 .generate(new WithoutNullsInputFieldsPickingStrategy(), new AllFieldsPickingStrategy(), argument);
-        String expectedResult = "{customGqlMutation(input:{subClassField:\"subClassFieldValue\","
+        String expectedResult = "mutation{customGqlMutation(input:{subClassField:\"subClassFieldValue\","
                 + "testField:\"testFieldValue\"}){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }

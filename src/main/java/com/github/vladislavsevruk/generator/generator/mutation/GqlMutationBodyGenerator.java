@@ -110,7 +110,7 @@ public class GqlMutationBodyGenerator {
         logger.info(() -> String.format("Generating '%s' GraphQL mutation.", mutationName));
         String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, arguments);
         String selectionSet = selectionSetGenerator.generate(selectionSetFieldsPickingStrategy);
-        String mutation = "{" + mutationName + argumentsStr + selectionSet + "}";
+        String mutation = "mutation{" + mutationName + argumentsStr + selectionSet + "}";
         logger.debug(() -> "Resulted mutation: " + mutation);
         return mutation;
     }

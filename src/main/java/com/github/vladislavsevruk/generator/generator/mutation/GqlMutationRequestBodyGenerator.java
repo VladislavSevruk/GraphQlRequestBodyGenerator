@@ -27,7 +27,6 @@ import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGen
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputGenerationStrategy;
-import com.github.vladislavsevruk.generator.util.StringUtil;
 
 import java.util.Arrays;
 
@@ -128,6 +127,6 @@ public class GqlMutationRequestBodyGenerator extends GqlOperationRequestBodyGene
     public String generate() {
         String mutationBody = new GqlMutationBodyGenerator(getOperationName(), getSelectionSetGenerator())
                 .generate(inputFieldsPickingStrategy, getSelectionSetFieldsPickingStrategy(), getArguments());
-        return "{\"mutation\":\"" + StringUtil.escapeQuotes(mutationBody) + "\"}";
+        return wrapForRequestBody(mutationBody);
     }
 }
