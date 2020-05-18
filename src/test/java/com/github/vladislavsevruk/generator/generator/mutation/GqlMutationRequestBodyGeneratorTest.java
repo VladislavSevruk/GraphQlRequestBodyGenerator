@@ -751,6 +751,14 @@ public class GqlMutationRequestBodyGeneratorTest {
         Assertions.assertEquals(expectedResult, result);
     }
 
+    @Test
+    public void withoutArgumentsTest() {
+        String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"mutation{customGqlMutation{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
     // method to guarantee methods order match
     private String getMethodValues(Map<String, String> methodNameValues) {
         List<String> values = new ArrayList<>(methodNameValues.size());
