@@ -44,18 +44,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GqlMutationRequestBodyGeneratorTest {
+class GqlMutationRequestBodyGeneratorTest {
 
     private InputFieldsPickingStrategy customInputFieldsPickingStrategy = (name, value) -> name.startsWith("custom")
             || value.contains("Ignored");
 
     @AfterAll
-    public static void setInitialAutoContextRefresh() {
+    static void setInitialAutoContextRefresh() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
     }
 
     @Test
-    public void argumentsArrayTest() {
+    void argumentsArrayTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .arguments(GqlArgument.of("testArgument1", "testValue1"), GqlArgument.of("testArgument2", "testValue2"))
@@ -66,7 +66,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void argumentsListTest() {
+    void argumentsListTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         List<GqlParameterValue<?>> arguments = Arrays
                 .asList(GqlArgument.of("testArgument1", "testValue1"), GqlArgument.of("testArgument2", "testValue2"));
@@ -78,7 +78,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void arrayAsInputArgumentTest() {
+    void arrayAsInputArgumentTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         SimpleInputTestModel simpleInputTestModel1 = new SimpleInputTestModel().setTestField("testValue1");
         SimpleInputTestModel simpleInputTestModel2 = new SimpleInputTestModel().setTestField("testValue2");
@@ -92,7 +92,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllInputFieldsWithDelegateAnnotationExceptIgnoredTest() {
+    void generateAllInputFieldsWithDelegateAnnotationExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithDelegateAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -129,7 +129,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllInputFieldsWithFieldAnnotationExceptIgnoredTest() {
+    void generateAllInputFieldsWithFieldAnnotationExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithFieldAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -164,7 +164,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllInputFieldsWithIgnoreAnnotationExceptIgnoredTest() {
+    void generateAllInputFieldsWithIgnoreAnnotationExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithIgnoreAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -196,7 +196,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllInputFieldsWithOverriddenNameExceptIgnoredTest() {
+    void generateAllInputFieldsWithOverriddenNameExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithOverriddenName();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -231,7 +231,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllInputFieldsWithoutAnnotationsExceptIgnoredTest() {
+    void generateAllInputFieldsWithoutAnnotationsExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithoutAnnotations();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -264,7 +264,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateInputFieldsCustomStrategyExceptIgnoredTest() {
+    void generateInputFieldsCustomStrategyExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithFieldAnnotation()
                 .initFieldsWithIgnoreAnnotation().initFieldsWithoutAnnotations().initFieldsWithOverriddenName()
@@ -285,7 +285,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateNonNullInputFieldsWithDelegateAnnotationExceptIgnoredTest() {
+    void generateNonNullInputFieldsWithDelegateAnnotationExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithDelegateAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -312,7 +312,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateNonNullInputFieldsWithFieldAnnotationExceptIgnoredTest() {
+    void generateNonNullInputFieldsWithFieldAnnotationExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithFieldAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -338,7 +338,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateNonNullInputFieldsWithIgnoreAnnotationExceptIgnoredTest() {
+    void generateNonNullInputFieldsWithIgnoreAnnotationExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithIgnoreAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -360,7 +360,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateNonNullInputFieldsWithOverriddenNameExceptIgnoredTest() {
+    void generateNonNullInputFieldsWithOverriddenNameExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithOverriddenName();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -388,7 +388,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateNonNullInputFieldsWithoutAnnotationsExceptIgnoredTest() {
+    void generateNonNullInputFieldsWithoutAnnotationsExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithoutAnnotations();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -414,7 +414,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedInputFieldsCustomStrategyTest() {
+    void generateOnlyMarkedInputFieldsCustomStrategyTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithFieldAnnotation()
                 .initFieldsWithIgnoreAnnotation().initFieldsWithoutAnnotations().initFieldsWithOverriddenName()
@@ -435,7 +435,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedInputFieldsWithDelegateAnnotationTest() {
+    void generateOnlyMarkedInputFieldsWithDelegateAnnotationTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithDelegateAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -470,7 +470,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedInputFieldsWithFieldAnnotationTest() {
+    void generateOnlyMarkedInputFieldsWithFieldAnnotationTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithFieldAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -503,7 +503,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedInputFieldsWithIgnoreAnnotationTest() {
+    void generateOnlyMarkedInputFieldsWithIgnoreAnnotationTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithIgnoreAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -533,7 +533,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedInputFieldsWithOverriddenNameTest() {
+    void generateOnlyMarkedInputFieldsWithOverriddenNameTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithOverriddenName();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -566,7 +566,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedInputFieldsWithoutAnnotationsTest() {
+    void generateOnlyMarkedInputFieldsWithoutAnnotationsTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithoutAnnotations();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -594,7 +594,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullInputFieldsWithDelegateAnnotationTest() {
+    void generateOnlyMarkedNonNullInputFieldsWithDelegateAnnotationTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithDelegateAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -621,7 +621,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullInputFieldsWithFieldAnnotationTest() {
+    void generateOnlyMarkedNonNullInputFieldsWithFieldAnnotationTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithFieldAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -647,7 +647,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullInputFieldsWithIgnoreAnnotationTest() {
+    void generateOnlyMarkedNonNullInputFieldsWithIgnoreAnnotationTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithIgnoreAnnotation();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -669,7 +669,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullInputFieldsWithOverriddenNameTest() {
+    void generateOnlyMarkedNonNullInputFieldsWithOverriddenNameTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithOverriddenName();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -698,7 +698,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullInputFieldsWithoutAnnotationsTest() {
+    void generateOnlyMarkedNonNullInputFieldsWithoutAnnotationsTest() {
         FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
         TestInputModel inputModel = new TestInputModel().initFieldsWithoutAnnotations();
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
@@ -718,13 +718,14 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithoutSelectionSetTest() {
-        Assertions.assertThrows(NullPointerException.class,
-                () -> new GqlMutationRequestBodyGenerator("customGqlMutation").generate());
+    void generateWithoutSelectionSetTest() {
+        GqlMutationRequestBodyGenerator mutationRequestBodyGenerator = new GqlMutationRequestBodyGenerator(
+                "customGqlMutation");
+        Assertions.assertThrows(NullPointerException.class, mutationRequestBodyGenerator::generate);
     }
 
     @Test
-    public void listAsInputArgumentTest() {
+    void listAsInputArgumentTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         SimpleInputTestModel simpleInputTestModel1 = new SimpleInputTestModel().setTestField("testValue1");
         SimpleInputTestModel simpleInputTestModel2 = new SimpleInputTestModel().setTestField("testValue2");
@@ -738,7 +739,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void severalArgumentsTest() {
+    void severalArgumentsTest() {
         FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
         InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
         inputModel.setTestField("testFieldValue");
@@ -752,7 +753,7 @@ public class GqlMutationRequestBodyGeneratorTest {
     }
 
     @Test
-    public void withoutArgumentsTest() {
+    void withoutArgumentsTest() {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "{\"query\":\"mutation{customGqlMutation{selectionSetField}}\"}";

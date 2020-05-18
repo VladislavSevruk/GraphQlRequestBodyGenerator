@@ -38,10 +38,10 @@ import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class SelectionSetGeneratorTest {
+class SelectionSetGeneratorTest {
 
     @Test
-    public void generateAllExceptIgnoredGenericModelWithAnnotationsTest() {
+    void generateAllExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -66,7 +66,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateAllExceptIgnoredInheritedModelWithAnnotationsTest() {
+    void generateAllExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -94,7 +94,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateAllExceptIgnoredModelWithAnnotationsTest() {
+    void generateAllExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -120,7 +120,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateNonNullExceptIgnoredGenericModelWithAnnotationsTest() {
+    void generateNonNullExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -132,7 +132,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateNonNullExceptIgnoredInheritedModelWithAnnotationsTest() {
+    void generateNonNullExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -144,7 +144,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateNonNullExceptIgnoredModelWithAnnotationsTest() {
+    void generateNonNullExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -156,7 +156,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyIdExceptIgnoredGenericModelWithAnnotationsTest() {
+    void generateOnlyIdExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -168,7 +168,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyIdExceptIgnoredInheritedModelWithAnnotationsTest() {
+    void generateOnlyIdExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -180,7 +180,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyIdExceptIgnoredModelWithAnnotationsTest() {
+    void generateOnlyIdExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -192,7 +192,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedGenericModelWithAnnotationsTest() {
+    void generateOnlyMarkedGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -214,7 +214,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedIdGenericModelWithAnnotationsTest() {
+    void generateOnlyMarkedIdGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -226,7 +226,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedIdInheritedModelWithAnnotationsTest() {
+    void generateOnlyMarkedIdInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -238,7 +238,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedIdModelWithAnnotationsTest() {
+    void generateOnlyMarkedIdModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -250,7 +250,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedInheritedModelWithAnnotationsTest() {
+    void generateOnlyMarkedInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -274,7 +274,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedModelWithAnnotationsTest() {
+    void generateOnlyMarkedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -296,7 +296,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullGenericModelWithAnnotationsTest() {
+    void generateOnlyMarkedNonNullGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -308,7 +308,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullInheritedModelWithAnnotationsTest() {
+    void generateOnlyMarkedNonNullInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -320,7 +320,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullModelWithAnnotationsTest() {
+    void generateOnlyMarkedNonNullModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -332,7 +332,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetGenericModelWithAnnotationsTest() {
+    void generateOnlyMarkedWithoutFieldsWithSelectionSetGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -343,7 +343,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetInheritedModelWithAnnotationsTest() {
+    void generateOnlyMarkedWithoutFieldsWithSelectionSetInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -354,7 +354,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithAnnotationsTest() {
+    void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
@@ -365,7 +365,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredGenericModelWithAnnotationsTest() {
+    void generateWithoutFieldsWithSelectionSetExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -376,7 +376,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredInheritedModelWithAnnotationsTest() {
+    void generateWithoutFieldsWithSelectionSetExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
@@ -388,7 +388,7 @@ public class SelectionSetGeneratorTest {
     }
 
     @Test
-    public void generateWithoutFieldsWithSelectionSetExceptIgnoredModelWithAnnotationsTest() {
+    void generateWithoutFieldsWithSelectionSetExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());

@@ -41,17 +41,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class GqlQueryRequestBodyGeneratorTest {
+class GqlQueryRequestBodyGeneratorTest {
 
     private FieldsPickingStrategy customFieldsPickingStrategy = field -> field.getName().startsWith("named");
 
     @AfterAll
-    public static void setInitialAutoContextRefresh() {
+    static void setInitialAutoContextRefresh() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
     }
 
     @Test
-    public void generateAllFieldsExceptIgnoredTest() {
+    void generateAllFieldsExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.allFields()).generate();
@@ -76,7 +76,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptIgnoredTypeProviderTest() {
+    void generateAllFieldsExceptIgnoredTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -103,7 +103,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptIgnoredWithArgumentsTest() {
+    void generateAllFieldsExceptIgnoredWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -129,7 +129,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptIgnoredWithArgumentsTypeProviderTest() {
+    void generateAllFieldsExceptIgnoredWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
@@ -157,7 +157,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptSelectionSetsAndIgnoredTest() {
+    void generateAllFieldsExceptSelectionSetsAndIgnoredTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.fieldsWithoutSelectionSets()).generate();
@@ -167,7 +167,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptSelectionSetsAndIgnoredTypeProviderTest() {
+    void generateAllFieldsExceptSelectionSetsAndIgnoredTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -180,7 +180,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptSelectionSetsAndIgnoredWithArgumentsTest() {
+    void generateAllFieldsExceptSelectionSetsAndIgnoredWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -192,7 +192,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllFieldsExceptSelectionSetsAndIgnoredWithArgumentsTypeProviderTest() {
+    void generateAllFieldsExceptSelectionSetsAndIgnoredWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -206,7 +206,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptSelectionSetsTest() {
+    void generateAllMarkedFieldsExceptSelectionSetsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.fieldsWithoutSelectionSets()).generate();
@@ -216,7 +216,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptSelectionSetsTypeProviderTest() {
+    void generateAllMarkedFieldsExceptSelectionSetsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -228,7 +228,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptSelectionSetsWithArgumentsTest() {
+    void generateAllMarkedFieldsExceptSelectionSetsWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -239,7 +239,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsExceptSelectionSetsWithArgumentsTypeProviderTest() {
+    void generateAllMarkedFieldsExceptSelectionSetsWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -252,7 +252,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsTest() {
+    void generateAllMarkedFieldsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.allFields()).generate();
@@ -274,7 +274,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsTypeProviderTest() {
+    void generateAllMarkedFieldsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -298,7 +298,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsWithArgumentsTest() {
+    void generateAllMarkedFieldsWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -321,7 +321,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateAllMarkedFieldsWithArgumentsTypeProviderTest() {
+    void generateAllMarkedFieldsWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -346,7 +346,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryExceptIgnoredTest() {
+    void generateCustomQueryExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, customFieldsPickingStrategy).generate();
@@ -357,7 +357,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryExceptIgnoredTypeProviderTest() {
+    void generateCustomQueryExceptIgnoredTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -370,7 +370,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryExceptIgnoredWithArgumentsTest() {
+    void generateCustomQueryExceptIgnoredWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -382,7 +382,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryExceptIgnoredWithArgumentsTypeProviderTest() {
+    void generateCustomQueryExceptIgnoredWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -397,7 +397,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryMarkedFieldsTest() {
+    void generateCustomQueryMarkedFieldsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, customFieldsPickingStrategy).generate();
@@ -408,7 +408,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryMarkedFieldsTypeProviderTest() {
+    void generateCustomQueryMarkedFieldsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -421,7 +421,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryMarkedFieldsWithArgumentsTest() {
+    void generateCustomQueryMarkedFieldsWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -433,7 +433,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateCustomQueryMarkedFieldsWithArgumentsTypeProviderTest() {
+    void generateCustomQueryMarkedFieldsWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -448,7 +448,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyIdFieldsExceptIgnoredTest() {
+    void generateOnlyIdFieldsExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.onlyId()).generate();
@@ -459,7 +459,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyIdFieldsExceptIgnoredTypeProviderTest() {
+    void generateOnlyIdFieldsExceptIgnoredTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -472,7 +472,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyIdFieldsExceptIgnoredWithArgumentsTest() {
+    void generateOnlyIdFieldsExceptIgnoredWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -484,7 +484,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyIdFieldsExceptIgnoredWithArgumentsTypeProviderTest() {
+    void generateOnlyIdFieldsExceptIgnoredWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -498,7 +498,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedIdFieldsTest() {
+    void generateOnlyMarkedIdFieldsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.onlyId()).generate();
@@ -509,7 +509,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedIdFieldsTypeProviderTest() {
+    void generateOnlyMarkedIdFieldsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -522,7 +522,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedIdFieldsWithArgumentsTest() {
+    void generateOnlyMarkedIdFieldsWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -534,7 +534,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedIdFieldsWithArgumentsTypeProviderTest() {
+    void generateOnlyMarkedIdFieldsWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -548,7 +548,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullFieldsTest() {
+    void generateOnlyMarkedNonNullFieldsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.onlyNonNull()).generate();
@@ -559,7 +559,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullFieldsTypeProviderTest() {
+    void generateOnlyMarkedNonNullFieldsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -572,7 +572,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullFieldsWithArgumentsTest() {
+    void generateOnlyMarkedNonNullFieldsWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -584,7 +584,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyMarkedNonNullFieldsWithArgumentsTypeProviderTest() {
+    void generateOnlyMarkedNonNullFieldsWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useOnlyMarkedFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -598,7 +598,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyNonNullFieldsExceptIgnoredTest() {
+    void generateOnlyNonNullFieldsExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(TestModel.class, SelectionSetGenerationStrategy.onlyNonNull()).generate();
@@ -609,7 +609,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyNonNullFieldsExceptIgnoredTypeProviderTest() {
+    void generateOnlyNonNullFieldsExceptIgnoredTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -622,7 +622,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyNonNullFieldsExceptIgnoredWithArgumentsTest() {
+    void generateOnlyNonNullFieldsExceptIgnoredWithArgumentsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -634,7 +634,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateOnlyNonNullFieldsExceptIgnoredWithArgumentsTypeProviderTest() {
+    void generateOnlyNonNullFieldsExceptIgnoredWithArgumentsTypeProviderTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         TypeProvider<GenericTestModel<NestedTestModel>> typeProvider
                 = new TypeProvider<GenericTestModel<NestedTestModel>>() {};
@@ -648,7 +648,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithArrayArgument() {
+    void generateWithArrayArgument() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<String[]> argument = GqlArgument.of("argument", new String[]{ "1", "2" });
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -658,7 +658,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithEnumArgument() {
+    void generateWithEnumArgument() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<TestEnum> argument = GqlArgument.of("argument", TestEnum.TEST_VALUE_1);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -668,7 +668,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithEnumAsArrayArgument() {
+    void generateWithEnumAsArrayArgument() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<List<TestEnum>> argument = GqlArgument
                 .of("argument", Arrays.asList(TestEnum.TEST_VALUE_1, TestEnum.TEST_VALUE_2));
@@ -680,7 +680,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithEnumAsIterableArgument() {
+    void generateWithEnumAsIterableArgument() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<TestEnum[]> argument = GqlArgument
                 .of("argument", new TestEnum[]{ TestEnum.TEST_VALUE_1, TestEnum.TEST_VALUE_2 });
@@ -692,7 +692,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithIterableArgument() {
+    void generateWithIterableArgument() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<List<Integer>> argument = GqlArgument.of("argument", Arrays.asList(1, 2));
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -702,7 +702,7 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithNullArgument() {
+    void generateWithNullArgument() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<String> argument = GqlArgument.of("argument", null);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -712,8 +712,8 @@ public class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    public void generateWithoutSelectionSetTest() {
-        Assertions.assertThrows(NullPointerException.class,
-                () -> new GqlQueryRequestBodyGenerator("customGqlQuery").generate());
+    void generateWithoutSelectionSetTest() {
+        GqlQueryRequestBodyGenerator queryRequestBodyGenerator = new GqlQueryRequestBodyGenerator("customGqlQuery");
+        Assertions.assertThrows(NullPointerException.class, queryRequestBodyGenerator::generate);
     }
 }

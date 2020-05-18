@@ -29,10 +29,10 @@ import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestMode
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GqlRequestBodyGeneratorTest {
+class GqlRequestBodyGeneratorTest {
 
     @Test
-    public void mutationTest() {
+    void mutationTest() {
         InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
         inputModel.setTestField("testFieldValue");
         String result = GqlRequestBodyGenerator.mutation("customGqlMutation").arguments(GqlInputArgument.of(inputModel))
@@ -43,7 +43,7 @@ public class GqlRequestBodyGeneratorTest {
     }
 
     @Test
-    public void queryTest() {
+    void queryTest() {
         String result = GqlRequestBodyGenerator.query("customGqlQuery").selectionSet(SimpleSelectionSetTestModel.class)
                 .generate();
         String expectedResult = "{\"query\":\"{customGqlQuery{selectionSetField}}\"}";

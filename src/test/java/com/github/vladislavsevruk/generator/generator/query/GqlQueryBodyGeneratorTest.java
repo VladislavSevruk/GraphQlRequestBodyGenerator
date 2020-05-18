@@ -33,10 +33,10 @@ import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GqlQueryBodyGeneratorTest {
+class GqlQueryBodyGeneratorTest {
 
     @Test
-    public void generateWithArgumentVarargsTest() {
+    void generateWithArgumentVarargsTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         SelectionSetGenerator selectionSetGenerator = new SelectionSetGenerator(

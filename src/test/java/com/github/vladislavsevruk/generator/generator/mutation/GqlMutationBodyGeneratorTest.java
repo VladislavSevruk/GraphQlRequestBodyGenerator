@@ -34,10 +34,10 @@ import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class GqlMutationBodyGeneratorTest {
+class GqlMutationBodyGeneratorTest {
 
     @Test
-    public void generateWithArgumentVarargsTest() {
+    void generateWithArgumentVarargsTest() {
         InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
         inputModel.setTestField("testFieldValue");
         GqlInputArgument<InheritedInputTestModel> argument = GqlInputArgument.of(inputModel);

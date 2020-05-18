@@ -27,10 +27,10 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-public class FieldMarkingStrategyManagerImplTest {
+class FieldMarkingStrategyManagerImplTest {
 
     @Test
-    public void useCustomStrategyTest() {
+    void useCustomStrategyTest() {
         FieldMarkingStrategy mockedStrategy = Mockito.mock(FieldMarkingStrategy.class);
         FieldMarkingStrategySourceManager.input().useCustomStrategy(mockedStrategy);
         Assertions.assertSame(mockedStrategy, FieldMarkingStrategySourceManager.input().getStrategy());
