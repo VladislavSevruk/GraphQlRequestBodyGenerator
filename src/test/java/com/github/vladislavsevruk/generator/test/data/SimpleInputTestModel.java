@@ -21,24 +21,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.test.data;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
-import java.lang.reflect.Field;
+@Accessors(chain = true)
+@Data
+public class SimpleInputTestModel {
 
-/**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlDelegate}
- * annotations.
- */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
-    }
+    @GqlField
+    private String testField;
 }

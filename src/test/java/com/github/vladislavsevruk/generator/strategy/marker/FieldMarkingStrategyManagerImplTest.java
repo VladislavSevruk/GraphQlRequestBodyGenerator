@@ -23,22 +23,16 @@
  */
 package com.github.vladislavsevruk.generator.strategy.marker;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import java.lang.reflect.Field;
+class FieldMarkingStrategyManagerImplTest {
 
-/**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlDelegate}
- * annotations.
- */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
+    @Test
+    void useCustomStrategyTest() {
+        FieldMarkingStrategy mockedStrategy = Mockito.mock(FieldMarkingStrategy.class);
+        FieldMarkingStrategySourceManager.input().useCustomStrategy(mockedStrategy);
+        Assertions.assertSame(mockedStrategy, FieldMarkingStrategySourceManager.input().getStrategy());
     }
 }

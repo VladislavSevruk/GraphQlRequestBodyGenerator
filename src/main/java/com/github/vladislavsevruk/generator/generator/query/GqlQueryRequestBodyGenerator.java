@@ -21,24 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.generator.query;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-
-import java.lang.reflect.Field;
+import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlDelegate}
- * annotations.
+ * Generates request body for GraphQL queries with received arguments and selection set according to different field
+ * picking strategies.
+ *
+ * @see FieldMarkingStrategySourceManager
  */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
+public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
+
+    public GqlQueryRequestBodyGenerator(String queryName) {
+        super(queryName);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
+    public String generate() {
+        String queryBody = new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
+                .generate(getSelectionSetFieldsPickingStrategy(), getArguments());
+        return wrapForRequestBody(queryBody);
     }
 }
+

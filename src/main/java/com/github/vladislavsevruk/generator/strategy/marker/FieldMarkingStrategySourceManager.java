@@ -23,22 +23,30 @@
  */
 package com.github.vladislavsevruk.generator.strategy.marker;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-
-import java.lang.reflect.Field;
-
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlDelegate}
- * annotations.
+ * Manages model fields marking strategies for input and selection set.
+ *
+ * @see FieldMarkingStrategyManager
  */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
+public final class FieldMarkingStrategySourceManager {
+
+    private static final FieldMarkingStrategyManager INPUT_MANAGER = new FieldMarkingStrategyManagerImpl();
+    private static final FieldMarkingStrategyManager SELECTION_SET_MANAGER = new FieldMarkingStrategyManagerImpl();
+
+    private FieldMarkingStrategySourceManager() {
+    }
 
     /**
-     * {@inheritDoc}
+     * Returns {@link FieldMarkingStrategyManager} for inputs.
      */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
+    public static FieldMarkingStrategyManager input() {
+        return INPUT_MANAGER;
+    }
+
+    /**
+     * Returns {@link FieldMarkingStrategyManager} for selection sets.
+     */
+    public static FieldMarkingStrategyManager selectionSet() {
+        return SELECTION_SET_MANAGER;
     }
 }

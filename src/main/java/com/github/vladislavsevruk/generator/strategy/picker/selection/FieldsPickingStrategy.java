@@ -21,24 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
-
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
+package com.github.vladislavsevruk.generator.strategy.picker.selection;
 
 import java.lang.reflect.Field;
 
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlDelegate}
- * annotations.
+ * Provides fields picking strategy for selection set generation.
  */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
+@FunctionalInterface
+public interface FieldsPickingStrategy {
 
     /**
-     * {@inheritDoc}
+     * Checks if received field should be picked according to current strategy.
+     *
+     * @param field <code>Field</code> to check.
+     * @return <code>true</code> if received field should be picked according to current strategy, <code>false</code>
+     * otherwise.
      */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
-    }
+    boolean shouldBePicked(Field field);
 }

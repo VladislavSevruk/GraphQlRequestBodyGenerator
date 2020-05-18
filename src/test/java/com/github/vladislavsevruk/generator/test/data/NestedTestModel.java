@@ -21,17 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.annotation;
+package com.github.vladislavsevruk.generator.test.data;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
-/**
- * Annotation that marks model fields that should be treated as delegate i.e. field itself won't be present at query but
- * its sub-fields will be added at field layer.
- */
-@Target({ ElementType.FIELD, ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-public @interface GqlDelegate {}
+import java.util.Collection;
+
+public class NestedTestModel {
+
+    @GqlField
+    private Collection<NestedTestModel> collectionField;
+    @GqlField
+    private Long fieldWithFieldAnnotation;
+    @GqlIgnore
+    private Long fieldWithIgnoreAnnotation;
+    private Long fieldWithoutAnnotations;
+    @GqlField(name = "idField")
+    private Long id;
+    @GqlField(name = "id")
+    private Long idField;
+    @GqlField(name = "customNamedField")
+    private Long namedField;
+    @GqlField(name = "customNamedNonNullField", nonNull = true)
+    private Long namedNonNullField;
+    @GqlField(nonNull = true)
+    private Long nonNullField;
+}

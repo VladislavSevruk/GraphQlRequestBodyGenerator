@@ -21,24 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.param;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-
-import java.lang.reflect.Field;
+import lombok.Value;
 
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlDelegate}
- * annotations.
+ * Represents input for GraphQL mutations.
+ *
+ * @param <T> type of value.
  */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
+@Value(staticConstructor = "of")
+public class GqlInputArgument<T> implements GqlParameterValue<T> {
 
-    /**
-     * {@inheritDoc}
-     */
+    private static final String NAME = "input";
+
+    T value;
+
     @Override
-    public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
+    public String getName() {
+        return NAME;
     }
 }

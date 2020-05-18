@@ -21,24 +21,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.util;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-
-import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField} or {@link GqlDelegate}
- * annotations.
+ * Contains utility methods for stream operations.
  */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
+public final class StreamUtil {
+
+    private StreamUtil() {
+    }
 
     /**
-     * {@inheritDoc}
+     * Creates new {@link Stream} for received iterables and arrays.
+     *
+     * @param value <code>Object</code> with iterable or array to create stream for.
+     * @return created <code>Stream</code>.
      */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
+    @SuppressWarnings("java:S1452")
+    public static Stream<?> createStream(Object value) {
+        if (Iterable.class.isAssignableFrom(value.getClass())) {
+            return StreamSupport.stream(((Iterable<?>) value).spliterator(), false);
+        }
+        return Arrays.stream((Object[]) value);
     }
 }

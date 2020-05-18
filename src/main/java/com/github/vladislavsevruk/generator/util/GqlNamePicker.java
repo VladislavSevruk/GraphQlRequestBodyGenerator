@@ -23,24 +23,20 @@
  */
 package com.github.vladislavsevruk.generator.util;
 
-import com.github.vladislavsevruk.generator.annotation.GqlEntity;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
-import com.github.vladislavsevruk.generator.annotation.GqlQuery;
 
 import java.lang.reflect.Field;
-import java.util.Objects;
 
 /**
- * Picks name for GraphQL queries and fields.
+ * Picks name for GraphQL items.
  */
-public class GqlNamePicker {
+public final class GqlNamePicker {
 
     private GqlNamePicker() {
     }
 
     /**
-     * Gets name for GraphQL query from {@link GqlField} or {@link GqlEntity} annotations if present or using field
-     * name.
+     * Gets name for GraphQL operation from {@link GqlField} annotation if present or using field name.
      *
      * @param field <code>Field</code> to get name for.
      * @return <code>String</code> with field name.
@@ -50,24 +46,6 @@ public class GqlNamePicker {
         if (fieldAnnotation != null && !fieldAnnotation.name().isEmpty()) {
             return fieldAnnotation.name();
         }
-        GqlEntity entityAnnotation = field.getAnnotation(GqlEntity.class);
-        if (entityAnnotation != null && !entityAnnotation.name().isEmpty()) {
-            return entityAnnotation.name();
-        }
         return field.getName();
-    }
-
-    /**
-     * Gets name for GraphQL query from {@link GqlQuery} annotation if present or using class name.
-     *
-     * @param clazz <code>Class</code> that represents GraphQL query model to get name for.
-     * @return <code>String</code> with query name.
-     */
-    public static String getQueryName(Class<?> clazz) {
-        GqlQuery annotation = clazz.getAnnotation(GqlQuery.class);
-        if (Objects.nonNull(annotation)) {
-            return annotation.name();
-        }
-        return clazz.getSimpleName();
     }
 }
