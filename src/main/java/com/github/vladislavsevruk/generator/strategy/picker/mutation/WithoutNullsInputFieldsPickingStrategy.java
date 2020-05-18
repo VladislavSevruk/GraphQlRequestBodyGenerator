@@ -33,6 +33,6 @@ public class WithoutNullsInputFieldsPickingStrategy implements InputFieldsPickin
      */
     @Override
     public boolean shouldBePicked(String fieldName, String fieldValue) {
-        return fieldValue != null && !"null".equals(fieldValue);
+        return fieldValue != null;
     }
 }

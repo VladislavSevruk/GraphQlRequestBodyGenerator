@@ -319,7 +319,7 @@ public class GqlMutationBodyGenerator {
     private String generateInputArgumentValue(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
         if (Objects.isNull(value)) {
             logger.debug("Value is null.");
-            return "null";
+            return null;
         }
         Class<?> valueClass = value.getClass();
         if (CharSequence.class.isAssignableFrom(valueClass)) {
