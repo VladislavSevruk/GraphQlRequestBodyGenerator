@@ -25,6 +25,7 @@ package com.github.vladislavsevruk.generator.test.data;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlFieldArgument;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
 import java.util.Collection;
@@ -38,6 +39,14 @@ public class GenericTestModel<T> {
     private Collection<T> collectionEntity;
     @GqlField
     private Collection<T> collectionField;
+    @GqlField(alias = "aliasForFieldWithAlias")
+    private Long fieldWithAlias;
+    @GqlField(alias = "aliasForFieldWithAliasAndArguments",
+            arguments = { @GqlFieldArgument(name = "argumentForFieldWithAliasAndArguments1", value = "1"),
+                    @GqlFieldArgument(name = "argumentForFieldWithAliasAndArguments2", value = "2") })
+    private Long fieldWithAliasAndArguments;
+    @GqlField(arguments = @GqlFieldArgument(name = "argumentForFieldWithArgument", value = "\"test value\""))
+    private Long fieldWithArgument;
     @GqlDelegate
     private T fieldWithDelegateAnnotation;
     @GqlField(withSelectionSet = true)

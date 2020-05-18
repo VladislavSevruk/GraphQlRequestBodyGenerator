@@ -48,20 +48,22 @@ class SelectionSetGeneratorTest {
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
                 + "idField id customNamedField customNamedNonNullField nonNullField} collectionField "
+                + "aliasForFieldWithAlias:fieldWithAlias aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\") fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField "
+                + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
+                + "id customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField fieldWithEntityAnnotation{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} listEntity{collectionField fieldWithFieldAnnotation "
+                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField fieldWithFieldAnnotation "
                 + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
-                + "customNamedEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullField nonNullField} customNamedNonNullEntity{"
-                + "collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
+                + "customNamedNonNullEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
+                + "id customNamedField customNamedNonNullField nonNullField} nonNullEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
                 + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
-                + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullField nonNullField}}";
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} setEntity{"
+                + "collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -71,25 +73,27 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullField nonNullField "
-                + "newEntityAtDescendant{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullField nonNullField} newFieldAtDescendant "
-                + "newFieldWithoutAnnotationAtDescendant collectionEntity{collectionField fieldWithFieldAnnotation "
+        String expectedResult = "{id collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
+                + "customNamedField customNamedNonNullField nonNullField newEntityAtDescendant{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField} newFieldAtDescendant newFieldWithoutAnnotationAtDescendant "
+                + "collectionEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullField nonNullField} aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\") fieldWithEntityAnnotation{"
+                + "collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField} listEntity{collectionField fieldWithFieldAnnotation "
                 + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
-                + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
+                + "customNamedEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField fieldWithFieldAnnotation "
                 + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
-                + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullField nonNullField}}";
+                + "queueEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -99,23 +103,32 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{collectionEntity{collectionField "
+        String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
+                + "idField id customNamedField customNamedNonNullField nonNullField} collectionField entity{"
+                + "collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField} aliasForEntityWithAlias:entityWithAlias{collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField "
-                + "fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
-                + "id customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
+                + "customNamedNonNullField nonNullField} aliasForEntityWithAliasAndArgument:entityWithAliasAndArgument("
+                + "argumentForEntityWithAliasAndArgument:\"valueForEntityWithAliasAndArgument\"){collectionField "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField "
+                + "customNamedNonNullField nonNullField} entityWithArgument(argumentForEntityWithArgument:"
+                + "\"valueForEntityWithArgument\"){collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
+                + "idField id customNamedField customNamedNonNullField nonNullField} aliasForFieldWithAlias:"
+                + "fieldWithAlias aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"valueForFieldWithArgument\") "
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
-                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
-                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
+                + "customNamedNonNullField nonNullField listEntity{collectionField fieldWithFieldAnnotation "
                 + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
-                + "setEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullField nonNullField}}";
+                + "customNamedEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField} "
+                + "queueEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
+                + "customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -185,9 +198,11 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
-                + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
-                + "queueEntity{id} setEntity{id}}";
+        String expectedResult = "{collectionEntity{id} entity{id} aliasForEntityWithAlias:entityWithAlias{id} "
+                + "aliasForEntityWithAliasAndArgument:entityWithAliasAndArgument(argumentForEntityWithAliasAndArgument:"
+                + "\"valueForEntityWithAliasAndArgument\"){id} entityWithArgument(argumentForEntityWithArgument:"
+                + "\"valueForEntityWithArgument\"){id} id listEntity{id} customNamedEntity{id} "
+                + "customNamedNonNullEntity{id} nonNullEntity{id} queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -197,19 +212,21 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{collectionEntity{collectionField "
+        String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullField nonNullField} collectionField aliasForFieldWithAlias:"
+                + "fieldWithAlias aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\") fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullField nonNullField fieldWithEntityAnnotation{collectionField "
                 + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "listEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullField nonNullField} customNamedNonNullEntity{"
                 + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField "
-                + "nonNullField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
-                + "customNamedEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
-                + "nonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField " + "nonNullField}}";
+                + "nonNullField} nonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation idField "
+                + "id customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -243,9 +260,11 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
-                + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
-                + "queueEntity{id} setEntity{id}}";
+        String expectedResult = "{collectionEntity{id} entity{id} aliasForEntityWithAlias:entityWithAlias{id} "
+                + "aliasForEntityWithAliasAndArgument:entityWithAliasAndArgument(argumentForEntityWithAliasAndArgument:"
+                + "\"valueForEntityWithAliasAndArgument\"){id} entityWithArgument(argumentForEntityWithArgument:"
+                + "\"valueForEntityWithArgument\"){id} id listEntity{id} customNamedEntity{id} "
+                + "customNamedNonNullEntity{id} nonNullEntity{id} queueEntity{id} setEntity{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -255,21 +274,23 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id collectionField fieldWithFieldAnnotation idField "
-                + "customNamedField customNamedNonNullField nonNullField newEntityAtDescendant{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
-                + "newFieldAtDescendant collectionEntity{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullField nonNullField} fieldWithEntityAnnotation{"
+        String expectedResult = "{id collectionField fieldWithFieldAnnotation idField customNamedField "
+                + "customNamedNonNullField nonNullField newEntityAtDescendant{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullField nonNullField} newFieldAtDescendant "
+                + "collectionEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\") fieldWithEntityAnnotation{"
                 + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField "
                 + "nonNullField} listEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
-                + "customNamedNonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullField nonNullField} nonNullEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
-                + "queueEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullField nonNullField} setEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id customNamedField customNamedNonNullField nonNullField}}";
+                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullField nonNullField} customNamedNonNullEntity{"
+                + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField "
+                + "nonNullField} nonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation idField "
+                + "id customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -279,19 +300,28 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{collectionEntity{collectionField "
+        String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullField nonNullField} collectionField entity{collectionField "
                 + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "aliasForEntityWithAlias:entityWithAlias{collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullField nonNullField} aliasForEntityWithAliasAndArgument:"
+                + "entityWithAliasAndArgument(argumentForEntityWithAliasAndArgument:"
+                + "\"valueForEntityWithAliasAndArgument\"){collectionField fieldWithFieldAnnotation idField id "
+                + "customNamedField customNamedNonNullField nonNullField} entityWithArgument("
+                + "argumentForEntityWithArgument:\"valueForEntityWithArgument\"){collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
+                + "aliasForFieldWithAlias:fieldWithAlias aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"valueForFieldWithArgument\") "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField "
+                + "listEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} customNamedEntity{collectionField fieldWithFieldAnnotation "
+                + "idField id customNamedField customNamedNonNullField nonNullField} customNamedNonNullEntity{"
                 + "collectionField fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField "
-                + "nonNullField fieldWithEntityAnnotation{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullField nonNullField} listEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
-                + "customNamedEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullField nonNullField} customNamedNonNullEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField} "
-                + "nonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
-                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation "
-                + "idField id customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
-                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField " + "nonNullField}}";
+                + "nonNullField} nonNullEntity{collectionField fieldWithFieldAnnotation idField id customNamedField "
+                + "customNamedNonNullField nonNullField} queueEntity{collectionField fieldWithFieldAnnotation idField "
+                + "id customNamedField customNamedNonNullField nonNullField} setEntity{collectionField "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -337,7 +367,10 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{collectionField fieldWithFieldAnnotation idField id "
+        String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\") fieldWithFieldAnnotation idField id "
                 + "customNamedField customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -348,8 +381,11 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{id collectionField fieldWithFieldAnnotation idField "
-                + "customNamedField customNamedNonNullField nonNullField newFieldAtDescendant}";
+        String expectedResult = "{id collectionField fieldWithFieldAnnotation idField customNamedField "
+                + "customNamedNonNullField nonNullField newFieldAtDescendant aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\")}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -359,8 +395,11 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new OnlyMarkedFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{collectionField fieldWithFieldAnnotation idField id "
-                + "customNamedField customNamedNonNullField nonNullField}";
+        String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"valueForFieldWithArgument\") "
+                + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -370,8 +409,11 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField " + "nonNullField}";
+        String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\") fieldWithFieldAnnotation "
+                + "fieldWithoutAnnotations idField id customNamedField customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -381,9 +423,12 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{id collectionField fieldWithFieldAnnotation "
-                + "fieldWithoutAnnotations idField customNamedField customNamedNonNullField nonNullField "
-                + "newFieldAtDescendant newFieldWithoutAnnotationAtDescendant}";
+        String expectedResult = "{id collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
+                + "customNamedField customNamedNonNullField nonNullField newFieldAtDescendant "
+                + "newFieldWithoutAnnotationAtDescendant aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"test value\")}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -393,8 +438,12 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
-        String expectedResult = "{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField id "
-                + "customNamedField customNamedNonNullField nonNullField}";
+        String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
+                + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
+                + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
+                + "fieldWithArgument(argumentForFieldWithArgument:\"valueForFieldWithArgument\") "
+                + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
+                + "customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
     }
 }
