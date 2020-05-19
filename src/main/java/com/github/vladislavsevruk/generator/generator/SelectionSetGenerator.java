@@ -85,7 +85,8 @@ public class SelectionSetGenerator {
         Set<String> fieldWithSelectionSetQueryParams = collectFieldWithSelectionSetQueryParameters(fieldTypeMeta,
                 fieldsPickingStrategy);
         if (!fieldWithSelectionSetQueryParams.isEmpty()) {
-            String fieldWithSelectionSetQueryParam = GqlNamePicker.getFieldName(field) + "{" + String
+            String fieldNameWithArgumentsAndAlias = GqlNamePicker.getFieldNameWithArgumentsAndAlias(field);
+            String fieldWithSelectionSetQueryParam = fieldNameWithArgumentsAndAlias + "{" + String
                     .join(DELIMITER, fieldWithSelectionSetQueryParams) + "}";
             queryParams.add(fieldWithSelectionSetQueryParam);
         }
@@ -103,7 +104,8 @@ public class SelectionSetGenerator {
                 addFieldWithSelectionSetQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
             } else {
                 logger.debug(() -> String.format("'%s' is field.", field.getName()));
-                queryParams.add(GqlNamePicker.getFieldName(field));
+                String fieldNameWithArgumentsAndAlias = GqlNamePicker.getFieldNameWithArgumentsAndAlias(field);
+                queryParams.add(fieldNameWithArgumentsAndAlias);
             }
         }
     }

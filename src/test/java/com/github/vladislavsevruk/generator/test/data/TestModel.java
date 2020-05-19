@@ -25,6 +25,7 @@ package com.github.vladislavsevruk.generator.test.data;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlFieldArgument;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
 import java.util.Collection;
@@ -38,10 +39,28 @@ public class TestModel {
     private Collection<NestedTestModel> collectionEntity;
     @GqlField
     private Collection<NestedTestModel> collectionField;
+    @GqlField(withSelectionSet = true)
+    private NestedTestModel entity;
+    @GqlField(withSelectionSet = true, alias = "aliasForEntityWithAlias")
+    private NestedTestModel entityWithAlias;
+    @GqlField(withSelectionSet = true, alias = "aliasForEntityWithAliasAndArgument",
+            arguments = @GqlFieldArgument(name = "argumentForEntityWithAliasAndArgument",
+                    value = "\"valueForEntityWithAliasAndArgument\""))
+    private NestedTestModel entityWithAliasAndArgument;
+    @GqlField(withSelectionSet = true, arguments = @GqlFieldArgument(name = "argumentForEntityWithArgument",
+            value = "\"valueForEntityWithArgument\""))
+    private NestedTestModel entityWithArgument;
+    @GqlField(alias = "aliasForFieldWithAlias")
+    private Long fieldWithAlias;
+    @GqlField(alias = "aliasForFieldWithAliasAndArguments",
+            arguments = { @GqlFieldArgument(name = "argumentForFieldWithAliasAndArguments1", value = "1"),
+                    @GqlFieldArgument(name = "argumentForFieldWithAliasAndArguments2", value = "2") })
+    private Long fieldWithAliasAndArguments;
+    @GqlField(arguments = @GqlFieldArgument(name = "argumentForFieldWithArgument",
+            value = "\"valueForFieldWithArgument\""))
+    private Long fieldWithArgument;
     @GqlDelegate
     private NestedTestModel fieldWithDelegateAnnotation;
-    @GqlField(withSelectionSet = true)
-    private NestedTestModel fieldWithEntityAnnotation;
     @GqlField
     private Long fieldWithFieldAnnotation;
     @GqlIgnore
