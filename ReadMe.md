@@ -265,7 +265,7 @@ public class User {
 }
 ```
 
-If provided name doesn't match any of GraphQL fields at model result of method execution as new field:
+If provided name doesn't match any of GraphQL fields at model result of method execution will be treated as new field:
 ```java
 public class User {
     @GqlField
@@ -360,10 +360,10 @@ String query = GqlRequestBodyGenerator.query("allUsers").selectionSet(User.class
 User newUser = new User();
 newUser.setFirstName("John");
 newUser.setLastName("Doe");
-
 // mutation
 GqlInputArgument input = GqlInputArgument.of(newUser);
-String mutation = GqlRequestBodyGenerator.mutation("newUser").arguments(input).selectionSet(User.class).generate();
+String mutation = GqlRequestBodyGenerator.mutation("newUser").arguments(input).selectionSet(User.class)
+        .generate();
 ```
 
 Generated operation is wrapped into json and can be passed as body to any API Client.
@@ -416,7 +416,8 @@ or filter items list, for example) so you can provide necessary arguments to ope
 [GqlArgument](src/main/java/com/github/vladislavsevruk/generator/param/GqlArgument.java) class:
 ```kotlin
 GqlArgument<Long> idArgument = GqlArgument.of("id", 1L);
-String query = GqlRequestBodyGenerator.query("user").arguments(idArgument).selectionSet(User.class).generate();
+String query = GqlRequestBodyGenerator.query("user").arguments(idArgument)
+        .selectionSet(User.class).generate();
 ```
 
 If you need to provide several arguments you can use varargs:
@@ -445,7 +446,6 @@ __input object__ for mutation:
 User newUser = new User();
 newUser.setFirstName("John");
 newUser.setLastName("Doe");
-
 // mutation
 GqlInputArgument<User> inputArgument = GqlInputArgument.of(newUser);
 // the same as GqlArgument<User> inputArgument = GqlArgument.of("input", newUser);
@@ -466,6 +466,15 @@ String query = GqlRequestBodyGenerator.mutation("newUser")
 ```kotlin
 String query = GqlRequestBodyGenerator.mutation("newUser")
         .arguments(InputGenerationStrategy.WITHOUT_NULLS, inputArgument).selectionSet(User.class).generate();
+```
+
+But you can provide your own input fields picking strategy that implements 
+[InputFieldsPickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/mutation/InputFieldsPickingStrategy.java)
+interface:
+```kotlin
+String query = GqlRequestBodyGenerator.mutation("newUser")
+        .arguments(field -> field.getName().contains("Name"), inputArgument)
+        .selectionSet(User.class).generate();
 ```
 
 ## License
