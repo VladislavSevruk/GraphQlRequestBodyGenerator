@@ -213,7 +213,7 @@ public class UserInfo {
 
 ### Input object value
 Input object value generation goes through fields that are declared at class or it superclasses and gets values from 
-related setter methods (or field itself if no related setter found).
+related getter methods (or field itself if no related getter found).
 
 #### GqlField
 [GqlField](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlField.java) annotation is also used for 
@@ -245,7 +245,7 @@ public class User {
 
 #### GqlInput
 [GqlInput](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlInput.java) annotation is used with methods 
-and helps to point to related GraphQL field if method name doesn't match field setter pattern:
+and helps to point to related GraphQL field if method name doesn't match field getter pattern:
 ```java
 public class User {
     @GqlField
