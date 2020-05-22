@@ -10,16 +10,21 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
   * [Maven](#maven)
   * [Gradle](#gradle)
 * [Usage](#usage)
+  * [Field marking strategy](#field-marking-strategy)
   * [Prepare POJO model](#prepare-pojo-model)
-    * [Field marking strategy](#field-marking-strategy)
-    * [Annotations](#annotations)
-      * [GqlField](#gqlfield)
-      * [GqlDelegate](#gqldelegate)
-      * [GqlIgnore](#gqlignore)
-      * [GqlQuery](#gqlquery)
-  * [Generate query body](#generate-query-body)
-    * [Provide query name](#provide-query-name)
+    * [Selection set](#selection-set)
+      * [GqlField](#gqlfield-1)
+      * [GqlDelegate](#gqldelegate-1)
+      * [GqlIgnore](#gqlignore-1)
+    * [Input object value](#input-object-value)
+      * [GqlField](#gqlfield-2)
+      * [GqlInput](#gqlinput)
+      * [GqlDelegate](#gqldelegate-2)
+      * [GqlIgnore](#gqlignore-2)
+  * [Generate request body](#generate-request-body)
+    * [Operation selection set](#operation-selection-set)
     * [Arguments](#arguments)
+      * [Input argument](#input-argument)
 * [License](#license)
 
 ## Getting started
@@ -41,57 +46,128 @@ implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.0'
 ```
 
 ## Usage
-### Prepare POJO model
-First of all we need to prepare POJO models that will be used for query body generation according to current field 
-marking strategy.
+First of all we need to choose field marking strategy that will be used for GraphQL operation generation.
 
 ### Field marking strategy
 There are two predefined field marking strategy that define the way how builder determine if field should be used for 
-query generation:
-  * Use all fields except ones with [GqlIgnore](#gqlignore) annotation \[default]
-  * Use only fields with one of [GqlField](#gqlfield) or [GqlDelegate](#gqldelegate) annotations
+GraphQL operation generation:
+  * Use all fields except ones with [GqlIgnore](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlIgnore.java)
+    annotation \[default]
+  * Use only fields with one of [GqlField](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlField.java) 
+    or [GqlDelegate](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlDelegate.java) annotations
 
-Current strategy can be set using [FieldMarkingStrategyManager](src/main/java/com/github/vladislavsevruk/generator/strategy/marker/FieldMarkingStrategyManager.java):
+Current strategy for both [operation selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets) and mutation
+[input object values](http://spec.graphql.org/June2018/#sec-Input-Object-Values) can be set using 
+[FieldMarkingStrategySourceManager](src/main/java/com/github/vladislavsevruk/generator/strategy/marker/FieldMarkingStrategySourceManager.java):
 ```kotlin
-FieldMarkingStrategyManager.useAllExceptIgnoredFieldsStrategy();
+FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
 // or
-FieldMarkingStrategyManager.useOnlyMarkedFieldsStrategy();
+FieldMarkingStrategySourceManager.input().useOnlyMarkedFieldsStrategy();
 ```
 
-### Annotations
+However, you can set your own custom [FieldMarkingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/marker/FieldMarkingStrategy.java):
+```kotlin
+FieldMarkingStrategySourceManager.selectionSet().useCustomStrategy(field -> true);
+```
+
+### Prepare POJO model
+Then we need to prepare POJO models that will be used for GraphQL operation generation according to chosen field marking
+strategy.
+
+### Selection set
+Selection set generation is based only on fields that are declared at class or it superclasses and doesn't involve 
+declared methods.
+
 #### GqlField
 [GqlField](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlField.java) annotation marks model fields 
-that should be treated as [GraphQL field](http://spec.graphql.org/June2018/#sec-Language.Fields). By default field name 
-will be used for query generation but you can override it using __name__ method. If you mark field using 
-__withSelectionSet__ method it will be treated as field that have [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets) 
-with nested fields. Annotation also has method __nonNullable__ that allow to mark field that was denoted as 
-[non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null) at GraphQL schema:
+that should be treated as [GraphQL field](http://spec.graphql.org/June2018/#sec-Language.Fields):
 ```java
 public class User {
-    @GqlField(nonNullable = true)
-    private Long id;
     @GqlField
-    private String sex;
+    private Long id;
+}
+```
+
+By default field name will be used for generation but you can override it using __name__ method:
+```java
+public class User {
     @GqlField(name = "wishListItemsUrls")
     private List<String> wishListItems;
-    @GqlField(name = "userContacts", withSelectionSet = true)
+}
+```
+
+Some fields may contain a [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets) so if you mark field 
+using __withSelectionSet__ method it will be treated as field that have nested fields:
+```java
+public class User {
+    @GqlField(withSelectionSet = true)
     private Contacts contacts;
-    @GqlField(nonNullable = true, withSelectionSet = true)
+    @GqlField(withSelectionSet = true)
     private List<Order> orders;
 }
 
 public class Contacts {
-    @GqlField(nonNullable = true)
+    @GqlField
     private String email;
-    @GqlField(name = "mobilePhoneNumber")
+    @GqlField
     private String phoneNumber;
 }
 
 public class Order {
-    @GqlField(nonNullable = true)
+    @GqlField
     private Long id;
-    @GqlField(nonNullable = true, name = "delivered")
+    @GqlField
     private Boolean isDelivered;
+}
+```
+
+Annotation also has method __nonNull__ that allow to mark field that was denoted as 
+[non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null) at GraphQL schema:
+```java
+public class User {
+    @GqlField(nonNull = true)
+    private Long id;
+}
+```
+
+If field requires [arguments](http://spec.graphql.org/June2018/#sec-Language.Arguments) for GraphQL operation they can 
+be provided via __arguments__ function:
+```java
+public class User {
+    @GqlField(arguments = { @GqlFieldArgument(name = "width", value = "100"),
+                            @GqlFieldArgument(name = "height", value = "50") })
+    private String profilePic;
+}
+```
+
+Values of [GqlFieldArgument](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlFieldArgument.java) 
+annotation will be added to selection set "as is" so you may need to escape quotes for literal values:
+```java
+public class User {
+    @GqlField(withSelectionSet = true,
+              arguments = @GqlFieldArgument(name = "sortBy", value = "\"orderDate DESC\""))
+    private List<Order> orders;
+}
+
+public class Order {
+    @GqlField
+    private Long id;
+    @GqlField
+    private Date orderDate;
+}
+```
+
+Also [alias](http://spec.graphql.org/June2018/#sec-Field-Alias) can be specified for field using self-titled method:
+```java
+public class User {
+    @GqlField(name = "profilePic",
+              alias = "smallPic",
+              arguments = { @GqlFieldArgument(name = "size", value = "64")})
+    private String smallPic;
+    @GqlField(name = "profilePic",
+              alias = "bigPic",
+              arguments = { @GqlFieldArgument(name = "size", value = "1024")})
+    private String bigPic;
 }
 ```
 
@@ -105,21 +181,26 @@ public class User {
 } 
 
 public class UserInfo {
+    @GqlField
     private String firstName;
+    @GqlField
     private String lastName;
 }
 ```
-is equivalent to:
+
+Code above is equivalent to:
 ```java
 public class User {
+    @GqlField
     private String firstName;
+    @GqlField
     private String lastName;
 }
 ```
 
 #### GqlIgnore
 [GqlIgnore](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlIgnore.java) is used with "all fields 
-except ignored" [field marking strategy](#field-marking-strategy) for marking field that shouldn't be used for query 
+except ignored" [field marking strategy](#field-marking-strategy) for marking field that shouldn't be used for 
 generation:
 ```java
 public class UserInfo {
@@ -130,78 +211,261 @@ public class UserInfo {
 }
 ```
 
-#### GqlQuery
-[GqlQuery](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlQuery.java) is designed to set default query
-name that will be used for query generation:
+### Input object value
+Input object value generation goes through fields that are declared at class or it superclasses and gets values from 
+related setter methods (or field itself if no related setter found).
+
+#### GqlField
+[GqlField](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlField.java) annotation is also used for 
+[input object value](http://spec.graphql.org/June2018/#sec-Input-Object-Values) generation and marks 
+[input values](http://spec.graphql.org/June2018/#sec-Input-Values) of any type:
 ```java
-@GqlQuery(name = "users")
 public class User {
-    ...
+    @GqlField
+    private Long id;
+    @GqlField
+    private Contacts contacts;
+}
+
+public class Contacts {
+    @GqlField
+    private String email;
+    @GqlField
+    private String phoneNumber;
 }
 ```
-If query name was not set class name will be used instead.
 
-### Generate query body
-Once POJO models are ready we can generate GraphQL query using [GqlQueryGenerator](src/main/java/com/github/vladislavsevruk/generator/GqlQueryGenerator.java).
-This class has several predefined methods with different fields picking strategies for query body generation, like:
+By default field name will be used for generation but you can override it using __name__ method:
+```java
+public class User {
+    @GqlField(name = "wishListItemsUrls")
+    private List<String> wishListItems;
+}
+```
+
+#### GqlInput
+[GqlInput](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlInput.java) annotation is used with methods 
+and helps to point to related GraphQL field if method name doesn't match field setter pattern:
+```java
+public class User {
+    @GqlField
+    private String name;
+    @GqlField
+    private String surname;
+
+    @GqlInput(name = "name")
+    public String getFirstName() {
+        return name;
+    }
+
+    @GqlInput(name = "surname")
+    public String getLastName() {
+        return surname;
+    }
+}
+```
+
+If provided name doesn't match any of GraphQL fields at model result of method execution as new field:
+```java
+public class User {
+    @GqlField
+    private String firstName;
+    @GqlField
+    private String lastName;
+
+    @GqlInput(name = "fullName")
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+}
+```
+
+#### GqlDelegate
+[GqlDelegate](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlDelegate.java) is used for complex values
+to treat its inner fields like they are declared at same class where field itself declared: 
+```java
+public class User {
+    @GqlDelegate
+    private UserInfo userInfo;
+} 
+
+public class UserInfo {
+    @GqlField
+    private String firstName;
+    @GqlField
+    private String lastName;
+}
+```
+
+Models above are equivalent to:
+```java
+public class User {
+    @GqlField
+    private String firstName;
+    @GqlField
+    private String lastName;
+}
+```
+
+Like [GqlInput](#gqlinput) __GqlDelegate__ can be applied to methods without related GraphQL field. In this case return 
+value of method will be treated as delegated field:
+```java
+public class User {
+    @GqlDelegate
+    public UserInfo getUserInfo() {
+        // UserInfo generation
+    }
+} 
+
+public class UserInfo {
+    @GqlField
+    private String firstName;
+    @GqlField
+    private String lastName;
+}
+```
+
+Code above is equivalent to:
+```java
+public class User {
+    @GqlField
+    private String firstName;
+    @GqlField
+    private String lastName;
+}
+```
+
+
+#### GqlIgnore
+[GqlIgnore](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlIgnore.java) is used with "all fields 
+except ignored" [field marking strategy](#field-marking-strategy) for marking field that shouldn't be used for 
+generation:
+```java
+public class UserInfo {
+    private String firstName;
+    @GqlIgnore
+    private String fullName;
+    private String lastName;
+}
+```
+
+### Generate request body
+Once POJO models are ready we can generate GraphQL operation using 
+[GqlRequestBodyGenerator](src/main/java/com/github/vladislavsevruk/generator/GqlRequestBodyGenerator.java):
+```kotlin
+// query
+String query = GqlRequestBodyGenerator.query("allUsers").selectionSet(User.class).generate();
+
+// prepare input model
+User newUser = new User();
+newUser.setFirstName("John");
+newUser.setLastName("Doe");
+
+// mutation
+GqlInputArgument input = GqlInputArgument.of(newUser);
+String mutation = GqlRequestBodyGenerator.mutation("newUser").arguments(input).selectionSet(User.class).generate();
+```
+
+Generated operation is wrapped into json and can be passed as body to any API Client.
+
+#### Operation selection set
+By default, all marked fields will be used for selection set generation. However, you can generate selection set using 
+one of [predefined fields picking strategies](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/selection/SelectionSetGenerationStrategy.java):
 - pick all marked fields
 ```kotlin
-String queryBody = GqlQueryGenerator.allFields(User.class);
+String query = GqlRequestBodyGenerator.query("allUsers")
+        .selectionSet(User.class, SelectionSetGenerationStrategy.ALL_FIELDS).generate();
 ```
+
 - pick only fields with __id__ name or fields that have nested field with __id__ name
 ```kotlin
-String queryBody = GqlQueryGenerator.onlyId(User.class);
+String query = GqlRequestBodyGenerator.query("allUsers")
+        .selectionSet(User.class, SelectionSetGenerationStrategy.ONLY_ID).generate();
 ```
+
 - pick only fields that are marked as [non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null)
 ```kotlin
-String queryBody = GqlQueryGenerator.onlyNonNullable(User.class);
+String query = GqlRequestBodyGenerator.query("allUsers")
+        .selectionSet(User.class, SelectionSetGenerationStrategy.ONLY_NON_NULL).generate();
 ```
+
 - pick all except fields with [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets) 
 ```kotlin
-String queryBody = GqlQueryGenerator.withoutFieldsWithSelectionSet(User.class);
+String query = GqlRequestBodyGenerator.query("allUsers")
+        .selectionSet(User.class, SelectionSetGenerationStrategy.WITHOUT_SELECTION_SETS).generate();
 ```
 
-Also you can provide your own custom fields picking strategy that implements [FieldsPickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/FieldsPickingStrategy.java)
+Also you can provide your own custom fields picking strategy that implements 
+[FieldsPickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/selection/FieldsPickingStrategy.java)
 functional interface:
 ```kotlin
-String queryBody = GqlQueryGenerator.customQuery(User.class,
-        field -> field.getName().contains("Name"));
+String query = GqlRequestBodyGenerator.query("allUsers")
+        .selectionSet(User.class, field -> field.getName().contains("Name")).generate();
 ```
 
-If you want to use generic models it's recommended to provide them via [TypeProvider](https://github.com/VladislavSevruk/TypeResolver/blob/develop/src/main/java/com/github/vladislavsevruk/resolver/type/TypeProvider.java):
+If you want to use generic models it's recommended to provide them via 
+[TypeProvider](https://github.com/VladislavSevruk/TypeResolver/blob/develop/src/main/java/com/github/vladislavsevruk/resolver/type/TypeProvider.java):
 ```kotlin
-String queryBody = GqlQueryGenerator.allFields(new TypeProvider<User<UserInfo>>() {});
-```
-
-#### Provide query name
-Some queries may have similar structure so it may be convenient to use same POJO models for them. But as they have 
-different names setting it through [GqlQuery](#gqlquery) annotation may not make a trick so you can provide query name 
-to method directly:
-```kotlin
-String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class);
+String query = GqlRequestBodyGenerator.query("allUsers")
+        .selectionSet(new TypeProvider<User<UserInfo>>() {}).generate();
 ```
 
 #### Arguments
-Some queries may require [arguments](http://spec.graphql.org/June2018/#sec-Language.Arguments) (to pick specific item 
-or filter items list, for example) so you can provide necessary arguments to query using 
+Some operations may require [arguments](http://spec.graphql.org/June2018/#sec-Language.Arguments) (to pick specific item 
+or filter items list, for example) so you can provide necessary arguments to operation using 
 [GqlArgument](src/main/java/com/github/vladislavsevruk/generator/param/GqlArgument.java) class:
 ```kotlin
-GqlArgument<Long> idArgument = new GqlArgument<>("id", 1L);
-String queryBody = GqlQueryGenerator.allFields("user", User.class, idArgument);
+GqlArgument<Long> idArgument = GqlArgument.of("id", 1L);
+String query = GqlRequestBodyGenerator.query("user").arguments(idArgument).selectionSet(User.class).generate();
 ```
+
 If you need to provide several arguments you can use varargs:
 ```kotlin
-GqlArgument<List<String>> firstNameArgument = new GqlArgument<>("lastName", Arrays.asList("John", "Jane"));
-GqlArgument<String> lastNameArgument = new GqlArgument<>("lastName", "Doe");
-String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class,
-        firstNameArgument, lastNameArgument);
+GqlArgument<List<String>> firstNameArgument = GqlArgument.of("lastName", Arrays.asList("John", "Jane"));
+GqlArgument<String> lastNameArgument = GqlArgument.of("lastName", "Doe");
+String query = GqlRequestBodyGenerator.query("activeUsers").arguments(firstNameArgument, lastNameArgument)
+        .selectionSet(User.class).generate();
 ```
+
 or iterables:
 ```kotlin
-GqlArgument<List<String>> firstNameArgument = new GqlArgument<>("lastName", Arrays.asList("John", "Jane"));
-GqlArgument<String> lastNameArgument = new GqlArgument<>("lastName", "Doe");
+GqlArgument<List<String>> firstNameArgument = GqlArgument.of("lastName", Arrays.asList("John", "Jane"));
+GqlArgument<String> lastNameArgument = GqlArgument.of("lastName", "Doe");
 List<GqlArgument<?>> arguments = Arrays.asList(firstNameArgument, lastNameArgument);
-String queryBody = GqlQueryGenerator.allFields("activeUsers", User.class, arguments);
+String query = GqlRequestBodyGenerator.query("activeUsers").arguments(arguments)
+        .selectionSet(User.class).generate();
+```
+
+#### Input argument
+Mutations usually use __input__ argument to pass complex [input objects](http://spec.graphql.org/June2018/#sec-Input-Objects).
+You can use [GqlInputArgument](src/main/java/com/github/vladislavsevruk/generator/param/GqlInputArgument.java) to pass 
+__input object__ for mutation:
+```kotlin
+// prepare input model
+User newUser = new User();
+newUser.setFirstName("John");
+newUser.setLastName("Doe");
+
+// mutation
+GqlInputArgument<User> inputArgument = GqlInputArgument.of(newUser);
+// the same as GqlArgument<User> inputArgument = GqlArgument.of("input", newUser);
+String mutation = GqlRequestBodyGenerator.mutation("newUser").arguments(inputArgument)
+        .selectionSet(User.class).generate();
+```
+
+By default, __input object__ will be generated using non-null field values but like [selection set](#operation-selection-set)
+__input object__ can be generated using 
+[predefined fields picking strategies](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/mutation/InputGenerationStrategy.java):
+- pick all marked fields
+```kotlin
+String query = GqlRequestBodyGenerator.mutation("newUser")
+        .arguments(InputGenerationStrategy.ALL_FIELDS, inputArgument).selectionSet(User.class).generate();
+```
+
+- pick only fields with non-null value
+```kotlin
+String query = GqlRequestBodyGenerator.mutation("newUser")
+        .arguments(InputGenerationStrategy.WITHOUT_NULLS, inputArgument).selectionSet(User.class).generate();
 ```
 
 ## License
