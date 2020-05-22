@@ -473,8 +473,8 @@ But you can provide your own input fields picking strategy that implements
 interface:
 ```kotlin
 String query = GqlRequestBodyGenerator.mutation("newUser")
-        .arguments(field -> field.getName().contains("Name"), inputArgument)
-        .selectionSet(User.class).generate();
+        .arguments(field -> field.getName().contains("Name"), inputArgument).selectionSet(User.class)
+        .generate();
 ```
 
 ## License
