@@ -39,6 +39,6 @@ public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
      */
     @Override
     public boolean isMarkedField(Field field) {
-        return (field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null);
+        return field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null;
     }
 }
