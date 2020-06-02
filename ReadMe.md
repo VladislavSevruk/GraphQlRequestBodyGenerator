@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/VladislavSevruk/GraphQlRequestBodyGenerator.svg?branch=develop)](https://travis-ci.com/VladislavSevruk/GraphQlRequestBodyGenerator)
+[![Build Status](https://travis-ci.org/VladislavSevruk/GraphQlRequestBodyGenerator.svg?branch=master)](https://travis-ci.com/VladislavSevruk/GraphQlRequestBodyGenerator)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=VladislavSevruk_GraphQlRequestBodyGenerator&metric=alert_status)](https://sonarcloud.io/dashboard?id=VladislavSevruk_GraphQlRequestBodyGenerator)
 [![Code Coverage](https://sonarcloud.io/api/project_badges/measure?project=VladislavSevruk_GraphQlRequestBodyGenerator&metric=coverage)](https://sonarcloud.io/component_measures?id=VladislavSevruk_GraphQlRequestBodyGenerator&metric=coverage)
 
