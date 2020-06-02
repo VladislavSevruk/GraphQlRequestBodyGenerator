@@ -75,7 +75,7 @@ test {
 publishing {
     publications {
         maven(MavenPublication) {
-            artifactId = 'graphql-request-body-generator'
+            artifactId = "${rootProject.name}"
             from components.java
             pom {
                 name = 'GraphQL Request Body Generator'
@@ -93,6 +93,11 @@ publishing {
                         name = 'Uladzislau Seuruk'
                         email = 'vladislavsevruk@gmail.com'
                     }
+                }
+                scm {
+                    connection = 'scm:git:git://VladislavSevruk/GraphQlRequestBodyGenerator.git'
+                    developerConnection = 'scm:git:ssh://VladislavSevruk/GraphQlRequestBodyGenerator.git'
+                    url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator/tree/master'
                 }
             }
         }
