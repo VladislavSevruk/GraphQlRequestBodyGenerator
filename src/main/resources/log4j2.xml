@@ -2,9 +2,7 @@
 <Configuration>
 
     <Properties>
-        <Property name="basePatternLayout">
-            %d{HH:mm:ss.SSS} [%-5p] (%F: %L - %M) - %m%n
-        </Property>
+        <Property name="basePatternLayout">%d{HH:mm:ss.SSS} [%-5p] (%F: %L - %M) - %m%n</Property>
         <Property name="fileName">${logFolder}/graphql-request-body-builder.log</Property>
         <Property name="filePattern">${logFolder}/graphql-request-body-builder-%d{MM-dd-yyyy}.log</Property>
         <Property name="logFolder">log</Property>
