@@ -25,6 +25,7 @@ package com.github.vladislavsevruk.generator.generator.mutation;
 
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlInputArgument;
+import com.github.vladislavsevruk.generator.strategy.looping.DefaultLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.WithoutNullsInputFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.AllFieldsPickingStrategy;
@@ -42,7 +43,8 @@ class GqlMutationBodyGeneratorTest {
         inputModel.setTestField("testFieldValue");
         GqlInputArgument<InheritedInputTestModel> argument = GqlInputArgument.of(inputModel);
         SelectionSetGenerator selectionSetGenerator = new SelectionSetGenerator(
-                new TypeMeta<>(SimpleSelectionSetTestModel.class), new AllExceptIgnoredFieldMarkingStrategy());
+                new TypeMeta<>(SimpleSelectionSetTestModel.class), new AllExceptIgnoredFieldMarkingStrategy(),
+                new DefaultLoopBreakingStrategy());
         String result = new GqlMutationBodyGenerator("customGqlMutation", selectionSetGenerator,
                 new AllExceptIgnoredFieldMarkingStrategy())
                 .generate(new WithoutNullsInputFieldsPickingStrategy(), new AllFieldsPickingStrategy(), argument);

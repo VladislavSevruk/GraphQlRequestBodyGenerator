@@ -24,6 +24,8 @@
 package com.github.vladislavsevruk.generator.generator.query;
 
 import com.github.vladislavsevruk.generator.param.GqlArgument;
+import com.github.vladislavsevruk.generator.strategy.looping.EndlessLoopBreakingStrategy;
+import com.github.vladislavsevruk.generator.strategy.looping.LoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.SelectionSetGenerationStrategy;
@@ -32,6 +34,8 @@ import com.github.vladislavsevruk.generator.test.data.NestedTestModel;
 import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestModel;
 import com.github.vladislavsevruk.generator.test.data.TestEnum;
 import com.github.vladislavsevruk.generator.test.data.TestModel;
+import com.github.vladislavsevruk.generator.test.data.loop.LongLoopedItem1;
+import com.github.vladislavsevruk.generator.test.data.loop.ShortLoopedItem1;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -515,6 +519,43 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
+    void generateLongLoopedItemsAtSelectionSetDefaultLoopBreakingStrategyTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery").selectionSet(LongLoopedItem1.class)
+                .generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 longLoopedItem2{field2 "
+                + "longLoopedItem3{field3}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateLongLoopedItemsAtSelectionSetDefaultLoopBreakingStrategyTypeProviderTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(new TypeProvider<LongLoopedItem1>() {}).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 longLoopedItem2{field2 "
+                + "longLoopedItem3{field3}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateLongLoopedItemsAtSelectionSetExcludeFirstEntityLoopBreakingStrategyTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(LongLoopedItem1.class, EndlessLoopBreakingStrategy.excludeFirstEntry()).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 longLoopedItem2{field2 "
+                + "longLoopedItem3{field3}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateLongLoopedItemsAtSelectionSetExcludeFirstEntityLoopBreakingStrategyTypeProviderTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(new TypeProvider<LongLoopedItem1>() {}, EndlessLoopBreakingStrategy.excludeFirstEntry())
+                .generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 longLoopedItem2{field2 "
+                + "longLoopedItem3{field3}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     void generateOnlyIdFieldsExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
@@ -727,7 +768,44 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    void generateWithArrayArgument() {
+    void generateShortLoopedItemsAtSelectionSetDefaultLoopBreakingStrategyTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery").selectionSet(ShortLoopedItem1.class)
+                .generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
+                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateShortLoopedItemsAtSelectionSetDefaultLoopBreakingStrategyTypeProviderTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(new TypeProvider<ShortLoopedItem1>() {}).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
+                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateShortLoopedItemsAtSelectionSetExcludeFirstEntityLoopBreakingStrategyTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(ShortLoopedItem1.class, EndlessLoopBreakingStrategy.excludeFirstEntry()).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
+                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateShortLoopedItemsAtSelectionSetExcludeFirstEntityLoopBreakingStrategyTypeProviderTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(new TypeProvider<ShortLoopedItem1>() {}, EndlessLoopBreakingStrategy.excludeFirstEntry())
+                .generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
+                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateWithArrayArgumentTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<String[]> argument = GqlArgument.of("argument", new String[]{ "1", "2" });
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -737,7 +815,7 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    void generateWithEnumArgument() {
+    void generateWithEnumArgumentTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<TestEnum> argument = GqlArgument.of("argument", TestEnum.TEST_VALUE_1);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -747,7 +825,7 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    void generateWithEnumAsArrayArgument() {
+    void generateWithEnumAsArrayArgumentTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<List<TestEnum>> argument = GqlArgument
                 .of("argument", Arrays.asList(TestEnum.TEST_VALUE_1, TestEnum.TEST_VALUE_2));
@@ -759,7 +837,7 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    void generateWithEnumAsIterableArgument() {
+    void generateWithEnumAsIterableArgumentTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<TestEnum[]> argument = GqlArgument
                 .of("argument", new TestEnum[]{ TestEnum.TEST_VALUE_1, TestEnum.TEST_VALUE_2 });
@@ -771,7 +849,7 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    void generateWithIterableArgument() {
+    void generateWithIterableArgumentTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<List<Integer>> argument = GqlArgument.of("argument", Arrays.asList(1, 2));
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -781,7 +859,7 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
-    void generateWithNullArgument() {
+    void generateWithNullArgumentTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<String> argument = GqlArgument.of("argument", null);
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").arguments(argument)
@@ -791,8 +869,25 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
+    void generateWithNullStrategiesTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(SimpleSelectionSetTestModel.class, null, (LoopBreakingStrategy) null).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     void generateWithoutSelectionSetTest() {
         GqlQueryRequestBodyGenerator queryRequestBodyGenerator = new GqlQueryRequestBodyGenerator("customGqlQuery");
         Assertions.assertThrows(NullPointerException.class, queryRequestBodyGenerator::generate);
+    }
+
+    @Test
+    void generateWithoutSelectionSetTypeMetaTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .selectionSet(new TypeProvider<SimpleSelectionSetTestModel>() {}, null, (LoopBreakingStrategy) null)
+                .generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
     }
 }

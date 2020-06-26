@@ -24,6 +24,8 @@
 package com.github.vladislavsevruk.generator.generator;
 
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
+import com.github.vladislavsevruk.generator.strategy.looping.EndlessLoopBreakingStrategy;
+import com.github.vladislavsevruk.generator.strategy.looping.LoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.SelectionSetGenerationStrategy;
@@ -36,6 +38,7 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Abstract request body generator with common logic for GraphQL operation.
@@ -46,6 +49,8 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
 
     @Getter(AccessLevel.PROTECTED)
     private Iterable<? extends GqlParameterValue<?>> arguments = Collections.emptyList();
+    private LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.defaultStrategy()
+            .getLoopBreakingStrategy();
     @Getter(AccessLevel.PROTECTED)
     private String operationName;
     @Getter(AccessLevel.PROTECTED)
@@ -90,7 +95,8 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
      * @return this.
      */
     public T selectionSet(Class<?> model) {
-        return selectionSet(model, SelectionSetGenerationStrategy.defaultStrategy());
+        return selectionSet(model, SelectionSetGenerationStrategy.defaultStrategy(),
+                EndlessLoopBreakingStrategy.defaultStrategy());
     }
 
     /**
@@ -101,7 +107,8 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
      * @return this.
      */
     public T selectionSet(TypeProvider<?> typeProvider) {
-        return selectionSet(typeProvider, SelectionSetGenerationStrategy.defaultStrategy());
+        return selectionSet(typeProvider, SelectionSetGenerationStrategy.defaultStrategy(),
+                EndlessLoopBreakingStrategy.defaultStrategy());
     }
 
     /**
@@ -122,13 +129,39 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
      *
      * @param model                             <code>Class</code> of model that will be used for selection set
      *                                          generation.
-     * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> fields picking strategy for
-     *                                          selection set generation.
+     * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> for selection set generation.
      * @return this.
      */
     public T selectionSet(Class<?> model, FieldsPickingStrategy selectionSetFieldsPickingStrategy) {
-        this.selectionSetFieldsPickingStrategy = selectionSetFieldsPickingStrategy;
-        return selectionSet(new TypeMeta<>(model));
+        return selectionSet(model, selectionSetFieldsPickingStrategy,
+                EndlessLoopBreakingStrategy.defaultStrategy().getLoopBreakingStrategy());
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received selection set fields picking strategy.
+     *
+     * @param model                       <code>Class</code> of model that will be used for selection set
+     *                                    generation.
+     * @param endlessLoopBreakingStrategy <code>EndlessLoopBreakingStrategy</code> with predefined loop breaking
+     *                                    strategy for picking element on which loop should be broken.
+     * @return this.
+     */
+    public T selectionSet(Class<?> model, EndlessLoopBreakingStrategy endlessLoopBreakingStrategy) {
+        return selectionSet(model, endlessLoopBreakingStrategy.getLoopBreakingStrategy());
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received selection set fields picking strategy.
+     *
+     * @param model                <code>Class</code> of model that will be used for selection set
+     *                             generation.
+     * @param loopBreakingStrategy <code>LoopBreakingStrategy</code> for picking element on which loop should be
+     *                             broken.
+     * @return this.
+     */
+    public T selectionSet(Class<?> model, LoopBreakingStrategy loopBreakingStrategy) {
+        return selectionSet(model, SelectionSetGenerationStrategy.defaultStrategy().getFieldsPickingStrategy(),
+                loopBreakingStrategy);
     }
 
     /**
@@ -141,7 +174,6 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
      * @return this.
      */
     public T selectionSet(TypeProvider<?> typeProvider, SelectionSetGenerationStrategy selectionSetGenerationStrategy) {
-        this.selectionSetFieldsPickingStrategy = selectionSetGenerationStrategy.getFieldsPickingStrategy();
         return selectionSet(typeProvider, selectionSetGenerationStrategy.getFieldsPickingStrategy());
     }
 
@@ -155,22 +187,127 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
      * @return this.
      */
     public T selectionSet(TypeProvider<?> typeProvider, FieldsPickingStrategy selectionSetFieldsPickingStrategy) {
-        this.selectionSetFieldsPickingStrategy = selectionSetFieldsPickingStrategy;
-        return selectionSet(typeProvider.getTypeMeta());
+        return selectionSet(typeProvider, selectionSetFieldsPickingStrategy,
+                EndlessLoopBreakingStrategy.defaultStrategy().getLoopBreakingStrategy());
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received predefined selection set fields picking strategy.
+     *
+     * @param typeProvider                <code>TypeProvider</code> with model reference that will be used for
+     *                                    selection set generation.
+     * @param endlessLoopBreakingStrategy <code>EndlessLoopBreakingStrategy</code> with predefined loop breaking
+     *                                    strategy for picking element on which loop should be broken.
+     * @return this.
+     */
+    public T selectionSet(TypeProvider<?> typeProvider, EndlessLoopBreakingStrategy endlessLoopBreakingStrategy) {
+        return selectionSet(typeProvider, endlessLoopBreakingStrategy.getLoopBreakingStrategy());
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received selection set fields picking strategy.
+     *
+     * @param typeProvider         <code>TypeProvider</code> with model reference that will be used for
+     *                             selection set generation.
+     * @param loopBreakingStrategy <code>LoopBreakingStrategy</code> for picking element on which loop should be
+     *                             broken.
+     * @return this.
+     */
+    public T selectionSet(TypeProvider<?> typeProvider, LoopBreakingStrategy loopBreakingStrategy) {
+        return selectionSet(typeProvider, SelectionSetGenerationStrategy.defaultStrategy().getFieldsPickingStrategy(),
+                loopBreakingStrategy);
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received predefined selection set fields picking strategy.
+     *
+     * @param model                          <code>Class</code> of model that will be used for selection set
+     *                                       generation.
+     * @param selectionSetGenerationStrategy <code>SelectionSetGenerationStrategy</code> with predefined fields picking
+     *                                       strategy for selection set generation.
+     * @param endlessLoopBreakingStrategy    <code>EndlessLoopBreakingStrategy</code> with predefined loop breaking
+     *                                       strategy for picking element on which loop should be broken.
+     * @return this.
+     */
+    public T selectionSet(Class<?> model, SelectionSetGenerationStrategy selectionSetGenerationStrategy,
+            EndlessLoopBreakingStrategy endlessLoopBreakingStrategy) {
+        return selectionSet(model, selectionSetGenerationStrategy.getFieldsPickingStrategy(),
+                endlessLoopBreakingStrategy.getLoopBreakingStrategy());
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received selection set fields picking strategy.
+     *
+     * @param model                             <code>Class</code> of model that will be used for selection set
+     *                                          generation.
+     * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> fields picking strategy for
+     *                                          selection set generation.
+     * @param loopBreakingStrategy              <code>LoopBreakingStrategy</code> for picking element on which loop
+     *                                          should be broken.
+     * @return this.
+     */
+    public T selectionSet(Class<?> model, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
+            LoopBreakingStrategy loopBreakingStrategy) {
+        return selectionSet(new TypeMeta<>(model), selectionSetFieldsPickingStrategy, loopBreakingStrategy);
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received predefined selection set fields picking strategy.
+     *
+     * @param typeProvider                   <code>TypeProvider</code> with model reference that will be used for
+     *                                       selection set generation.
+     * @param selectionSetGenerationStrategy <code>SelectionSetGenerationStrategy</code> with predefined fields picking
+     *                                       strategy for selection set generation.
+     * @param endlessLoopBreakingStrategy    <code>EndlessLoopBreakingStrategy</code> with predefined loop breaking
+     *                                       strategy for picking element on which loop should be broken.
+     * @return this.
+     */
+    public T selectionSet(TypeProvider<?> typeProvider, SelectionSetGenerationStrategy selectionSetGenerationStrategy,
+            EndlessLoopBreakingStrategy endlessLoopBreakingStrategy) {
+        return selectionSet(typeProvider, selectionSetGenerationStrategy.getFieldsPickingStrategy(),
+                endlessLoopBreakingStrategy.getLoopBreakingStrategy());
+    }
+
+    /**
+     * Sets selection set model for GraphQL operation with received selection set fields picking strategy.
+     *
+     * @param typeProvider                      <code>TypeProvider</code> with model reference that will be used for
+     *                                          selection set generation.
+     * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> fields picking strategy for
+     *                                          selection set generation.
+     * @param loopBreakingStrategy              <code>LoopBreakingStrategy</code> for picking element on which loop
+     *                                          should be broken.
+     * @return this.
+     */
+    public T selectionSet(TypeProvider<?> typeProvider, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
+            LoopBreakingStrategy loopBreakingStrategy) {
+        return selectionSet(typeProvider.getTypeMeta(), selectionSetFieldsPickingStrategy, loopBreakingStrategy);
     }
 
     protected SelectionSetGenerator getSelectionSetGenerator() {
         Objects.requireNonNull(selectionSetTypeMeta, "Selection set model wasn't set.");
         return new SelectionSetGenerator(selectionSetTypeMeta,
-                FieldMarkingStrategySourceManager.selectionSet().getStrategy());
+                FieldMarkingStrategySourceManager.selectionSet().getStrategy(), loopBreakingStrategy);
     }
 
     protected String wrapForRequestBody(String operationBody) {
         return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
     }
 
-    private T selectionSet(TypeMeta<?> typeMeta) {
+    private <U> U orDefault(U value, Supplier<U> defaultValue) {
+        if (value != null) {
+            return value;
+        }
+        return defaultValue.get();
+    }
+
+    private T selectionSet(TypeMeta<?> typeMeta, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
+            LoopBreakingStrategy loopBreakingStrategy) {
         this.selectionSetTypeMeta = typeMeta;
+        this.selectionSetFieldsPickingStrategy = orDefault(selectionSetFieldsPickingStrategy,
+                SelectionSetGenerationStrategy.defaultStrategy()::getFieldsPickingStrategy);
+        this.loopBreakingStrategy = orDefault(loopBreakingStrategy,
+                EndlessLoopBreakingStrategy.defaultStrategy()::getLoopBreakingStrategy);
         return thisInstance();
     }
 
