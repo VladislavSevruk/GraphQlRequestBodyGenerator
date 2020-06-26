@@ -33,32 +33,32 @@ java {
 }
 
 dependencies {
-    compileOnly (
+    compileOnly(
             "org.projectlombok:lombok:${lombokVersion}"
     )
-    annotationProcessor (
+    annotationProcessor(
             "org.projectlombok:lombok:${lombokVersion}"
     )
-    implementation (
+    implementation(
             "org.apache.logging.log4j:log4j-api:${log4jVersion}",
             "org.apache.logging.log4j:log4j-core:${log4jVersion}"
     )
-    testCompileOnly (
+    testCompileOnly(
             "org.projectlombok:lombok:${lombokVersion}"
     )
-    testAnnotationProcessor (
+    testAnnotationProcessor(
             "org.projectlombok:lombok:${lombokVersion}"
     )
-    testImplementation (
+    testImplementation(
             "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
             "org.junit.jupiter:junit-jupiter-params:${junitVersion}",
             "org.mockito:mockito-core:${mockitoVersion}",
             "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
     )
-    testRuntimeOnly (
+    testRuntimeOnly(
             "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     )
-    api (
+    api(
             "com.github.vladislavsevruk:type-resolver:${typeResolverVersion}",
     )
 }
