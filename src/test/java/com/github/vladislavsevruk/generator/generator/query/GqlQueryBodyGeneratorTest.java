@@ -25,6 +25,7 @@ package com.github.vladislavsevruk.generator.generator.query;
 
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlArgument;
+import com.github.vladislavsevruk.generator.strategy.looping.DefaultLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.AllFieldsPickingStrategy;
@@ -40,7 +41,8 @@ class GqlQueryBodyGeneratorTest {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         GqlArgument<Integer> argument = GqlArgument.of("argument", 3);
         SelectionSetGenerator selectionSetGenerator = new SelectionSetGenerator(
-                new TypeMeta<>(SimpleSelectionSetTestModel.class), new AllExceptIgnoredFieldMarkingStrategy());
+                new TypeMeta<>(SimpleSelectionSetTestModel.class), new AllExceptIgnoredFieldMarkingStrategy(),
+                new DefaultLoopBreakingStrategy());
         String result = new GqlQueryBodyGenerator("customGqlQuery", selectionSetGenerator)
                 .generate(new AllFieldsPickingStrategy(), argument);
         String expectedResult = "{customGqlQuery(argument:3){selectionSetField}}";
