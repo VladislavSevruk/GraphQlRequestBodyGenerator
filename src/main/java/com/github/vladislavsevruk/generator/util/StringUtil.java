@@ -23,8 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +31,8 @@ import java.util.stream.Collectors;
 /**
  * Contains utility methods for escaped strings generation.
  */
+@Log4j2
 public final class StringUtil {
-
-    private static final Logger logger = LogManager.getLogger(StringUtil.class);
 
     private StringUtil() {
     }
@@ -79,17 +77,17 @@ public final class StringUtil {
      */
     public static String generateEscapedValueString(Object value) {
         if (value == null) {
-            logger.debug("Value is null.");
+            log.debug("Value is null.");
             return "null";
         }
         Class<?> valueClass = value.getClass();
         if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
-            logger.debug("Value is iterable or array.");
+            log.debug("Value is iterable or array.");
             // compose all elements through the comma and surround by square brackets
             return "[" + String.join(",", convertToStringList(value)) + "]";
         }
         if (CharSequence.class.isAssignableFrom(valueClass)) {
-            logger.debug("Value is char sequence.");
+            log.debug("Value is char sequence.");
             // add escaped quotes for literals
             return addQuotesForStringArgument(value.toString());
         }

@@ -30,14 +30,13 @@ import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.util.GqlNamePicker;
 import com.github.vladislavsevruk.resolver.context.ResolvingContext;
-import com.github.vladislavsevruk.resolver.context.ResolvingContextManager;
-import com.github.vladislavsevruk.resolver.resolver.FieldTypeResolver;
-import com.github.vladislavsevruk.resolver.resolver.FieldTypeResolverImpl;
+import com.github.vladislavsevruk.resolver.context.TypeMetaResolvingContextManager;
+import com.github.vladislavsevruk.resolver.resolver.field.FieldTypeMetaResolver;
+import com.github.vladislavsevruk.resolver.resolver.field.FieldTypeResolver;
 import com.github.vladislavsevruk.resolver.type.MappedVariableHierarchy;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeVariableMap;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -48,15 +47,15 @@ import java.util.Set;
 /**
  * Generates selection sets for GraphQL operations for received model according to different field picking strategies.
  */
+@Log4j2
 public class SelectionSetGenerator {
 
     private static final String DELIMITER = " ";
-    private static final Logger logger = LogManager.getLogger(SelectionSetGenerator.class);
     private final FieldMarkingStrategy fieldMarkingStrategy;
     private final LoopDetector loopDetector;
     private final TypeMeta<?> modelTypeMeta;
-    private final ResolvingContext resolvingContext = ResolvingContextManager.getContext();
-    private final FieldTypeResolver fieldTypeResolver = new FieldTypeResolverImpl(resolvingContext);
+    private final ResolvingContext<TypeMeta<?>> resolvingContext = TypeMetaResolvingContextManager.getContext();
+    private final FieldTypeResolver<TypeMeta<?>> fieldTypeResolver = new FieldTypeMetaResolver(resolvingContext);
 
     public SelectionSetGenerator(TypeMeta<?> modelTypeMeta, FieldMarkingStrategy fieldMarkingStrategy,
             LoopBreakingStrategy loopBreakingStrategy) {
@@ -75,10 +74,11 @@ public class SelectionSetGenerator {
      */
     public String generate(FieldsPickingStrategy fieldsPickingStrategy) {
         Objects.requireNonNull(fieldsPickingStrategy);
-        logger.debug(() -> String.format("Generating selection set for '%s' model using '%s' field marking strategy "
+        log.debug(() -> String.format("Generating selection set for '%s' model using '%s' field marking strategy "
                         + "and '%s' field picking strategy.", modelTypeMeta.getType().getName(),
                 fieldMarkingStrategy.getClass().getName(), fieldsPickingStrategy.getClass().getName()));
-        MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(modelTypeMeta);
+        MappedVariableHierarchy<TypeMeta<?>> hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
+                .get(modelTypeMeta);
         Set<String> queryParams = collectQueryParameters(hierarchy, modelTypeMeta, fieldsPickingStrategy);
         return "{" + String.join(DELIMITER, queryParams) + "}";
     }
@@ -88,7 +88,7 @@ public class SelectionSetGenerator {
         TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
         loopDetector.addToTrace(fieldTypeMeta);
         if (loopDetector.shouldBreakOnItem(fieldTypeMeta)) {
-            logger.warn(() -> String
+            log.warn(() -> String
                     .format("'%s' won't be added to selection set to avoid endless loop.", loopDetector.getTrace()));
         } else {
             Set<String> fieldWithSelectionSetQueryParams = collectFieldWithSelectionSetQueryParameters(fieldTypeMeta,
@@ -106,15 +106,15 @@ public class SelectionSetGenerator {
     private void addQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
             FieldsPickingStrategy fieldsPickingStrategy) {
         if (field.getAnnotation(GqlDelegate.class) != null) {
-            logger.debug(() -> String.format("'%s' is delegate.", field.getName()));
+            log.debug(() -> String.format("'%s' is delegate.", field.getName()));
             queryParams.addAll(collectDelegatedQueryParameters(typeMeta, field, fieldsPickingStrategy));
         } else {
             GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
             if (fieldAnnotation != null && fieldAnnotation.withSelectionSet()) {
-                logger.debug(() -> String.format("'%s' is field with selection set.", field.getName()));
+                log.debug(() -> String.format("'%s' is field with selection set.", field.getName()));
                 addFieldWithSelectionSetQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
             } else {
-                logger.debug(() -> String.format("'%s' is field.", field.getName()));
+                log.debug(() -> String.format("'%s' is field.", field.getName()));
                 String fieldNameWithArgumentsAndAlias = GqlNamePicker.getFieldNameWithArgumentsAndAlias(field);
                 queryParams.add(fieldNameWithArgumentsAndAlias);
             }
@@ -124,7 +124,8 @@ public class SelectionSetGenerator {
     private Set<String> collectDelegatedQueryParameters(TypeMeta<?> typeMeta, Field field,
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
-        MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(fieldTypeMeta);
+        MappedVariableHierarchy<TypeMeta<?>> hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
+                .get(fieldTypeMeta);
         return collectQueryParameters(hierarchy, fieldTypeMeta, fieldsPickingStrategy);
     }
 
@@ -132,25 +133,26 @@ public class SelectionSetGenerator {
             FieldsPickingStrategy fieldsPickingStrategy) {
         if (Collection.class.isAssignableFrom(fieldTypeMeta.getType()) || fieldTypeMeta.getType().isArray()) {
             TypeMeta<?> genericTypeMeta = fieldTypeMeta.getGenericTypes()[0];
-            MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
+            MappedVariableHierarchy<TypeMeta<?>> hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
                     .get(genericTypeMeta);
             return collectQueryParameters(hierarchy, genericTypeMeta, fieldsPickingStrategy);
         }
-        MappedVariableHierarchy hierarchy = resolvingContext.getMappedVariableHierarchyStorage().get(fieldTypeMeta);
+        MappedVariableHierarchy<TypeMeta<?>> hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
+                .get(fieldTypeMeta);
         return collectQueryParameters(hierarchy, fieldTypeMeta, fieldsPickingStrategy);
     }
 
-    private Set<String> collectQueryParameters(MappedVariableHierarchy hierarchy, TypeMeta<?> typeMeta,
+    private Set<String> collectQueryParameters(MappedVariableHierarchy<TypeMeta<?>> hierarchy, TypeMeta<?> typeMeta,
             FieldsPickingStrategy fieldsPickingStrategy) {
-        logger.debug(() -> String.format("Collecting GraphQL fields for '%s' model.", typeMeta.getType().getName()));
+        log.debug(() -> String.format("Collecting GraphQL fields for '%s' model.", typeMeta.getType().getName()));
         Set<String> queryParams = new LinkedHashSet<>();
         for (Field field : typeMeta.getType().getDeclaredFields()) {
             if (field.isSynthetic() || !fieldMarkingStrategy.isMarkedField(field)) {
                 continue;
             }
-            logger.debug(() -> String.format("Marked '%s' selection set field.", field.getName()));
+            log.debug(() -> String.format("Marked '%s' selection set field.", field.getName()));
             if (fieldsPickingStrategy.shouldBePicked(field)) {
-                logger.debug(() -> String.format("Picked '%s' selection set field.", field.getName()));
+                log.debug(() -> String.format("Picked '%s' selection set field.", field.getName()));
                 addQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
             }
         }
@@ -162,8 +164,8 @@ public class SelectionSetGenerator {
         return queryParams;
     }
 
-    private TypeMeta<?> getTypeMeta(MappedVariableHierarchy hierarchy, Class<?> clazz) {
-        TypeVariableMap typeVariableMap = hierarchy.getTypeVariableMap(clazz);
+    private TypeMeta<?> getTypeMeta(MappedVariableHierarchy<TypeMeta<?>> hierarchy, Class<?> clazz) {
+        TypeVariableMap<TypeMeta<?>> typeVariableMap = hierarchy.getTypeVariableMap(clazz);
         return resolvingContext.getTypeResolverPicker().pickTypeResolver(clazz).resolve(typeVariableMap, clazz);
     }
 }

@@ -36,8 +36,7 @@ import com.github.vladislavsevruk.generator.util.GqlNamePicker;
 import com.github.vladislavsevruk.generator.util.StreamUtil;
 import com.github.vladislavsevruk.generator.util.StringUtil;
 import com.github.vladislavsevruk.resolver.util.PrimitiveWrapperUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -55,11 +54,11 @@ import java.util.stream.StreamSupport;
  * Generates body for GraphQL mutations with received arguments and selection set according to different field picking
  * strategies.
  */
+@Log4j2
 public class GqlMutationBodyGenerator {
 
     private static final String DELIMITER = ",";
     private static final String GETTER_PREFIX = "get";
-    private static final Logger logger = LogManager.getLogger(GqlMutationBodyGenerator.class);
     private final FieldMarkingStrategy inputFieldMarkingStrategy;
     private final String mutationName;
     private final SelectionSetGenerator selectionSetGenerator;
@@ -107,11 +106,11 @@ public class GqlMutationBodyGenerator {
             FieldsPickingStrategy selectionSetFieldsPickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
-        logger.info(() -> String.format("Generating '%s' GraphQL mutation.", mutationName));
+        log.info(() -> String.format("Generating '%s' GraphQL mutation.", mutationName));
         String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, arguments);
         String selectionSet = selectionSetGenerator.generate(selectionSetFieldsPickingStrategy);
         String mutation = "mutation{" + mutationName + argumentsStr + selectionSet + "}";
-        logger.debug(() -> "Resulted mutation: " + mutation);
+        log.debug(() -> "Resulted mutation: " + mutation);
         return mutation;
     }
 
@@ -125,9 +124,9 @@ public class GqlMutationBodyGenerator {
 
     private void collectValue(String fieldName, String fieldValue,
             InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
-        logger.debug(() -> String.format("Received '%s' value for '%s' input field.", fieldValue, fieldName));
+        log.debug(() -> String.format("Received '%s' value for '%s' input field.", fieldValue, fieldName));
         if (inputFieldsPickingStrategy.shouldBePicked(fieldName, fieldValue)) {
-            logger.debug(() -> String.format("Picked '%s' input field.", fieldName));
+            log.debug(() -> String.format("Picked '%s' input field.", fieldName));
             mutationValues.put(fieldName, fieldValue);
         }
     }
@@ -138,13 +137,13 @@ public class GqlMutationBodyGenerator {
             if (field.isSynthetic() || !inputFieldMarkingStrategy.isMarkedField(field)) {
                 continue;
             }
-            logger.debug(() -> String.format("Marked '%s' input field.", field.getName()));
+            log.debug(() -> String.format("Marked '%s' input field.", field.getName()));
             if (field.getAnnotation(GqlDelegate.class) != null) {
-                logger.debug(() -> String.format("'%s' is delegate.", field.getName()));
+                log.debug(() -> String.format("'%s' is delegate.", field.getName()));
                 Object delegateObject = generateArgumentValue(field, value);
                 collectValuesForDelegate(delegateObject, inputFieldsPickingStrategy, mutationValues);
             } else {
-                logger.debug(() -> String.format("'%s' is input field.", field.getName()));
+                log.debug(() -> String.format("'%s' is input field.", field.getName()));
                 collectValuesForField(value, field, inputFieldsPickingStrategy, mutationValues);
             }
         }
@@ -162,13 +161,13 @@ public class GqlMutationBodyGenerator {
             if (fieldAnnotation == null && delegateAnnotation == null) {
                 continue;
             }
-            logger.debug(() -> String.format("Marked '%s' input method.", method.getName()));
+            log.debug(() -> String.format("Marked '%s' input method.", method.getName()));
             if (delegateAnnotation != null) {
-                logger.debug(() -> String.format("'%s' is delegate.", method.getName()));
+                log.debug(() -> String.format("'%s' is delegate.", method.getName()));
                 Object delegateObject = generateArgumentValueByMethod(value, method);
                 collectValuesForDelegate(delegateObject, inputFieldsPickingStrategy, mutationValues);
             } else {
-                logger.debug(() -> String.format("'%s' is input method.", method.getName()));
+                log.debug(() -> String.format("'%s' is input method.", method.getName()));
                 collectValuesForMethod(value, method, inputFieldsPickingStrategy, mutationValues);
             }
         }
@@ -185,7 +184,7 @@ public class GqlMutationBodyGenerator {
             LinkedHashMap<String, String> mutationValues) {
         String fieldName = GqlNamePicker.getFieldName(field);
         if (mutationValues.containsKey(fieldName)) {
-            logger.debug(() -> String.format("Input field '%s' is already collected.", fieldName));
+            log.debug(() -> String.format("Input field '%s' is already collected.", fieldName));
         } else {
             String argumentValue = generateInputArgumentValue(generateArgumentValue(field, value),
                     inputFieldsPickingStrategy);
@@ -199,7 +198,7 @@ public class GqlMutationBodyGenerator {
             Entry<?, ?> entry = (Entry<?, ?>) object;
             String entryKey = entry.getKey().toString();
             if (mutationValues.containsKey(entryKey)) {
-                logger.debug(() -> String.format("Input field '%s' is already collected.", entryKey));
+                log.debug(() -> String.format("Input field '%s' is already collected.", entryKey));
             } else {
                 String entryValue = generateInputArgumentValue(entry.getValue(), inputFieldsPickingStrategy);
                 collectValue(entryKey, entryValue, inputFieldsPickingStrategy, mutationValues);
@@ -220,7 +219,7 @@ public class GqlMutationBodyGenerator {
 
     private LinkedHashMap<String, String> collectValuesForModel(Object value, Class<?> valueClass,
             InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
-        logger.debug(() -> "Generating mutation value for " + valueClass.getName());
+        log.debug(() -> "Generating mutation value for " + valueClass.getName());
         collectValuesByFields(value, valueClass, inputFieldsPickingStrategy, mutationValues);
         collectValuesByMethods(value, valueClass, inputFieldsPickingStrategy, mutationValues);
         return mutationValues;
@@ -229,7 +228,7 @@ public class GqlMutationBodyGenerator {
     private LinkedHashMap<String, String> collectValuesMap(Object value, Class<?> valueClass,
             InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
         if (Map.class.isAssignableFrom(valueClass)) {
-            logger.debug(() -> valueClass.getName() + " is map.");
+            log.debug(() -> valueClass.getName() + " is map.");
             return collectValuesForMap(value, inputFieldsPickingStrategy, mutationValues);
         }
         return collectValuesForModel(value, valueClass, inputFieldsPickingStrategy, mutationValues);
@@ -261,11 +260,11 @@ public class GqlMutationBodyGenerator {
     private Object generateArgumentValue(Field field, Object value) {
         Method getterMethod = findGetterMethod(field);
         if (getterMethod != null) {
-            logger.debug(() -> String
+            log.debug(() -> String
                     .format("Found '%s' getter method for '%s' field.", getterMethod.getName(), field.getName()));
             return generateArgumentValueByMethod(value, getterMethod);
         } else {
-            logger.debug(() -> String.format("There was no getter method for '%s' field found.", field.getName()));
+            log.debug(() -> String.format("There was no getter method for '%s' field found.", field.getName()));
             return generateArgumentValueByField(value, field);
         }
     }
@@ -277,7 +276,7 @@ public class GqlMutationBodyGenerator {
             return argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue());
         }
         Object inputValue = argument.getValue();
-        logger.debug(() -> String.format("Generating input argument value for '%s' model using '%s' input field "
+        log.debug(() -> String.format("Generating input argument value for '%s' model using '%s' input field "
                         + "marking strategy and '%s' field picking strategy.", inputValue.getClass().getName(),
                 inputFieldMarkingStrategy.getClass().getName(), inputFieldsPickingStrategy.getClass().getName()));
         return argument.getName() + ":" + generateInputArgumentValue(inputValue, inputFieldsPickingStrategy);
@@ -289,7 +288,7 @@ public class GqlMutationBodyGenerator {
             field.setAccessible(true);
             return field.get(value);
         } catch (ReflectiveOperationException roEx) {
-            logger.error(() -> String.format("Failed to get value of '%s' field.", field.getName()), roEx);
+            log.error(() -> String.format("Failed to get value of '%s' field.", field.getName()), roEx);
             return null;
         } finally {
             field.setAccessible(isAccessible);
@@ -300,7 +299,7 @@ public class GqlMutationBodyGenerator {
         try {
             return getterMethod.invoke(value);
         } catch (ReflectiveOperationException roEx) {
-            logger.error(() -> String.format("Failed to execute '%s' getter method.", getterMethod.getName()), roEx);
+            log.error(() -> String.format("Failed to execute '%s' getter method.", getterMethod.getName()), roEx);
             return null;
         }
     }
@@ -308,7 +307,7 @@ public class GqlMutationBodyGenerator {
     private String generateGqlArguments(InputFieldsPickingStrategy inputFieldsPickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         if (!arguments.iterator().hasNext()) {
-            logger.warn("GraphQL mutation argument iterable is empty.");
+            log.warn("GraphQL mutation argument iterable is empty.");
             return "";
         }
         return "(" + StreamSupport.stream(arguments.spliterator(), false)
@@ -318,21 +317,21 @@ public class GqlMutationBodyGenerator {
 
     private String generateInputArgumentValue(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
         if (Objects.isNull(value)) {
-            logger.debug("Value is null.");
+            log.debug("Value is null.");
             return null;
         }
         Class<?> valueClass = value.getClass();
         if (CharSequence.class.isAssignableFrom(valueClass)) {
-            logger.debug(() -> valueClass.getName() + " is char sequence.");
+            log.debug(() -> valueClass.getName() + " is char sequence.");
             // add escaped quotes for literals
             return StringUtil.addQuotesForStringArgument(value.toString());
         }
         if (isSimpleType(valueClass)) {
-            logger.debug(() -> valueClass.getName() + " is simple type.");
+            log.debug(() -> valueClass.getName() + " is simple type.");
             return String.valueOf(value);
         }
         if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
-            logger.debug(() -> valueClass.getName() + " is iterable or array.");
+            log.debug(() -> valueClass.getName() + " is iterable or array.");
             // compose all elements through the comma and surround by square brackets
             return "[" + String.join(",", convertToStringList(value, inputFieldsPickingStrategy)) + "]";
         }
