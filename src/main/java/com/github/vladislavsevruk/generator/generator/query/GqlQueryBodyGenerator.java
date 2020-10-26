@@ -27,8 +27,7 @@ import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.util.StringUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -39,9 +38,9 @@ import java.util.stream.StreamSupport;
  * Generates body for GraphQL queries with received arguments and selection set according to different field picking
  * strategies.
  */
+@Log4j2
 public class GqlQueryBodyGenerator {
 
-    private static final Logger logger = LogManager.getLogger(GqlQueryBodyGenerator.class);
     private final String queryName;
     private final SelectionSetGenerator selectionSetGenerator;
 
@@ -73,17 +72,17 @@ public class GqlQueryBodyGenerator {
     public String generate(FieldsPickingStrategy fieldsPickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
-        logger.info(() -> String.format("Generating '%s' GraphQL query.", queryName));
+        log.info(() -> String.format("Generating '%s' GraphQL query.", queryName));
         String argumentsStr = generateGqlArguments(arguments);
         String selectionSet = selectionSetGenerator.generate(fieldsPickingStrategy);
         String query = "{" + queryName + argumentsStr + selectionSet + "}";
-        logger.debug(() -> "Resulted query: " + query);
+        log.debug(() -> "Resulted query: " + query);
         return query;
     }
 
     private String generateGqlArguments(Iterable<? extends GqlParameterValue<?>> argumentValue) {
         if (!argumentValue.iterator().hasNext()) {
-            logger.debug("GraphQL query argument iterable is empty.");
+            log.debug("GraphQL query argument iterable is empty.");
             return "";
         }
         return "(" + StreamSupport.stream(argumentValue.spliterator(), false)
