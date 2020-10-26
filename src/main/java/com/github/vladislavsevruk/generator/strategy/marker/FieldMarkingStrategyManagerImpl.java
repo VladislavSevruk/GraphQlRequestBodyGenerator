@@ -23,8 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.strategy.marker;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -34,9 +33,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @see FieldMarkingStrategyManager
  */
+@Log4j2
 public class FieldMarkingStrategyManagerImpl implements FieldMarkingStrategyManager {
 
-    private static final Logger logger = LogManager.getLogger(FieldMarkingStrategyManagerImpl.class);
     private FieldMarkingStrategy strategy = new AllExceptIgnoredFieldMarkingStrategy();
     private final ReadWriteLock strategyLock = new ReentrantReadWriteLock();
 
@@ -57,7 +56,7 @@ public class FieldMarkingStrategyManagerImpl implements FieldMarkingStrategyMana
     @Override
     public void useAllExceptIgnoredFieldsStrategy() {
         strategyLock.writeLock().lock();
-        logger.info("Using all fields except ignored ones marking strategy.");
+        log.info("Using all fields except ignored ones marking strategy.");
         strategy = new AllExceptIgnoredFieldMarkingStrategy();
         strategyLock.writeLock().unlock();
     }
@@ -68,7 +67,7 @@ public class FieldMarkingStrategyManagerImpl implements FieldMarkingStrategyMana
     @Override
     public void useCustomStrategy(FieldMarkingStrategy customStrategy) {
         strategyLock.writeLock().lock();
-        logger.info("Using custom marking strategy.");
+        log.info("Using custom marking strategy.");
         strategy = customStrategy;
         strategyLock.writeLock().unlock();
     }
@@ -79,7 +78,7 @@ public class FieldMarkingStrategyManagerImpl implements FieldMarkingStrategyMana
     @Override
     public void useOnlyMarkedFieldsStrategy() {
         strategyLock.writeLock().lock();
-        logger.info("Using only marked fields marking strategy.");
+        log.info("Using only marked fields marking strategy.");
         strategy = new OnlyMarkedFieldMarkingStrategy();
         strategyLock.writeLock().unlock();
     }

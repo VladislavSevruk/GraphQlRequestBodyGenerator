@@ -59,7 +59,7 @@ dependencies {
             "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     )
     api(
-            "com.github.vladislavsevruk:type-resolver:${typeResolverVersion}",
+            "com.github.vladislavsevruk:type-resolver:${typeResolverVersion}"
     )
 }
 
@@ -114,11 +114,9 @@ publishing {
     }
     repositories {
         maven {
-            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            credentials(ossrhCredentials)
-        }
-        maven {
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            def stagingRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : stagingRepoUrl
             credentials(ossrhCredentials)
         }
     }
