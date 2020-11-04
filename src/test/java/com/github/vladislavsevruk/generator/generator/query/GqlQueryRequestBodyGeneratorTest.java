@@ -36,6 +36,8 @@ import com.github.vladislavsevruk.generator.test.data.TestEnum;
 import com.github.vladislavsevruk.generator.test.data.TestModel;
 import com.github.vladislavsevruk.generator.test.data.loop.LongLoopedItem1;
 import com.github.vladislavsevruk.generator.test.data.loop.ShortLoopedItem1;
+import com.github.vladislavsevruk.generator.test.data.loop.union.LongLoopedUnionItem1;
+import com.github.vladislavsevruk.generator.test.data.loop.union.ShortLoopedUnionItem1;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -556,6 +558,15 @@ class GqlQueryRequestBodyGeneratorTest {
     }
 
     @Test
+    void generateLongLoopedUnionItemsAtSelectionSetDefaultLoopBreakingStrategyTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery").selectionSet(LongLoopedUnionItem1.class)
+                .generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 longLoopedItem2{... on LongLoopedUnionItem2{"
+                + "field2 longLoopedItem3{... on LongLoopedUnionItem3{field3}}}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     void generateOnlyIdFieldsExceptIgnoredTest() {
         FieldMarkingStrategySourceManager.selectionSet().useAllExceptIgnoredFieldsStrategy();
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
@@ -801,6 +812,16 @@ class GqlQueryRequestBodyGeneratorTest {
                 .generate();
         String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
                 + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateShortLoopedUnionItemsAtSelectionSetDefaultLoopBreakingStrategyTest() {
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery").selectionSet(ShortLoopedUnionItem1.class)
+                .generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{... on ShortLoopedUnionItem2{"
+                + "field2 shortLoopedItem3{... on ShortLoopedUnionItem3{field3}}}} shortLoopedItem3{"
+                + "... on ShortLoopedUnionItem3{field3 shortLoopedItem2{... on ShortLoopedUnionItem2{field2}}}}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 

@@ -24,8 +24,10 @@
 package com.github.vladislavsevruk.generator.strategy.picker.selection;
 
 import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlUnion;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 /**
  * Provides selection set generation strategy for picking only fields that do not have nested fields.
@@ -38,6 +40,9 @@ public class WithoutFieldsWithSelectionSetPickingStrategy implements FieldsPicki
     @Override
     public boolean shouldBePicked(Field field) {
         GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
-        return fieldAnnotation == null || !fieldAnnotation.withSelectionSet();
+        if (Objects.nonNull(fieldAnnotation) && fieldAnnotation.withSelectionSet()) {
+            return false;
+        }
+        return Objects.isNull(field.getAnnotation(GqlUnion.class));
     }
 }

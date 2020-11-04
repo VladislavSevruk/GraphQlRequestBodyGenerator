@@ -25,6 +25,7 @@ package com.github.vladislavsevruk.generator.util;
 
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlFieldArgument;
+import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -67,6 +68,19 @@ public final class GqlNamePicker {
             fieldName = addArgumentsIfPresent(fieldName, fieldAnnotation);
         }
         return fieldName;
+    }
+
+    /**
+     * Gets name for GraphQL union type from {@link GqlUnionType} annotation.
+     *
+     * @param unionType <code>GqlUnionType</code> to get name from.
+     * @return <code>String</code> with union type name.
+     */
+    public static String getUnionName(GqlUnionType unionType) {
+        if (!unionType.name().isEmpty()) {
+            return unionType.name();
+        }
+        return unionType.value().getSimpleName();
     }
 
     private static String addAliasIfPresent(String fieldName, GqlField fieldAnnotation) {
