@@ -21,26 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
-
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-import com.github.vladislavsevruk.generator.annotation.GqlUnion;
-
-import java.lang.reflect.Field;
+package com.github.vladislavsevruk.generator.annotation;
 
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField}, {@link GqlDelegate}
- * or {@link GqlUnion} annotations.
+ * Represents possible value for GraphQL union.
+ *
+ * @see GqlUnion
  */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
+public @interface GqlUnionType {
 
     /**
-     * {@inheritDoc}
+     * Returns <code>String</code> with name that should be used for GraphQL union generation.
      */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null
-                || field.getAnnotation(GqlUnion.class) != null;
-    }
+    String name() default "";
+
+    /**
+     * Returns model class that represent one of possible values for union.
+     */
+    Class<?> value();
 }

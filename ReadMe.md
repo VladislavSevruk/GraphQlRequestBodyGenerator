@@ -16,6 +16,7 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
     * [Selection set](#selection-set)
       * [GqlField](#gqlfield)
       * [GqlDelegate](#gqldelegate)
+      * [GqlUnion](#gqlunion)
       * [GqlIgnore](#gqlignore)
     * [Input object value](#input-object-value)
       * [GqlField](#gqlfield-1)
@@ -37,13 +38,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.3'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.4'
 ```
 
 ## Usage
@@ -196,6 +197,37 @@ public class User {
     private String firstName;
     @GqlField
     private String lastName;
+}
+```
+
+#### GqlUnion
+[GqlUnion](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlUnion.java) annotation is used for fields 
+that should be treated as [union](http://spec.graphql.org/June2018/#sec-Unions): 
+```java
+public class Order {
+    @GqlField
+    private Long id;
+    @GqlField
+    private Date orderDate;
+    @GqlUnion({ @GqlUnionType(Book.class), @GqlUnionType(value = BoardGame.class, name = "Game") })
+    private OrderItem orderItem;
+}
+
+public class OrderItem {
+    @GqlField
+    private Long id;
+    @GqlField
+    private String title;
+}
+
+public class Book extends OrderItem {
+    @GqlField
+    private Long numberOfPages;
+}
+
+public class BoardGame extends OrderItem {
+    @GqlField
+    private Long numberOfPlayers;
 }
 ```
 

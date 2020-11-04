@@ -21,26 +21,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.test.data.loop.union;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlUnion;
+import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
 
-import java.lang.reflect.Field;
+public class ShortLoopedUnionItem1 {
 
-/**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField}, {@link GqlDelegate}
- * or {@link GqlUnion} annotations.
- */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null
-                || field.getAnnotation(GqlUnion.class) != null;
-    }
+    @GqlField
+    private long field1;
+    @GqlUnion(@GqlUnionType(ShortLoopedUnionItem2.class))
+    private ShortLoopedUnionItem2[] shortLoopedItem2;
+    @GqlUnion(@GqlUnionType(ShortLoopedUnionItem3.class))
+    private ShortLoopedUnionItem3[] shortLoopedItem3;
 }

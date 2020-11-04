@@ -21,26 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.test.data.union;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlUnion;
+import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
+import lombok.Data;
 
-import java.lang.reflect.Field;
+@Data
+public class TestModelWithUnion {
 
-/**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField}, {@link GqlDelegate}
- * or {@link GqlUnion} annotations.
- */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null
-                || field.getAnnotation(GqlUnion.class) != null;
-    }
+    @GqlField(nonNull = true)
+    @GqlUnion({ @GqlUnionType(UnionType1.class), @GqlUnionType(value = UnionType2.class, name = "UnionType") })
+    private Object severalUnionTypes;
+    @GqlField(nonNull = true, name = "id")
+    private Long simpleField;
+    @GqlUnion(@GqlUnionType(UnionType1.class))
+    private Object singleUnionType;
 }
