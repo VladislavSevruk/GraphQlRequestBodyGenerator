@@ -25,6 +25,8 @@ package com.github.vladislavsevruk.generator.generator;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlUnion;
+import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
 import com.github.vladislavsevruk.generator.strategy.looping.LoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
@@ -108,6 +110,10 @@ public class SelectionSetGenerator {
         if (field.getAnnotation(GqlDelegate.class) != null) {
             log.debug(() -> String.format("'%s' is delegate.", field.getName()));
             queryParams.addAll(collectDelegatedQueryParameters(typeMeta, field, fieldsPickingStrategy));
+        } else if (field.getAnnotation(GqlUnion.class) != null) {
+            GqlUnion unionAnnotation = field.getAnnotation(GqlUnion.class);
+            log.debug(() -> String.format("'%s' is union.", field.getName()));
+            addUnionQueryParameters(queryParams, unionAnnotation.value(), field, fieldsPickingStrategy);
         } else {
             GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
             if (fieldAnnotation != null && fieldAnnotation.withSelectionSet()) {
@@ -118,6 +124,42 @@ public class SelectionSetGenerator {
                 String fieldNameWithArgumentsAndAlias = GqlNamePicker.getFieldNameWithArgumentsAndAlias(field);
                 queryParams.add(fieldNameWithArgumentsAndAlias);
             }
+        }
+    }
+
+    private void addUnionQueryParameter(Set<String> queryParams, GqlUnionType unionType,
+            FieldsPickingStrategy fieldsPickingStrategy) {
+        TypeMeta<?> unionTypeMeta = new TypeMeta<>(unionType.value());
+        loopDetector.addToTrace(unionTypeMeta);
+        if (loopDetector.shouldBreakOnItem(unionTypeMeta)) {
+            log.warn(() -> String
+                    .format("'%s' won't be added to selection set to avoid endless loop.", loopDetector.getTrace()));
+        } else {
+            MappedVariableHierarchy<TypeMeta<?>> hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
+                    .get(unionTypeMeta);
+            Set<String> fieldWithSelectionSetQueryParams = collectQueryParameters(hierarchy, unionTypeMeta,
+                    fieldsPickingStrategy);
+            if (!fieldWithSelectionSetQueryParams.isEmpty()) {
+                String unionName = GqlNamePicker.getUnionName(unionType);
+                String fieldWithSelectionSetQueryParam = "... on " + unionName + "{" + String
+                        .join(DELIMITER, fieldWithSelectionSetQueryParams) + "}";
+                queryParams.add(fieldWithSelectionSetQueryParam);
+            }
+        }
+        loopDetector.removeLastItemFromTrace();
+    }
+
+    private void addUnionQueryParameters(Set<String> queryParams, GqlUnionType[] unionTypes, Field field,
+            FieldsPickingStrategy fieldsPickingStrategy) {
+        Set<String> unionQueryParams = new LinkedHashSet<>();
+        for (GqlUnionType unionType : unionTypes) {
+            addUnionQueryParameter(unionQueryParams, unionType, fieldsPickingStrategy);
+        }
+        if (!unionQueryParams.isEmpty()) {
+            String fieldNameWithArgumentsAndAlias = GqlNamePicker.getFieldNameWithArgumentsAndAlias(field);
+            String fieldWithSelectionSetQueryParam = fieldNameWithArgumentsAndAlias + "{" + String
+                    .join(DELIMITER, unionQueryParams) + "}";
+            queryParams.add(fieldWithSelectionSetQueryParam);
         }
     }
 
