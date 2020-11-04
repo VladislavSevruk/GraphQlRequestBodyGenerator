@@ -37,6 +37,7 @@ import com.github.vladislavsevruk.generator.test.data.NestedTestModel;
 import com.github.vladislavsevruk.generator.test.data.TestModel;
 import com.github.vladislavsevruk.generator.test.data.loop.LongLoopedItem1;
 import com.github.vladislavsevruk.generator.test.data.loop.ShortLoopedItem1;
+import com.github.vladislavsevruk.generator.test.data.union.TestModelWithUnion;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import org.junit.jupiter.api.Assertions;
@@ -273,6 +274,16 @@ class SelectionSetGeneratorTest {
     }
 
     @Test
+    void generateOnlyMarkedIdModelWithUnionsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
+        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
+                new DefaultLoopBreakingStrategy());
+        String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
+        String expectedResult = "{singleUnionType{... on UnionType1{id}} severalUnionTypes{... on UnionType1{id}} id}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     void generateOnlyMarkedInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
@@ -330,6 +341,17 @@ class SelectionSetGeneratorTest {
     }
 
     @Test
+    void generateOnlyMarkedModelWithUnionsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
+        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
+                new DefaultLoopBreakingStrategy());
+        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
+        String expectedResult = "{singleUnionType{... on UnionType1{id nonNullField}} severalUnionTypes{"
+                + "... on UnionType1{id nonNullField} ... on UnionType{simpleField}} id}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     void generateOnlyMarkedNonNullGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
@@ -362,6 +384,16 @@ class SelectionSetGeneratorTest {
         String expectedResult = "{customNamedNonNullField nonNullField "
                 + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
                 + "customNamedNonNullField nonNullField}}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateOnlyMarkedNonNullModelWithUnionsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
+        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
+                new DefaultLoopBreakingStrategy());
+        String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
+        String expectedResult = "{severalUnionTypes{... on UnionType1{id nonNullField}} id}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -404,6 +436,16 @@ class SelectionSetGeneratorTest {
                 + "argumentForFieldWithAliasAndArguments1:1,argumentForFieldWithAliasAndArguments2:2) "
                 + "fieldWithArgument(argumentForFieldWithArgument:\"valueForFieldWithArgument\") "
                 + "fieldWithFieldAnnotation idField id customNamedField customNamedNonNullField nonNullField}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithUnionsTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
+        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
+                new DefaultLoopBreakingStrategy());
+        String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
+        String expectedResult = "{id}";
         Assertions.assertEquals(expectedResult, result);
     }
 

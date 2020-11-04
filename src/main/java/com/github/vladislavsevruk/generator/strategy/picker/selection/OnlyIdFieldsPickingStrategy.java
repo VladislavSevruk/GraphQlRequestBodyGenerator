@@ -25,6 +25,7 @@ package com.github.vladislavsevruk.generator.strategy.picker.selection;
 
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlUnion;
 import com.github.vladislavsevruk.generator.util.GqlNamePicker;
 
 import java.lang.reflect.Field;
@@ -42,6 +43,9 @@ public class OnlyIdFieldsPickingStrategy implements FieldsPickingStrategy {
     @Override
     public boolean shouldBePicked(Field field) {
         if (field.getAnnotation(GqlDelegate.class) != null) {
+            return true;
+        }
+        if (field.getAnnotation(GqlUnion.class) != null) {
             return true;
         }
         GqlField fieldAnnotation = field.getAnnotation(GqlField.class);

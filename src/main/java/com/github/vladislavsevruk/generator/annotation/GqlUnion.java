@@ -21,26 +21,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.annotation;
 
-import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-import com.github.vladislavsevruk.generator.annotation.GqlUnion;
-
-import java.lang.reflect.Field;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Provides query generation strategy for marking only fields that are marked by {@link GqlField}, {@link GqlDelegate}
- * or {@link GqlUnion} annotations.
+ * Annotation that marks model fields that should be treated as union. More information you can find at
+ * <a href="https://www.apollographql.com/docs/apollo-server/schema/unions-interfaces/#union-type">official
+ * documentation</a>.
  */
-public class OnlyMarkedFieldMarkingStrategy implements FieldMarkingStrategy {
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface GqlUnion {
 
     /**
-     * {@inheritDoc}
+     * Returns {@link GqlUnionType} array that represent possible values for that union.
      */
-    @Override
-    public boolean isMarkedField(Field field) {
-        return field.getAnnotation(GqlField.class) != null || field.getAnnotation(GqlDelegate.class) != null
-                || field.getAnnotation(GqlUnion.class) != null;
-    }
+    GqlUnionType[] value();
 }
