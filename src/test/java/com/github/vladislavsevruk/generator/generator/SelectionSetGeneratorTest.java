@@ -279,7 +279,7 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
                 new DefaultLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
-        String expectedResult = "{singleUnionType{... on UnionType1{id}} severalUnionTypes{... on UnionType1{id}} id}";
+        String expectedResult = "{severalUnionTypes{... on UnionType1{id}} id singleUnionType{... on UnionType1{id}}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -346,8 +346,8 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
                 new DefaultLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{singleUnionType{... on UnionType1{id nonNullField}} severalUnionTypes{"
-                + "... on UnionType1{id nonNullField} ... on UnionType{simpleField}} id}";
+        String expectedResult = "{severalUnionTypes{... on UnionType1{id nonNullField} ... on UnionType{simpleField}} "
+                + "id singleUnionType{... on UnionType1{id nonNullField}}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
