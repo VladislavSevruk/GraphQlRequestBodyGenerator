@@ -28,6 +28,7 @@ import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 import com.github.vladislavsevruk.generator.annotation.GqlInput;
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
+import com.github.vladislavsevruk.generator.strategy.argument.ModelArgumentStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputFieldsPickingStrategy;
@@ -81,14 +82,17 @@ public class GqlMutationBodyGenerator {
      *
      * @param inputFieldsPickingStrategy        <code>InputFieldsPickingStrategy</code> to filter required fields for
      *                                          mutation input.
+     * @param modelArgumentStrategy             <code>ModelArgumentStrategy</code> for mutation argument generation.
      * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for
      *                                          mutation selection set.
      * @param arguments                         <code>GqlParameterValue</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL mutation.
      */
     public String generate(InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            FieldsPickingStrategy selectionSetFieldsPickingStrategy, GqlParameterValue<?>... arguments) {
-        return generate(inputFieldsPickingStrategy, selectionSetFieldsPickingStrategy, Arrays.asList(arguments));
+            ModelArgumentStrategy modelArgumentStrategy, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
+            GqlParameterValue<?>... arguments) {
+        return generate(inputFieldsPickingStrategy, modelArgumentStrategy, selectionSetFieldsPickingStrategy,
+                Arrays.asList(arguments));
     }
 
     /**
@@ -96,6 +100,7 @@ public class GqlMutationBodyGenerator {
      *
      * @param inputFieldsPickingStrategy        <code>InputFieldsPickingStrategy</code> to filter required fields for
      *                                          mutation input.
+     * @param modelArgumentStrategy             <code>ModelArgumentStrategy</code> for mutation argument generation.
      * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for
      *                                          mutation selection set.
      * @param arguments                         <code>Iterable</code> of <code>GqlParameterValue</code> with argument
@@ -103,11 +108,11 @@ public class GqlMutationBodyGenerator {
      * @return <code>String</code> with resulted GraphQL mutation.
      */
     public String generate(InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            FieldsPickingStrategy selectionSetFieldsPickingStrategy,
+            ModelArgumentStrategy modelArgumentStrategy, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
         log.info(() -> String.format("Generating '%s' GraphQL mutation.", mutationName));
-        String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, arguments);
+        String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, modelArgumentStrategy, arguments);
         String selectionSet = selectionSetGenerator.generate(selectionSetFieldsPickingStrategy);
         String mutation = "mutation{" + mutationName + argumentsStr + selectionSet + "}";
         log.debug(() -> "Resulted mutation: " + mutation);
@@ -186,7 +191,7 @@ public class GqlMutationBodyGenerator {
         if (mutationValues.containsKey(fieldName)) {
             log.debug(() -> String.format("Input field '%s' is already collected.", fieldName));
         } else {
-            String argumentValue = generateInputArgumentValue(generateArgumentValue(field, value),
+            String argumentValue = generateArgumentModelValue(generateArgumentValue(field, value),
                     inputFieldsPickingStrategy);
             collectValue(fieldName, argumentValue, inputFieldsPickingStrategy, mutationValues);
         }
@@ -200,7 +205,7 @@ public class GqlMutationBodyGenerator {
             if (mutationValues.containsKey(entryKey)) {
                 log.debug(() -> String.format("Input field '%s' is already collected.", entryKey));
             } else {
-                String entryValue = generateInputArgumentValue(entry.getValue(), inputFieldsPickingStrategy);
+                String entryValue = generateArgumentModelValue(entry.getValue(), inputFieldsPickingStrategy);
                 collectValue(entryKey, entryValue, inputFieldsPickingStrategy, mutationValues);
             }
         }
@@ -211,7 +216,7 @@ public class GqlMutationBodyGenerator {
             InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
         String methodName = method.getAnnotation(GqlInput.class).name();
         if (!mutationValues.containsKey(methodName)) {
-            String argumentValue = generateInputArgumentValue(generateArgumentValueByMethod(value, method),
+            String argumentValue = generateArgumentModelValue(generateArgumentValueByMethod(value, method),
                     inputFieldsPickingStrategy);
             collectValue(methodName, argumentValue, inputFieldsPickingStrategy, mutationValues);
         }
@@ -235,7 +240,7 @@ public class GqlMutationBodyGenerator {
     }
 
     private List<String> convertToStringList(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
-        return StreamUtil.createStream(value).map(item -> generateInputArgumentValue(item, inputFieldsPickingStrategy))
+        return StreamUtil.createStream(value).map(item -> generateArgumentModelValue(item, inputFieldsPickingStrategy))
                 .collect(Collectors.toList());
     }
 
@@ -257,6 +262,33 @@ public class GqlMutationBodyGenerator {
         return null;
     }
 
+    private String generateArgumentModelValue(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
+        if (Objects.isNull(value)) {
+            log.debug("Value is null.");
+            return null;
+        }
+        Class<?> valueClass = value.getClass();
+        if (CharSequence.class.isAssignableFrom(valueClass)) {
+            log.debug(() -> valueClass.getName() + " is char sequence.");
+            // add escaped quotes for literals
+            return StringUtil.addQuotesForStringArgument(value.toString());
+        }
+        if (isSimpleType(valueClass)) {
+            log.debug(() -> valueClass.getName() + " is simple type.");
+            return String.valueOf(value);
+        }
+        if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
+            log.debug(() -> valueClass.getName() + " is iterable or array.");
+            // compose all elements through the comma and surround by square brackets
+            return "[" + String.join(",", convertToStringList(value, inputFieldsPickingStrategy)) + "]";
+        }
+        LinkedHashMap<String, String> modelValues = collectValuesMap(value, value.getClass(),
+                inputFieldsPickingStrategy, new LinkedHashMap<>());
+        String argumentValue = modelValues.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue())
+                .collect(Collectors.joining(DELIMITER));
+        return "{" + argumentValue + "}";
+    }
+
     private Object generateArgumentValue(Field field, Object value) {
         Method getterMethod = findGetterMethod(field);
         if (getterMethod != null) {
@@ -270,16 +302,16 @@ public class GqlMutationBodyGenerator {
     }
 
     private String generateArgumentValue(GqlParameterValue<?> argument,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy) {
-        String argumentName = argument.getName();
-        if (!"input".equals(argumentName)) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, ModelArgumentStrategy modelArgumentStrategy) {
+        if (!modelArgumentStrategy.isModelArgument(argument)) {
             return argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue());
         }
         Object inputValue = argument.getValue();
-        log.debug(() -> String.format("Generating input argument value for '%s' model using '%s' input field "
-                        + "marking strategy and '%s' field picking strategy.", inputValue.getClass().getName(),
-                inputFieldMarkingStrategy.getClass().getName(), inputFieldsPickingStrategy.getClass().getName()));
-        return argument.getName() + ":" + generateInputArgumentValue(inputValue, inputFieldsPickingStrategy);
+        log.debug(() -> String.format("Generating '%s' argument value for '%s' model using '%s' input field "
+                        + "marking strategy and '%s' field picking strategy.", argument.getName(),
+                inputValue.getClass().getName(), inputFieldMarkingStrategy.getClass().getName(),
+                inputFieldsPickingStrategy.getClass().getName()));
+        return argument.getName() + ":" + generateArgumentModelValue(inputValue, inputFieldsPickingStrategy);
     }
 
     private Object generateArgumentValueByField(Object value, Field field) {
@@ -305,41 +337,14 @@ public class GqlMutationBodyGenerator {
     }
 
     private String generateGqlArguments(InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            Iterable<? extends GqlParameterValue<?>> arguments) {
+            ModelArgumentStrategy modelArgumentStrategy, Iterable<? extends GqlParameterValue<?>> arguments) {
         if (!arguments.iterator().hasNext()) {
             log.warn("GraphQL mutation argument iterable is empty.");
             return "";
         }
         return "(" + StreamSupport.stream(arguments.spliterator(), false)
-                .map(argument -> generateArgumentValue(argument, inputFieldsPickingStrategy))
+                .map(argument -> generateArgumentValue(argument, inputFieldsPickingStrategy, modelArgumentStrategy))
                 .collect(Collectors.joining(",")) + ")";
-    }
-
-    private String generateInputArgumentValue(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
-        if (Objects.isNull(value)) {
-            log.debug("Value is null.");
-            return null;
-        }
-        Class<?> valueClass = value.getClass();
-        if (CharSequence.class.isAssignableFrom(valueClass)) {
-            log.debug(() -> valueClass.getName() + " is char sequence.");
-            // add escaped quotes for literals
-            return StringUtil.addQuotesForStringArgument(value.toString());
-        }
-        if (isSimpleType(valueClass)) {
-            log.debug(() -> valueClass.getName() + " is simple type.");
-            return String.valueOf(value);
-        }
-        if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
-            log.debug(() -> valueClass.getName() + " is iterable or array.");
-            // compose all elements through the comma and surround by square brackets
-            return "[" + String.join(",", convertToStringList(value, inputFieldsPickingStrategy)) + "]";
-        }
-        LinkedHashMap<String, String> modelValues = collectValuesMap(value, value.getClass(),
-                inputFieldsPickingStrategy, new LinkedHashMap<>());
-        String argumentValue = modelValues.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue())
-                .collect(Collectors.joining(DELIMITER));
-        return "{" + argumentValue + "}";
     }
 
     private String getNameFromAnnotation(Method method) {

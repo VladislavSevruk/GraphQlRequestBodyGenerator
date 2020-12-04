@@ -25,6 +25,7 @@ package com.github.vladislavsevruk.generator.generator.mutation;
 
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlInputArgument;
+import com.github.vladislavsevruk.generator.strategy.argument.OnlyInputArgumentStrategy;
 import com.github.vladislavsevruk.generator.strategy.looping.DefaultLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.WithoutNullsInputFieldsPickingStrategy;
@@ -47,7 +48,8 @@ class GqlMutationBodyGeneratorTest {
                 new DefaultLoopBreakingStrategy());
         String result = new GqlMutationBodyGenerator("customGqlMutation", selectionSetGenerator,
                 new AllExceptIgnoredFieldMarkingStrategy())
-                .generate(new WithoutNullsInputFieldsPickingStrategy(), new AllFieldsPickingStrategy(), argument);
+                .generate(new WithoutNullsInputFieldsPickingStrategy(), new OnlyInputArgumentStrategy(),
+                        new AllFieldsPickingStrategy(), argument);
         String expectedResult = "mutation{customGqlMutation(input:{subClassField:\"subClassFieldValue\","
                 + "testField:\"testFieldValue\"}){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
