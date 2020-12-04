@@ -27,6 +27,7 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
     * [Operation selection set](#operation-selection-set)
     * [Arguments](#arguments)
       * [Input argument](#input-argument)
+      * [Mutation argument strategy](#mutation-argument-strategy)
 * [License](#license)
 
 ## Getting started
@@ -38,13 +39,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.3'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.4'
 ```
 
 ## Usage
@@ -407,25 +408,25 @@ one of [predefined fields picking strategies](src/main/java/com/github/vladislav
 - pick all marked fields
 ```kotlin
 String query = GqlRequestBodyGenerator.query("allUsers")
-        .selectionSet(User.class, SelectionSetGenerationStrategy.ALL_FIELDS).generate();
+        .selectionSet(User.class, SelectionSetGenerationStrategy.allFields()).generate();
 ```
 
 - pick only fields with __id__ name or fields that have nested field with __id__ name
 ```kotlin
 String query = GqlRequestBodyGenerator.query("allUsers")
-        .selectionSet(User.class, SelectionSetGenerationStrategy.ONLY_ID).generate();
+        .selectionSet(User.class, SelectionSetGenerationStrategy.onlyId()).generate();
 ```
 
 - pick only fields that are marked as [non-null](http://spec.graphql.org/June2018/#sec-Type-System.Non-Null)
 ```kotlin
 String query = GqlRequestBodyGenerator.query("allUsers")
-        .selectionSet(User.class, SelectionSetGenerationStrategy.ONLY_NON_NULL).generate();
+        .selectionSet(User.class, SelectionSetGenerationStrategy.onlyNonNull()).generate();
 ```
 
 - pick all except fields with [selection set](http://spec.graphql.org/June2018/#sec-Selection-Sets) 
 ```kotlin
 String query = GqlRequestBodyGenerator.query("allUsers")
-        .selectionSet(User.class, SelectionSetGenerationStrategy.WITHOUT_SELECTION_SETS).generate();
+        .selectionSet(User.class, SelectionSetGenerationStrategy.fieldsWithoutSelectionSets()).generate();
 ```
 
 Also you can provide your own custom fields picking strategy that implements 
@@ -492,22 +493,50 @@ __input object__ can be generated using
 - pick all marked fields
 ```kotlin
 String query = GqlRequestBodyGenerator.mutation("newUser")
-        .arguments(InputGenerationStrategy.ALL_FIELDS, inputArgument).selectionSet(User.class).generate();
+        .arguments(InputGenerationStrategy.allFields(), inputArgument).selectionSet(User.class).generate();
 ```
 
 - pick only fields with non-null value
 ```kotlin
 String query = GqlRequestBodyGenerator.mutation("newUser")
-        .arguments(InputGenerationStrategy.WITHOUT_NULLS, inputArgument).selectionSet(User.class).generate();
+        .arguments(InputGenerationStrategy.nonNullsFields(), inputArgument).selectionSet(User.class).generate();
 ```
 
 But you can provide your own input fields picking strategy that implements 
 [InputFieldsPickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/picker/mutation/InputFieldsPickingStrategy.java)
 interface:
 ```kotlin
+InputFieldsPickingStrategy inputFieldsPickingStrategy = field -> field.getName().contains("Name");
 String query = GqlRequestBodyGenerator.mutation("newUser")
-        .arguments(field -> field.getName().contains("Name"), inputArgument).selectionSet(User.class)
-        .generate();
+        .arguments(inputFieldsPickingStrategy, inputArgument).selectionSet(User.class).generate();
+```
+
+#### Mutation argument strategy
+By default, only __input__ argument value is treated as [complex input objects](http://spec.graphql.org/June2018/#sec-Input-Objects) 
+according to GraphQL specification. However, you can use other 
+[model arguments strategies](src/main/java/com/github/vladislavsevruk/generator/strategy/argument/ModelArgumentGenerationStrategy.java) 
+to override this behavior:
+- treat only __input__ argument as potential complex input object
+```kotlin
+String query = GqlRequestBodyGenerator.mutation("newUser")
+        .arguments(ModelArgumentGenerationStrategy.onlyInputArgument(), inputArgument)
+        .selectionSet(User.class).generate();
+```
+
+- treat any argument as potential complex input object
+```kotlin
+String query = GqlRequestBodyGenerator.mutation("newUser")
+        .arguments(ModelArgumentGenerationStrategy.anyArgument(), inputArgument)
+        .selectionSet(User.class).generate();
+```
+
+You can also provide your own mutation arguments strategy that implements 
+[ModelArgumentStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/argument/ModelArgumentStrategy.java)
+interface:
+```kotlin
+ModelArgumentStrategy modelArgumentStrategy = argument -> argument.getName().contains("Model");
+String query = GqlRequestBodyGenerator.mutation("newUser")
+        .arguments(modelArgumentStrategy, inputArgument).selectionSet(User.class).generate();
 ```
 
 ## License

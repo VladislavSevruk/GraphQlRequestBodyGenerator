@@ -28,8 +28,8 @@ import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 
 /**
- * Manages model fields marking strategies.<br> There are two field marking strategies for GraphQL operation body
- * generation:<ul>
+ * Manages model fields marking strategies.<br> There are two default field marking strategies for GraphQL operation
+ * body generation:<ul>
  * <li> pick all fields except ones that have {@link GqlIgnore} annotation
  * <li> pick only fields that have {@link GqlField} or {@link GqlDelegate} annotations
  * </ul>
