@@ -23,9 +23,12 @@
  */
 package com.github.vladislavsevruk.generator.generator.mutation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.vladislavsevruk.generator.annotation.GqlDelegate;
 import com.github.vladislavsevruk.generator.annotation.GqlIgnore;
 import com.github.vladislavsevruk.generator.annotation.GqlInput;
+import com.github.vladislavsevruk.generator.generator.GqlBodyGenerator;
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.argument.ModelArgumentStrategy;
@@ -33,11 +36,13 @@ import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.input.type.InputTypePickingStrategy;
 import com.github.vladislavsevruk.generator.util.GqlNamePicker;
 import com.github.vladislavsevruk.generator.util.StreamUtil;
 import com.github.vladislavsevruk.generator.util.StringUtil;
 import com.github.vladislavsevruk.resolver.util.PrimitiveWrapperUtil;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -46,6 +51,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -56,7 +62,7 @@ import java.util.stream.StreamSupport;
  * strategies.
  */
 @Log4j2
-public class GqlMutationBodyGenerator {
+public class GqlMutationBodyGenerator extends GqlBodyGenerator {
 
     private static final String DELIMITER = ",";
     private static final String GETTER_PREFIX = "get";
@@ -85,14 +91,17 @@ public class GqlMutationBodyGenerator {
      * @param modelArgumentStrategy             <code>ModelArgumentStrategy</code> for mutation argument generation.
      * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for
      *                                          mutation selection set.
+     * @param inputTypePickingStrategy          <code>InputTypePickingStrategy</code> for mutation with input type.
      * @param arguments                         <code>GqlParameterValue</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL mutation.
      */
     public String generate(InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            ModelArgumentStrategy modelArgumentStrategy, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
-            GqlParameterValue<?>... arguments) {
+                           ModelArgumentStrategy modelArgumentStrategy,
+                           FieldsPickingStrategy selectionSetFieldsPickingStrategy,
+                           InputTypePickingStrategy inputTypePickingStrategy,
+                           GqlParameterValue<?>... arguments) {
         return generate(inputFieldsPickingStrategy, modelArgumentStrategy, selectionSetFieldsPickingStrategy,
-                Arrays.asList(arguments));
+                inputTypePickingStrategy, Arrays.asList(arguments));
     }
 
     /**
@@ -103,20 +112,49 @@ public class GqlMutationBodyGenerator {
      * @param modelArgumentStrategy             <code>ModelArgumentStrategy</code> for mutation argument generation.
      * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for
      *                                          mutation selection set.
+     * @param inputTypePickingStrategy          <code>InputTypePickingStrategy</code> for mutation with input type.
      * @param arguments                         <code>Iterable</code> of <code>GqlParameterValue</code> with argument
      *                                          names and values.
      * @return <code>String</code> with resulted GraphQL mutation.
      */
     public String generate(InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            ModelArgumentStrategy modelArgumentStrategy, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
-            Iterable<? extends GqlParameterValue<?>> arguments) {
+                           ModelArgumentStrategy modelArgumentStrategy,
+                           FieldsPickingStrategy selectionSetFieldsPickingStrategy,
+                           InputTypePickingStrategy inputTypePickingStrategy,
+                           Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
         log.info(() -> String.format("Generating '%s' GraphQL mutation.", mutationName));
-        String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, modelArgumentStrategy, arguments);
         String selectionSet = selectionSetGenerator.generate(selectionSetFieldsPickingStrategy);
-        String mutation = "mutation{" + mutationName + argumentsStr + selectionSet + "}";
+        String signature = getSignature(inputTypePickingStrategy, arguments);
+        boolean hasSignature = StringUtils.isNotEmpty(signature);
+        String argumentsStr = hasSignature
+                ? generateGqlArgumentsWithInputType(arguments)
+                : generateGqlArguments(inputFieldsPickingStrategy, modelArgumentStrategy, arguments);
+        String mutation = "mutation" + signature  + "{" + mutationName + argumentsStr + selectionSet + "}";
         log.debug(() -> "Resulted mutation: " + mutation);
-        return mutation;
+        return hasSignature
+                ? wrapForRequestBodyWithInputType(mutation, generateVariables(arguments))
+                : wrapForRequestBody(mutation);
+    }
+
+    private String generateVariables(Iterable<? extends GqlParameterValue<?>> arguments) {
+        Objects.requireNonNull(arguments);
+        return generateGqlVariables(arguments).stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+    }
+
+    private List<String> generateGqlVariables(Iterable<? extends GqlParameterValue<?>> arguments) {
+        List<String> variables = new ArrayList<>();
+        for (GqlParameterValue<?> next : arguments) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                variables.add("{\"" + next.getName() + "\":" + objectMapper.writeValueAsString(next.getValue()) + "}");
+            } catch (JsonProcessingException exception) {
+                log.error(() -> "Unable to parse JSON by argument object", exception);
+            }
+        }
+        return variables;
     }
 
     private boolean canBeGetter(Method method) {
