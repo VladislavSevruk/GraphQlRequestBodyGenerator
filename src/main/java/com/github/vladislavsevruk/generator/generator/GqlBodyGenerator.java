@@ -55,11 +55,10 @@ public class GqlBodyGenerator {
         }
     }
 
-    protected String wrapForRequestBody(String operationBody) {
-        return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
-    }
-
-    protected String wrapForRequestBody(String mutationBody, String variables) {
-        return "{\"variables\":" + variables + ",\"query\":\"" + StringUtil.escapeQuotes(mutationBody) + "\"}";
+    protected String wrapForRequestBody(String operationBody, String variables) {
+        if (variables.isEmpty()) {
+            return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
+        }
+        return "{\"variables\":" + variables + ",\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
     }
 }

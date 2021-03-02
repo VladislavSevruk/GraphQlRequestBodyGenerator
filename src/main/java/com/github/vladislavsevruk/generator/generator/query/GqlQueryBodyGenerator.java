@@ -85,8 +85,7 @@ public class GqlQueryBodyGenerator extends GqlBodyGenerator {
         if (!variablesStr.isEmpty()) {
             query = "query" + operationArgumentsStr + query;
         }
-        String wrappedQuery = !variablesStr.isEmpty() ? wrapForRequestBody(query, variablesStr)
-                : wrapForRequestBody(query);
+        String wrappedQuery = wrapForRequestBody(query, variablesStr);
         log.debug(() -> "Resulted query: " + wrappedQuery);
         return wrappedQuery;
     }

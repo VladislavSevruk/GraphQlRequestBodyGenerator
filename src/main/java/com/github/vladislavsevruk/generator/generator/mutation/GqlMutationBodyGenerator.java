@@ -122,8 +122,7 @@ public class GqlMutationBodyGenerator extends GqlBodyGenerator {
         String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, modelArgumentStrategy,
                 variablePickingStrategy, arguments);
         String mutation = "mutation" + operationArgumentsStr + "{" + mutationName + argumentsStr + selectionSet + "}";
-        String wrappedMutation = !variablesStr.isEmpty() ? wrapForRequestBody(mutation, variablesStr)
-                : wrapForRequestBody(mutation);
+        String wrappedMutation = wrapForRequestBody(mutation, variablesStr);
         log.debug(() -> "Resulted mutation: " + wrappedMutation);
         return wrappedMutation;
     }
