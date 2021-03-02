@@ -23,13 +23,20 @@
  */
 package com.github.vladislavsevruk.generator.generator.query;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.vladislavsevruk.generator.generator.GqlBodyGenerator;
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.input.type.InputTypePickingStrategy;
 import com.github.vladislavsevruk.generator.util.StringUtil;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -39,7 +46,7 @@ import java.util.stream.StreamSupport;
  * strategies.
  */
 @Log4j2
-public class GqlQueryBodyGenerator {
+public class GqlQueryBodyGenerator extends GqlBodyGenerator {
 
     private final String queryName;
     private final SelectionSetGenerator selectionSetGenerator;
@@ -53,31 +60,42 @@ public class GqlQueryBodyGenerator {
     /**
      * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
-     * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param arguments             <code>GqlArgument</code> varargs with argument names and values.
+     * @param fieldsPickingStrategy    <code>FieldsPickingStrategy</code> to filter required fields for query.
+     * @param inputTypePickingStrategy <code>InputTypePickingStrategy</code> for query with input type.
+     * @param arguments                <code>GqlArgument</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, GqlParameterValue<?>... arguments) {
-        return generate(fieldsPickingStrategy, Arrays.asList(arguments));
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, InputTypePickingStrategy inputTypePickingStrategy,
+                           GqlParameterValue<?>... arguments) {
+        return generate(fieldsPickingStrategy, inputTypePickingStrategy, Arrays.asList(arguments));
     }
 
     /**
      * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
-     * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param arguments             <code>Iterable</code> of <code>GqlParameterValue</code> with argument names and
-     *                              values.
+     * @param fieldsPickingStrategy    <code>FieldsPickingStrategy</code> to filter required fields for query.
+     * @param inputTypePickingStrategy <code>InputTypePickingStrategy</code> for query with input type.
+     * @param arguments                <code>Iterable</code> of <code>GqlParameterValue</code> with argument names and
+     *                                 values.
      * @return <code>String</code> with resulted GraphQL query.
      */
     public String generate(FieldsPickingStrategy fieldsPickingStrategy,
-            Iterable<? extends GqlParameterValue<?>> arguments) {
+                           InputTypePickingStrategy inputTypePickingStrategy,
+                           Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
-        log.info(() -> String.format("Generating '%s' GraphQL query.", queryName));
-        String argumentsStr = generateGqlArguments(arguments);
         String selectionSet = selectionSetGenerator.generate(fieldsPickingStrategy);
-        String query = "{" + queryName + argumentsStr + selectionSet + "}";
-        log.debug(() -> "Resulted query: " + query);
-        return query;
+        String signature = getSignature(inputTypePickingStrategy, arguments);
+        log.info(() -> String.format("Generating '%s' GraphQL query.", queryName));
+        String wrappedQuery;
+        if (StringUtils.isEmpty(signature)) {
+            String query = "{" + queryName + generateGqlArguments(arguments) + selectionSet + "}";
+            wrappedQuery = wrapForRequestBody(query);
+        } else {
+            String query = "query" + signature + "{" + queryName + generateGqlArgumentsWithInputType(arguments) + selectionSet + "}";
+            wrappedQuery = wrapForRequestBodyWithInputType(query, generateVariables(arguments));
+        }
+        log.debug(() -> "Resulted query: " + wrappedQuery);
+        return wrappedQuery;
     }
 
     private String generateGqlArguments(Iterable<? extends GqlParameterValue<?>> argumentValue) {
@@ -88,5 +106,25 @@ public class GqlQueryBodyGenerator {
         return "(" + StreamSupport.stream(argumentValue.spliterator(), false)
                 .map(argument -> argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue()))
                 .collect(Collectors.joining(",")) + ")";
+    }
+
+    private String generateVariables(Iterable<? extends GqlParameterValue<?>> arguments) {
+        Objects.requireNonNull(arguments);
+        return generateGqlVariables(arguments).stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+    }
+
+    private List<String> generateGqlVariables(Iterable<? extends GqlParameterValue<?>> arguments) {
+        List<String> variables = new ArrayList<>();
+        for (GqlParameterValue<?> next : arguments) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                variables.add(objectMapper.writeValueAsString(next.getValue()));
+            } catch (JsonProcessingException exception) {
+                log.error(() -> "Unable to parse JSON by argument object", exception);
+            }
+        }
+        return variables;
     }
 }
