@@ -24,12 +24,7 @@
 package com.github.vladislavsevruk.generator.generator.query;
 
 import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
-import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
-import com.github.vladislavsevruk.generator.strategy.input.type.InputTypePickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.input.type.InputTypePickingStrategyManager;
-
-import java.util.Arrays;
 
 /**
  * Generates request body for GraphQL queries with received arguments and selection set according to different field
@@ -39,53 +34,8 @@ import java.util.Arrays;
  */
 public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
 
-    private InputTypePickingStrategy inputTypePickingStrategy = InputTypePickingStrategyManager.defaultStrategy()
-            .getInputTypePickingStrategy();
-
     public GqlQueryRequestBodyGenerator(String queryName) {
         super(queryName);
-    }
-
-    /**
-     * Adds arguments to GraphQL operation with predefined mutation input fields picking strategy.
-     *
-     * @param inputTypePickingStrategyManager <code>InputTypePickingStrategyManager</code> input type picking strategy
-     *                                        for variables generation.
-     * @param arguments                       <code>GqlParameterValue</code> varargs with argument names and values.
-     * @return this.
-     */
-    public GqlQueryRequestBodyGenerator arguments(InputTypePickingStrategyManager inputTypePickingStrategyManager,
-                                                  GqlParameterValue<?>... arguments) {
-        return arguments(inputTypePickingStrategyManager.getInputTypePickingStrategy(), Arrays.asList(arguments));
-    }
-
-    /**
-     * Adds arguments to GraphQL operation with predefined mutation input fields picking strategy.
-     *
-     * @param inputTypePickingStrategyManager   <code>InputTypePickingStrategyManager</code> input type picking strategy
-     *                                          for variables generation.
-     * @param arguments                         <code>Iterable</code> of <code>GqlParameterValue</code> with argument names
-     *                                          and values.
-     * @return this.
-     */
-    public GqlQueryRequestBodyGenerator arguments(InputTypePickingStrategyManager inputTypePickingStrategyManager,
-                                                  Iterable<? extends GqlParameterValue<?>> arguments) {
-        return arguments(inputTypePickingStrategyManager.getInputTypePickingStrategy(), arguments);
-    }
-
-    /**
-     * Adds arguments to GraphQL operation with predefined mutation input fields picking strategy.
-     *
-     * @param inputTypePickingStrategy   <code>InputTypePickingStrategy</code> input type picking strategy
-     *                                   for variables generation.
-     * @param arguments                  <code>Iterable</code> of <code>GqlParameterValue</code> with argument names
-     *                                   and values.
-     * @return this.
-     */
-    public GqlQueryRequestBodyGenerator arguments(InputTypePickingStrategy inputTypePickingStrategy,
-                                                  Iterable<? extends GqlParameterValue<?>> arguments) {
-        this.inputTypePickingStrategy = inputTypePickingStrategy;
-        return super.arguments(arguments);
     }
 
     /**
@@ -94,7 +44,7 @@ public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerat
     @Override
     public String generate() {
         return new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
-                .generate(getSelectionSetFieldsPickingStrategy(), inputTypePickingStrategy, getArguments());
+                .generate(getSelectionSetFieldsPickingStrategy(), getVariablePickingStrategy(), getArguments());
     }
 }
 

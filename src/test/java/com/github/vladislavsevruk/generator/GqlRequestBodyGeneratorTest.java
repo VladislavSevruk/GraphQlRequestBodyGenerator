@@ -25,7 +25,8 @@ package com.github.vladislavsevruk.generator;
 
 import com.github.vladislavsevruk.generator.param.GqlArgument;
 import com.github.vladislavsevruk.generator.param.GqlInputArgument;
-import com.github.vladislavsevruk.generator.strategy.input.type.InputTypePickingStrategyManager;
+import com.github.vladislavsevruk.generator.param.GqlVariableArgument;
+import com.github.vladislavsevruk.generator.strategy.variable.VariableGenerationStrategy;
 import com.github.vladislavsevruk.generator.test.data.InheritedInputTestModel;
 import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestModel;
 import com.github.vladislavsevruk.generator.test.data.TestDataForInputTypeStrategy;
@@ -38,8 +39,7 @@ class GqlRequestBodyGeneratorTest {
     void mutationTest() {
         InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
         inputModel.setTestField("testFieldValue");
-        String result = GqlRequestBodyGenerator.mutation("customGqlMutation")
-                .arguments(GqlInputArgument.of(inputModel))
+        String result = GqlRequestBodyGenerator.mutation("customGqlMutation").arguments(GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "{\"query\":\"mutation{customGqlMutation(input:{subClassField:"
                 + "\\\"subClassFieldValue\\\",testField:\\\"testFieldValue\\\"}){selectionSetField}}\"}";
@@ -47,38 +47,39 @@ class GqlRequestBodyGeneratorTest {
     }
 
     @Test
-    void mutationTestWithVariables() {
-        TestDataForInputTypeStrategy testData = new TestDataForInputTypeStrategy()
-                .setName("user1")
+    void mutationWithVariablesTest() {
+        TestDataForInputTypeStrategy testData = new TestDataForInputTypeStrategy().setName("user1")
                 .setAddress("street1");
+        String variableName = "userProfile";
         String result = GqlRequestBodyGenerator.mutation("customGqlMutation")
-                .arguments(InputTypePickingStrategyManager.withInputType(), GqlArgument.of("userProfile", testData))
+                .arguments(VariableGenerationStrategy.byArgumentType(),
+                        GqlVariableArgument.of(variableName, variableName, testData, "InputData", true))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "{\"variables\":{\"userProfile\":{\"name\":\"user1\",\"address\":\"street1\"}}," +
-                "\"query\":\"mutation($userProfile:InputData!){customGqlMutation(userProfile:$userProfile)" +
-                "{selectionSetField}}\"}";
+        String expectedResult = "{\"variables\":{\"userProfile\":{\"address\":\"street1\",\"name\":\"user1\"}},"
+                + "\"query\":\"mutation($userProfile:InputData!){customGqlMutation(userProfile:$userProfile)"
+                + "{selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
     void queryTest() {
-        String result = GqlRequestBodyGenerator.query("customGqlQuery")
-                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String result = GqlRequestBodyGenerator.query("customGqlQuery").selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
         String expectedResult = "{\"query\":\"{customGqlQuery{selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
     @Test
-    void queryTestWithVariables() {
-        TestDataForInputTypeStrategy testDataForQueryVariables = new TestDataForInputTypeStrategy()
-                .setName("NameData")
+    void queryWithVariablesTest() {
+        TestDataForInputTypeStrategy testDataForQueryVariables = new TestDataForInputTypeStrategy().setName("NameData")
                 .setAddress("AddressData");
         String result = GqlRequestBodyGenerator.query("gqlQueryWithVariables")
-                .arguments(InputTypePickingStrategyManager.withInputType(),
+                .arguments(VariableGenerationStrategy.annotatedArgumentValueType(),
                         GqlArgument.of("search", testDataForQueryVariables))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "{\"variables\":{\"name\":\"NameData\",\"address\":\"AddressData\"}," +
-                "\"query\":\"query($search:InputData!){gqlQueryWithVariables(search:$search){selectionSetField}}\"}";
+        String expectedResult = "{\"variables\":{\"search\":{\"address\":\"AddressData\",\"name\":\"NameData\"}},"
+                + "\"query\":\"query($search:InputData={\\\"name\\\":\\\"Test Name\\\","
+                + "\\\"address\\\":\\\"Test Address\\\"}){gqlQueryWithVariables(search:$search){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 }

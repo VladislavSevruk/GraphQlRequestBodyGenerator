@@ -29,7 +29,7 @@ import com.github.vladislavsevruk.generator.strategy.looping.DefaultLoopBreaking
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.AllFieldsPickingStrategy;
-import com.github.vladislavsevruk.generator.strategy.input.type.InputTypePickingStrategyImpl;
+import com.github.vladislavsevruk.generator.strategy.variable.VariableArgumentTypeStrategy;
 import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestModel;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +45,7 @@ class GqlQueryBodyGeneratorTest {
                 new TypeMeta<>(SimpleSelectionSetTestModel.class), new AllExceptIgnoredFieldMarkingStrategy(),
                 new DefaultLoopBreakingStrategy());
         String result = new GqlQueryBodyGenerator("customGqlQuery", selectionSetGenerator)
-                .generate(new AllFieldsPickingStrategy(), new InputTypePickingStrategyImpl(), argument);
+                .generate(new AllFieldsPickingStrategy(), new VariableArgumentTypeStrategy(), argument);
         String expectedResult = "{\"query\":\"{customGqlQuery(argument:3){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }

@@ -27,6 +27,7 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
     * [Operation selection set](#operation-selection-set)
     * [Arguments](#arguments)
       * [Input argument](#input-argument)
+      * [Variables](#variables)
       * [Mutation argument strategy](#mutation-argument-strategy)
 * [License](#license)
 
@@ -39,13 +40,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.5</version>
+      <version>1.0.6</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.5'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.6'
 ```
 
 ## Usage
@@ -510,6 +511,27 @@ InputFieldsPickingStrategy inputFieldsPickingStrategy = field -> field.getName()
 String query = GqlRequestBodyGenerator.mutation("newUser")
         .arguments(inputFieldsPickingStrategy, inputArgument).selectionSet(User.class).generate();
 ```
+
+#### Variables
+As GraphQL query can be parameterized with [variables](https://spec.graphql.org/June2018/#sec-Language.Variables) you 
+can generate GraphQL operation body that way passing values as operation arguments and using one of 
+[predefined variables generation strategies](src/main/java/com/github/vladislavsevruk/generator/strategy/variable/VariableGenerationStrategy.java):
+- generate only for arguments of [GqlVariableArgument](src/main/java/com/github/vladislavsevruk/generator/param/GqlVariableArgument.java)
+type:
+```kotlin
+String variableName = "id";
+GqlParameterValue<String> variable = GqlVariableArgument.of(variableName, variableName, 1, true);
+String query = GqlRequestBodyGenerator.query("getProfile")
+        .arguments(VariableGenerationStrategy.byArgumentType(), variable)
+        .selectionSet(User.class).generate();
+```
+
+- generate only for arguments with value type annotated by 
+[GqlVariableType](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlVariableType.java) type;
+
+Or you can provide your own variables generation strategy that implements 
+[VariablePickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/variable/VariablePickingStrategy.java)
+interface.
 
 #### Mutation argument strategy
 By default, only __input__ argument value is treated as [complex input objects](http://spec.graphql.org/June2018/#sec-Input-Objects) 

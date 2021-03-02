@@ -1,50 +1,65 @@
 package com.github.vladislavsevruk.generator.generator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
-import com.github.vladislavsevruk.generator.strategy.input.type.InputTypePickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStrategy;
 import com.github.vladislavsevruk.generator.util.StringUtil;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.log4j.Log4j2;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
  * Class body generator with common logic for GraphQL operation.
  */
+@Log4j2
 public class GqlBodyGenerator {
+
+    protected static ObjectMapper jsonMapper = new ObjectMapper();
+
+    protected String generateOperationArgument(VariablePickingStrategy variablePickingStrategy,
+            GqlParameterValue<?> argument) {
+        String variableName = variablePickingStrategy.getVariableName(argument);
+        String variableType = variablePickingStrategy.getVariableType(argument);
+        String requiredArgumentPostfix = Optional.ofNullable(variablePickingStrategy.getDefaultValue(argument))
+                .filter(value -> !value.isEmpty()).map(value -> "=" + value)
+                .orElseGet(() -> variablePickingStrategy.isRequired(argument) ? "!" : "");
+        return String.format("$%s:%s%s", variableName, variableType, requiredArgumentPostfix);
+    }
+
+    protected String generateOperationArguments(VariablePickingStrategy variablePickingStrategy,
+            Iterable<? extends GqlParameterValue<?>> arguments) {
+        String operationArguments = StreamSupport.stream(arguments.spliterator(), false)
+                .filter(variablePickingStrategy::isVariable)
+                .map(argument -> generateOperationArgument(variablePickingStrategy, argument))
+                .collect(Collectors.joining(","));
+        return operationArguments.isEmpty() ? "" : "(" + operationArguments + ")";
+    }
+
+    protected String generateVariables(VariablePickingStrategy variablePickingStrategy,
+            Iterable<? extends GqlParameterValue<?>> arguments) {
+        Map<String, ?> variablesMap = StreamSupport.stream(arguments.spliterator(), false)
+                .filter(variablePickingStrategy::isVariable)
+                .collect(Collectors.toMap(variablePickingStrategy::getVariableName, GqlParameterValue::getValue));
+        if (variablesMap.isEmpty()) {
+            return "";
+        }
+        try {
+            return jsonMapper.writeValueAsString(variablesMap);
+        } catch (JsonProcessingException jpEx) {
+            log.error("Failed to represent variables as JSON.", jpEx);
+            return "";
+        }
+    }
 
     protected String wrapForRequestBody(String operationBody) {
         return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
     }
 
-    protected String wrapForRequestBodyWithInputType(String mutationBody, String variables) {
+    protected String wrapForRequestBody(String mutationBody, String variables) {
         return "{\"variables\":" + variables + ",\"query\":\"" + StringUtil.escapeQuotes(mutationBody) + "\"}";
-    }
-
-    protected String getSignature(InputTypePickingStrategy inputTypePickingStrategy,
-                                Iterable<? extends GqlParameterValue<?>> arguments) {
-        String signature = StreamSupport.stream(arguments.spliterator(), false)
-                .map(argument -> generateSignature(inputTypePickingStrategy, argument))
-                .filter(StringUtils::isNotEmpty)
-                .collect(Collectors.joining(","));
-        return StringUtils.isEmpty(signature) ? "" : "(" + signature + ")";
-    }
-
-    protected String generateSignature(InputTypePickingStrategy inputTypePickingStrategy, GqlParameterValue<?> argument) {
-        if (argument.getValue() != null && inputTypePickingStrategy.getInputType(argument) != null) {
-            return "$" + argument.getName() + ":" + inputTypePickingStrategy.getInputType(argument) + "!";
-        } else {
-            return "";
-        }
-    }
-
-    protected String generateGqlArgumentsWithInputType(Iterable<? extends GqlParameterValue<?>> arguments) {
-        return "(" + StreamSupport.stream(arguments.spliterator(), false)
-                .map(this::generateArgumentMethodValue)
-                .collect(Collectors.joining(",")) + ")";
-    }
-
-    protected String generateArgumentMethodValue(GqlParameterValue<?> argument) {
-        return argument.getName() + ":$" + argument.getName();
     }
 }
