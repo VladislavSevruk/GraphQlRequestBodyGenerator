@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2021 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,29 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.param;
+package com.github.vladislavsevruk.generator.test.data;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlVariableType;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
-/**
- * Represents input for GraphQL mutations.
- *
- * @param <T> type of value.
- */
-@RequiredArgsConstructor(staticName = "of")
-@Getter
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class GqlInputArgument<T> implements GqlParameterValue<T> {
+@Accessors(chain = true)
+@Data
+@GqlVariableType(isRequired = true)
+public class AnnotatedVariableRequiredTestModel {
 
-    private static final String NAME = "input";
-
-    T value;
-
-    @Override
-    public String getName() {
-        return NAME;
-    }
+    @GqlField
+    private String address;
+    @GqlField
+    private String name;
 }
