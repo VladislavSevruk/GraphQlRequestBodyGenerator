@@ -26,8 +26,11 @@ package com.github.vladislavsevruk.generator.util;
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlFieldArgument;
 import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
+import com.github.vladislavsevruk.resolver.util.PrimitiveWrapperUtil;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -68,6 +71,30 @@ public final class GqlNamePicker {
             fieldName = addArgumentsIfPresent(fieldName, fieldAnnotation);
         }
         return fieldName;
+    }
+
+    /**
+     * Gets suitable name for GraphQL primitives or uses class name if type is not primitive.
+     *
+     * @param value value to get GraphQL type name for.
+     * @return <code>String</code> with GraphQL type name.
+     */
+    public static String getGqlTypeName(Object value) {
+        Class<?> clazz = PrimitiveWrapperUtil.wrap(value.getClass());
+        if (CharSequence.class.isAssignableFrom(clazz)) {
+            return "String";
+        }
+        if (Boolean.class.isAssignableFrom(clazz)) {
+            return "Boolean";
+        }
+        if (Long.class.equals(clazz) || Integer.class.equals(clazz) || Short.class.equals(clazz) || Byte.class
+                .equals(clazz) || BigInteger.class.equals(clazz)) {
+            return "Int";
+        }
+        if (Double.class.equals(clazz) || Float.class.equals(clazz) || BigDecimal.class.equals(clazz)) {
+            return "Float";
+        }
+        return value.getClass().getSimpleName();
     }
 
     /**

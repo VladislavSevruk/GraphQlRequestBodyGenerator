@@ -43,9 +43,8 @@ public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerat
      */
     @Override
     public String generate() {
-        String queryBody = new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
-                .generate(getSelectionSetFieldsPickingStrategy(), getArguments());
-        return wrapForRequestBody(queryBody);
+        return new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
+                .generate(getSelectionSetFieldsPickingStrategy(), getVariablePickingStrategy(), getArguments());
     }
 }
 

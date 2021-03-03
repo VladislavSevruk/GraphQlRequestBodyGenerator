@@ -23,9 +23,11 @@
  */
 package com.github.vladislavsevruk.generator.generator.query;
 
+import com.github.vladislavsevruk.generator.generator.GqlBodyGenerator;
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
+import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStrategy;
 import com.github.vladislavsevruk.generator.util.StringUtil;
 import lombok.extern.log4j.Log4j2;
 
@@ -39,7 +41,7 @@ import java.util.stream.StreamSupport;
  * strategies.
  */
 @Log4j2
-public class GqlQueryBodyGenerator {
+public class GqlQueryBodyGenerator extends GqlBodyGenerator {
 
     private final String queryName;
     private final SelectionSetGenerator selectionSetGenerator;
@@ -53,40 +55,57 @@ public class GqlQueryBodyGenerator {
     /**
      * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
-     * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param arguments             <code>GqlArgument</code> varargs with argument names and values.
+     * @param fieldsPickingStrategy   <code>FieldsPickingStrategy</code> to filter required fields for query.
+     * @param variablePickingStrategy <code>VariablePickingStrategy</code> for mutation variables generation.
+     * @param arguments               <code>GqlArgument</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy, GqlParameterValue<?>... arguments) {
-        return generate(fieldsPickingStrategy, Arrays.asList(arguments));
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, VariablePickingStrategy variablePickingStrategy,
+            GqlParameterValue<?>... arguments) {
+        return generate(fieldsPickingStrategy, variablePickingStrategy, Arrays.asList(arguments));
     }
 
     /**
      * Builds GraphQL query body with received arguments according to received field picking strategy.
      *
-     * @param fieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for query.
-     * @param arguments             <code>Iterable</code> of <code>GqlParameterValue</code> with argument names and
-     *                              values.
+     * @param fieldsPickingStrategy   <code>FieldsPickingStrategy</code> to filter required fields for query.
+     * @param variablePickingStrategy <code>VariablePickingStrategy</code> for mutation variables generation.
+     * @param arguments               <code>Iterable</code> of <code>GqlParameterValue</code> with argument names and
+     *                                values.
      * @return <code>String</code> with resulted GraphQL query.
      */
-    public String generate(FieldsPickingStrategy fieldsPickingStrategy,
+    public String generate(FieldsPickingStrategy fieldsPickingStrategy, VariablePickingStrategy variablePickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
         log.info(() -> String.format("Generating '%s' GraphQL query.", queryName));
-        String argumentsStr = generateGqlArguments(arguments);
         String selectionSet = selectionSetGenerator.generate(fieldsPickingStrategy);
-        String query = "{" + queryName + argumentsStr + selectionSet + "}";
-        log.debug(() -> "Resulted query: " + query);
-        return query;
+        String variablesStr = generateVariables(variablePickingStrategy, arguments);
+        String operationArgumentsStr = generateOperationArguments(variablePickingStrategy, arguments);
+        String query = "{" + queryName + generateGqlArguments(variablePickingStrategy, arguments) + selectionSet + "}";
+        if (!variablesStr.isEmpty()) {
+            query = "query" + operationArgumentsStr + query;
+        }
+        String wrappedQuery = wrapForRequestBody(query, variablesStr);
+        log.debug(() -> "Resulted query: " + wrappedQuery);
+        return wrappedQuery;
     }
 
-    private String generateGqlArguments(Iterable<? extends GqlParameterValue<?>> argumentValue) {
+    private String generateArgumentValue(VariablePickingStrategy variablePickingStrategy,
+            GqlParameterValue<?> argument) {
+        if (variablePickingStrategy.isVariable(argument)) {
+            return argument.getName() + ":$" + variablePickingStrategy.getVariableName(argument);
+        }
+        return argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue());
+    }
+
+    private String generateGqlArguments(VariablePickingStrategy variablePickingStrategy,
+            Iterable<? extends GqlParameterValue<?>> argumentValue) {
         if (!argumentValue.iterator().hasNext()) {
             log.debug("GraphQL query argument iterable is empty.");
             return "";
         }
         return "(" + StreamSupport.stream(argumentValue.spliterator(), false)
-                .map(argument -> argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue()))
+                .map(argument -> generateArgumentValue(variablePickingStrategy, argument))
                 .collect(Collectors.joining(",")) + ")";
     }
 }

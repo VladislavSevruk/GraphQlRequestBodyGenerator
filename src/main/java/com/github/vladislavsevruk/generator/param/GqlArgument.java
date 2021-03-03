@@ -23,14 +23,19 @@
  */
 package com.github.vladislavsevruk.generator.param;
 
-import lombok.Value;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 /**
  * Represents argument for GraphQL operations.
  *
  * @param <T> type of value.
  */
-@Value(staticConstructor = "of")
+@RequiredArgsConstructor(staticName = "of")
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class GqlArgument<T> implements GqlParameterValue<T> {
 
     String name;
