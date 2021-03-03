@@ -24,14 +24,17 @@
 package com.github.vladislavsevruk.generator.param;
 
 import com.github.vladislavsevruk.generator.util.GqlNamePicker;
-import lombok.Value;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
 /**
  * Represents input for GraphQL mutations.
  *
  * @param <T> type of value.
  */
-@Value
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class GqlVariableArgument<T> implements GqlParameterValue<T> {
 
     String defaultValue;
