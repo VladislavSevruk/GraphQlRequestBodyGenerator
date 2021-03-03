@@ -29,6 +29,8 @@ import com.github.vladislavsevruk.generator.strategy.argument.ModelArgumentGener
 import com.github.vladislavsevruk.generator.strategy.argument.ModelArgumentStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputGenerationStrategy;
+import com.github.vladislavsevruk.generator.strategy.variable.VariableGenerationStrategy;
+import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStrategy;
 
 import java.util.Arrays;
 
@@ -243,9 +245,92 @@ public class GqlMutationRequestBodyGenerator extends GqlOperationRequestBodyGene
      */
     public GqlMutationRequestBodyGenerator arguments(InputFieldsPickingStrategy inputFieldsPickingStrategy,
             ModelArgumentStrategy modelArgumentStrategy, Iterable<? extends GqlParameterValue<?>> arguments) {
+        return arguments(inputFieldsPickingStrategy,
+                VariableGenerationStrategy.defaultStrategy().getVariablePickingStrategy(), modelArgumentStrategy,
+                arguments);
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined mutation input fields picking strategy.
+     *
+     * @param inputGenerationStrategy         <code>InputGenerationStrategy</code> with predefined fields picking
+     *                                        strategy for mutation input generation.
+     * @param variableGenerationStrategy      <code>VariableGenerationStrategy</code> variables picking strategy for
+     *                                        variables generation.
+     * @param modelArgumentGenerationStrategy <code>ModelArgumentGenerationStrategy</code> with predefined arguments
+     *                                        treating strategy for mutation argument generation.
+     * @param arguments                       <code>GqlParameterValue</code> varargs with argument names and values.
+     * @return this.
+     */
+    public GqlMutationRequestBodyGenerator arguments(InputGenerationStrategy inputGenerationStrategy,
+            VariableGenerationStrategy variableGenerationStrategy,
+            ModelArgumentGenerationStrategy modelArgumentGenerationStrategy, GqlParameterValue<?>... arguments) {
+        return arguments(inputGenerationStrategy.getInputFieldsPickingStrategy(),
+                variableGenerationStrategy.getVariablePickingStrategy(),
+                modelArgumentGenerationStrategy.getModelArgumentStrategy(), arguments);
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined mutation input fields picking strategy.
+     *
+     * @param inputGenerationStrategy         <code>InputGenerationStrategy</code> with predefined fields picking
+     *                                        strategy for mutation input generation.
+     * @param variableGenerationStrategy      <code>VariableGenerationStrategy</code> variables picking strategy for
+     *                                        variables generation.
+     * @param modelArgumentGenerationStrategy <code>ModelArgumentGenerationStrategy</code> with predefined arguments
+     *                                        treating strategy for mutation argument generation.
+     * @param arguments                       <code>Iterable</code> of <code>GqlParameterValue</code> with argument
+     *                                        names and values.
+     * @return this.
+     */
+    public GqlMutationRequestBodyGenerator arguments(InputGenerationStrategy inputGenerationStrategy,
+            VariableGenerationStrategy variableGenerationStrategy,
+            ModelArgumentGenerationStrategy modelArgumentGenerationStrategy,
+            Iterable<? extends GqlParameterValue<?>> arguments) {
+        return arguments(inputGenerationStrategy.getInputFieldsPickingStrategy(),
+                variableGenerationStrategy.getVariablePickingStrategy(),
+                modelArgumentGenerationStrategy.getModelArgumentStrategy(), arguments);
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined mutation input fields picking strategy.
+     *
+     * @param inputFieldsPickingStrategy <code>InputFieldsPickingStrategy</code> fields picking strategy for mutation
+     *                                   input generation.
+     * @param variablePickingStrategy    <code>VariablePickingStrategy</code> variables picking strategy for
+     *                                   variables generation.
+     * @param modelArgumentStrategy      <code>ModelArgumentStrategy</code> model argument treating strategy for
+     *                                   mutation argument generation.
+     * @param arguments                  <code>GqlParameterValue</code> varargs with argument names and values.
+     * @return this.
+     */
+    public GqlMutationRequestBodyGenerator arguments(InputFieldsPickingStrategy inputFieldsPickingStrategy,
+            VariablePickingStrategy variablePickingStrategy, ModelArgumentStrategy modelArgumentStrategy,
+            GqlParameterValue<?>... arguments) {
+        return arguments(inputFieldsPickingStrategy, variablePickingStrategy, modelArgumentStrategy,
+                Arrays.asList(arguments));
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined mutation input fields picking strategy.
+     *
+     * @param inputFieldsPickingStrategy <code>InputFieldsPickingStrategy</code> fields picking strategy to get
+     *                                   input type.
+     * @param variablePickingStrategy    <code>VariablePickingStrategy</code> variables picking strategy for
+     *                                   variables generation.
+     * @param modelArgumentStrategy      <code>ModelArgumentStrategy</code> model argument treating strategy for
+     *                                   mutation argument generation.
+     * @param arguments                  <code>Iterable</code> of <code>GqlParameterValue</code> with argument names
+     *                                   and values.
+     * @return this.
+     */
+    public GqlMutationRequestBodyGenerator arguments(InputFieldsPickingStrategy inputFieldsPickingStrategy,
+            VariablePickingStrategy variablePickingStrategy, ModelArgumentStrategy modelArgumentStrategy,
+            Iterable<? extends GqlParameterValue<?>> arguments) {
+        super.arguments(variablePickingStrategy, arguments);
         this.inputFieldsPickingStrategy = inputFieldsPickingStrategy;
         this.modelArgumentStrategy = modelArgumentStrategy;
-        return super.arguments(arguments);
+        return this;
     }
 
     /**
@@ -253,9 +338,14 @@ public class GqlMutationRequestBodyGenerator extends GqlOperationRequestBodyGene
      */
     @Override
     public String generate() {
-        String mutationBody = new GqlMutationBodyGenerator(getOperationName(), getSelectionSetGenerator())
+        return new GqlMutationBodyGenerator(getOperationName(), getSelectionSetGenerator())
                 .generate(inputFieldsPickingStrategy, modelArgumentStrategy, getSelectionSetFieldsPickingStrategy(),
-                        getArguments());
-        return wrapForRequestBody(mutationBody);
+                        getVariablePickingStrategy(), getArguments());
+    }
+
+    @Override
+    protected void setExtendedArgumentsStrategiesToDefault() {
+        inputFieldsPickingStrategy = InputGenerationStrategy.defaultStrategy().getInputFieldsPickingStrategy();
+        modelArgumentStrategy = ModelArgumentGenerationStrategy.defaultStrategy().getModelArgumentStrategy();
     }
 }

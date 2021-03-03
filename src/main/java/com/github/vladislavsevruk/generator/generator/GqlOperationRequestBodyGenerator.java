@@ -29,7 +29,8 @@ import com.github.vladislavsevruk.generator.strategy.looping.LoopBreakingStrateg
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.SelectionSetGenerationStrategy;
-import com.github.vladislavsevruk.generator.util.StringUtil;
+import com.github.vladislavsevruk.generator.strategy.variable.VariableGenerationStrategy;
+import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStrategy;
 import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import lombok.AccessLevel;
@@ -57,6 +58,9 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
     private FieldsPickingStrategy selectionSetFieldsPickingStrategy = SelectionSetGenerationStrategy.defaultStrategy()
             .getFieldsPickingStrategy();
     private TypeMeta<?> selectionSetTypeMeta;
+    @Getter(AccessLevel.PROTECTED)
+    private VariablePickingStrategy variablePickingStrategy = VariableGenerationStrategy.defaultStrategy()
+            .getVariablePickingStrategy();
 
     protected GqlOperationRequestBodyGenerator(String operationName) {
         this.operationName = operationName;
@@ -79,7 +83,61 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
      * @return this.
      */
     public T arguments(Iterable<? extends GqlParameterValue<?>> arguments) {
+        return arguments(VariableGenerationStrategy.defaultStrategy(), arguments);
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined variable generation strategy.
+     *
+     * @param variableGenerationStrategy <code>VariableGenerationStrategy</code> variables picking strategy for
+     *                                   variables generation.
+     * @param arguments                  <code>GqlParameterValue</code> varargs with argument names and values.
+     * @return this.
+     */
+    public T arguments(VariableGenerationStrategy variableGenerationStrategy, GqlParameterValue<?>... arguments) {
+        return arguments(variableGenerationStrategy.getVariablePickingStrategy(), arguments);
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined variable generation strategy.
+     *
+     * @param variableGenerationStrategy <code>VariableGenerationStrategy</code> variables picking strategy for
+     *                                   variables generation.
+     * @param arguments                  <code>Iterable</code> of <code>GqlParameterValue</code> with argument names
+     *                                   and values.
+     * @return this.
+     */
+    public T arguments(VariableGenerationStrategy variableGenerationStrategy,
+            Iterable<? extends GqlParameterValue<?>> arguments) {
+        return arguments(variableGenerationStrategy.getVariablePickingStrategy(), arguments);
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined variable picking strategy.
+     *
+     * @param variablePickingStrategy <code>VariablePickingStrategy</code> variables picking strategy for variables
+     *                                generation.
+     * @param arguments               <code>GqlParameterValue</code> varargs with argument names and values.
+     * @return this.
+     */
+    public T arguments(VariablePickingStrategy variablePickingStrategy, GqlParameterValue<?>... arguments) {
+        return arguments(variablePickingStrategy, Arrays.asList(arguments));
+    }
+
+    /**
+     * Adds arguments to GraphQL operation with predefined variable picking strategy.
+     *
+     * @param variablePickingStrategy <code>VariablePickingStrategy</code> variables picking strategy for variables
+     *                                generation.
+     * @param arguments               <code>Iterable</code> of <code>GqlParameterValue</code> with argument names and
+     *                                values.
+     * @return this.
+     */
+    public T arguments(VariablePickingStrategy variablePickingStrategy,
+            Iterable<? extends GqlParameterValue<?>> arguments) {
+        setExtendedArgumentsStrategiesToDefault();
         this.arguments = arguments;
+        this.variablePickingStrategy = variablePickingStrategy;
         return thisInstance();
     }
 
@@ -290,8 +348,8 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
                 FieldMarkingStrategySourceManager.selectionSet().getStrategy(), loopBreakingStrategy);
     }
 
-    protected String wrapForRequestBody(String operationBody) {
-        return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
+    // can be overridden at descendants to reset strategies to default when methods for argument modification from this class are called
+    protected void setExtendedArgumentsStrategiesToDefault() {
     }
 
     private <U> U orDefault(U value, Supplier<U> defaultValue) {
