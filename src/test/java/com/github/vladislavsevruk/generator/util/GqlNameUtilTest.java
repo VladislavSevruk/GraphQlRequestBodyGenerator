@@ -23,7 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.util;
 
-import com.github.vladislavsevruk.generator.test.data.TestDataForInputTypeStrategy;
+import com.github.vladislavsevruk.generator.test.data.AnnotatedVariableAllMethodsTestModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -95,9 +95,9 @@ class GqlNameUtilTest {
 
     @Test
     void modelGqlTypeTest() {
-        TestDataForInputTypeStrategy value = new TestDataForInputTypeStrategy();
+        AnnotatedVariableAllMethodsTestModel value = new AnnotatedVariableAllMethodsTestModel();
         String typeName = GqlNamePicker.getGqlTypeName(value);
-        Assertions.assertEquals("TestDataForInputTypeStrategy", typeName);
+        Assertions.assertEquals(AnnotatedVariableAllMethodsTestModel.class.getSimpleName(), typeName);
     }
 
     @Test

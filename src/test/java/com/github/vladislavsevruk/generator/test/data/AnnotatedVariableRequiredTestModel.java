@@ -30,9 +30,8 @@ import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Data
-@GqlVariableType(variableType = "InputData", variableName = "search",
-        defaultValue = "{\"name\":\"Test Name\",\"address\":\"Test Address\"}")
-public class TestDataForInputTypeStrategy {
+@GqlVariableType(isRequired = true)
+public class AnnotatedVariableRequiredTestModel {
 
     @GqlField
     private String address;

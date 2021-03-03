@@ -30,8 +30,10 @@ import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStr
 import com.github.vladislavsevruk.generator.util.StringUtil;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -65,8 +67,9 @@ public class GqlBodyGenerator {
     protected String generateVariables(VariablePickingStrategy variablePickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         Map<String, ?> variablesMap = StreamSupport.stream(arguments.spliterator(), false)
-                .filter(variablePickingStrategy::isVariable)
-                .collect(Collectors.toMap(variablePickingStrategy::getVariableName, GqlParameterValue::getValue));
+                .filter(variablePickingStrategy::isVariable).collect(Collectors
+                        .toMap(variablePickingStrategy::getVariableName, GqlParameterValue::getValue, throwingMerger(),
+                                LinkedHashMap::new));
         if (variablesMap.isEmpty()) {
             return "";
         }
@@ -83,5 +86,9 @@ public class GqlBodyGenerator {
             return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
         }
         return "{\"variables\":" + variables + ",\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
+    }
+
+    private static <T> BinaryOperator<T> throwingMerger() {
+        return (u, v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); };
     }
 }
