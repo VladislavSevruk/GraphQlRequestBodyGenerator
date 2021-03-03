@@ -528,6 +528,26 @@ String query = GqlRequestBodyGenerator.query("getProfile")
 
 - generate only for arguments with value type annotated by 
 [GqlVariableType](src/main/java/com/github/vladislavsevruk/generator/annotation/GqlVariableType.java) type;
+```java
+@GqlVariableType(variableType = "ContactsData", variableName = "contactsData")
+public class Contacts {
+    @GqlField
+    private String email;
+    @GqlField
+    private String phoneNumber;
+
+    // getters and setters
+    ...
+}
+```
+```kotlin
+Contacts contacts = new Contacts().setEmail("test@domain.com").setPhoneNumber("3751945");
+String variableName = "id";
+GqlArgument<Contacts> variable = GqlArgument.of("contacts", contacts);
+String query = GqlRequestBodyGenerator.mutation("updateContacts")
+        .arguments(VariableGenerationStrategy.annotatedArgumentValueType(), variable)
+        .selectionSet(Contacts.class).generate();
+```
 
 Or you can provide your own variables generation strategy that implements 
 [VariablePickingStrategy](src/main/java/com/github/vladislavsevruk/generator/strategy/variable/VariablePickingStrategy.java)
