@@ -6,62 +6,24 @@ plugins {
     id 'signing'
 }
 
-sourceCompatibility = "${javaVersion}"
-targetCompatibility = "${javaVersion}"
-
 def ossrhCredentials = {
     username = project.hasProperty('ossrhUsername') ? project.getProperty('ossrhUsername') : ''
     password = project.hasProperty('ossrhPassword') ? project.getProperty('ossrhPassword') : ''
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-    maven {
-        url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-        credentials(ossrhCredentials)
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials(ossrhCredentials)
+        }
+        maven {
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            credentials(ossrhCredentials)
+        }
     }
-    maven {
-        url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        credentials(ossrhCredentials)
-    }
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-dependencies {
-    compileOnly(
-            "org.projectlombok:lombok:${lombokVersion}"
-    )
-    annotationProcessor(
-            "org.projectlombok:lombok:${lombokVersion}"
-    )
-    implementation(
-            "org.apache.logging.log4j:log4j-api:${log4jVersion}",
-            "org.apache.logging.log4j:log4j-core:${log4jVersion}",
-            "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-    )
-    testCompileOnly(
-            "org.projectlombok:lombok:${lombokVersion}"
-    )
-    testAnnotationProcessor(
-            "org.projectlombok:lombok:${lombokVersion}"
-    )
-    testImplementation(
-            "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
-            "org.junit.jupiter:junit-jupiter-params:${junitVersion}",
-            "org.mockito:mockito-core:${mockitoVersion}",
-            "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
-    )
-    testRuntimeOnly(
-            "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    )
-    api(
-            "com.github.vladislavsevruk:type-resolver:${typeResolverVersion}"
-    )
 }
 
 sonarqube {
@@ -70,59 +32,44 @@ sonarqube {
     }
 }
 
-jacocoTestReport {
-    reports {
-        xml.enabled true
-        html.enabled true
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'org.sonarqube'
+    apply plugin: 'jacoco'
+    apply plugin: 'maven-publish'
+    apply plugin: 'signing'
+
+    sourceCompatibility = "${javaVersion}"
+    targetCompatibility = "${javaVersion}"
+
+    java {
+        withJavadocJar()
+        withSourcesJar()
     }
-}
 
-test {
-    useJUnit()
-    useJUnitPlatform()
-    maxHeapSize = '64m'
-}
+    test {
+        useJUnit()
+        useJUnitPlatform()
+        maxHeapSize = '64m'
+    }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            artifactId = "${rootProject.name}"
-            from components.java
-            pom {
-                name = 'GraphQL Request Body Generator'
-                description = 'This utility library helps to generate body for GraphQL request using POJO and annotations.'
-                url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator'
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'uladzislau_seuruk'
-                        name = 'Uladzislau Seuruk'
-                        email = 'vladislavsevruk@gmail.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git://VladislavSevruk/GraphQlRequestBodyGenerator.git'
-                    developerConnection = 'scm:git:ssh://VladislavSevruk/GraphQlRequestBodyGenerator.git'
-                    url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator/tree/master'
-                }
+    publishing {
+        publications {
+            maven(MavenPublication) {
+            }
+        }
+        repositories {
+            maven {
+                def stagingRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : stagingRepoUrl
+                credentials(ossrhCredentials)
             }
         }
     }
-    repositories {
-        maven {
-            def stagingRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-            url = version.endsWith('-SNAPSHOT') ? snapshotsRepoUrl : stagingRepoUrl
-            credentials(ossrhCredentials)
-        }
-    }
-}
 
-signing {
-    sign publishing.publications.maven
+    signing {
+        useGpgCmd()
+        sign publishing.publications.maven
+    }
 }

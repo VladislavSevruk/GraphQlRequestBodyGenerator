@@ -9,4 +9,6 @@ gradleEnterprise {
     }
 }
 
-rootProject.name = 'graphql-request-body-generator'
+include 'graphql-request-body-generator-annotation', 'graphql-request-body-generator'
+
+rootProject.name = 'graphql-request-body-generator-base'
