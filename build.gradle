@@ -47,15 +47,6 @@ subprojects {
         withSourcesJar()
     }
 
-    jacocoTestReport {
-        dependsOn test
-        executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-        reports {
-            xml.enabled true
-            html.enabled true
-        }
-    }
-
     test {
         useJUnit()
         useJUnitPlatform()
