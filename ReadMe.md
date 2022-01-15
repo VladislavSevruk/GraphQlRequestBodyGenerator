@@ -40,13 +40,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.6</version>
+      <version>1.0.7</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.6'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.7'
 ```
 
 ## Usage
