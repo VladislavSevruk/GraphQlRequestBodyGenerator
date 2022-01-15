@@ -1,0 +1,68 @@
+dependencies {
+    compile project(':graphql-request-body-generator-annotation')
+    compileOnly(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    annotationProcessor(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    implementation (
+            "org.apache.logging.log4j:log4j-api:${log4jVersion}",
+            "org.apache.logging.log4j:log4j-core:${log4jVersion}",
+            "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    )
+    testCompileOnly(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    testAnnotationProcessor(
+            "org.projectlombok:lombok:${lombokVersion}"
+    )
+    testImplementation (
+            "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
+            "org.junit.jupiter:junit-jupiter-params:${junitVersion}",
+            "org.mockito:mockito-core:${mockitoVersion}",
+            "org.mockito:mockito-junit-jupiter:${mockitoVersion}"
+    )
+    testRuntimeOnly (
+            "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+    )
+    api(
+            "com.github.vladislavsevruk:type-resolver:${typeResolverVersion}"
+    )
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = "${project.name}"
+            from components.java
+            pom {
+                name = 'GraphQL Request Body Generator'
+                description = 'This utility library helps to generate body for GraphQL request using POJO and annotations.'
+                url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator/graphql-request-body-generator'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'uladzislau_seuruk'
+                        name = 'Uladzislau Seuruk'
+                        email = 'vladislavsevruk@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://VladislavSevruk/GraphQlRequestBodyGenerator.git'
+                    developerConnection = 'scm:git:ssh://VladislavSevruk/GraphQlRequestBodyGenerator.git'
+                    url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator/tree/master'
+                }
+            }
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}

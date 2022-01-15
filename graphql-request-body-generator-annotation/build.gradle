@@ -1,0 +1,31 @@
+publishing {
+    publications {
+        maven(MavenPublication) {
+            artifactId = "${project.name}"
+            from components.java
+            pom {
+                name = 'GraphQL Request Body Generator Annotations'
+                description = 'Annotations for utility library that helps to generate body for GraphQL request.'
+                url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator/graphql-request-body-generator-annotation'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'uladzislau_seuruk'
+                        name = 'Uladzislau Seuruk'
+                        email = 'vladislavsevruk@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://VladislavSevruk/GraphQlRequestBodyGenerator.git'
+                    developerConnection = 'scm:git:ssh://VladislavSevruk/GraphQlRequestBodyGenerator.git'
+                    url = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator/tree/master'
+                }
+            }
+        }
+    }
+}
