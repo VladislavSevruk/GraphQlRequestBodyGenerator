@@ -8,14 +8,14 @@ import java.util.List;
 /**
  * Provides loop breaking strategy that allows to generate looped items with allowed level of nesting starting from 1
  * to keep only single item at query, e.g. for self-referencing structure <pre>item{id item{...}}</pre>
- * nesting level 1 -
+ * nesting level 0 (nesting disabled) -
  * <pre>
  * {@code
  * {
  *   id
  * }
  * </pre>
- * nesting level 2 -
+ * nesting level 1 -
  * <pre>
  * {@code
  * {
@@ -26,7 +26,7 @@ import java.util.List;
  * }
  * }
  * </pre>
- * nesting level 3 -
+ * nesting level 2 -
  * <pre>
  * {@code
  *  {
@@ -48,8 +48,8 @@ public class NestingLoopBreakingStrategy implements LoopBreakingStrategy {
 
     public NestingLoopBreakingStrategy(int nestingLevel) {
         this.nestingLevel = nestingLevel;
-        if (nestingLevel < 1) {
-            log.warn("Received nesting level at '{}' is '{}' while expected to be greater than to zero.",
+        if (nestingLevel < 0) {
+            log.warn("Received nesting level at '{}' is '{}' while expected to be greater than or equal to zero.",
                     this.getClass().getName(), nestingLevel);
         }
     }
@@ -59,6 +59,6 @@ public class NestingLoopBreakingStrategy implements LoopBreakingStrategy {
      */
     @Override
     public boolean isShouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
-        return trace.stream().filter(traceItem -> traceItem.equals(typeMeta)).count() > nestingLevel;
+        return trace.stream().filter(traceItem -> traceItem.equals(typeMeta)).count() > nestingLevel + 1;
     }
 }

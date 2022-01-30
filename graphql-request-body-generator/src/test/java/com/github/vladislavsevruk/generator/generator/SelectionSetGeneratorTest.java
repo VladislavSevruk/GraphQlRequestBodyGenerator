@@ -454,7 +454,7 @@ class SelectionSetGeneratorTest {
     @Test
     void generateWithNestingLoopBreakingStrategyLongLoopedItemTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(LongLoopedItem1.class);
-        int nestingLevel = 2;
+        int nestingLevel = 1;
         LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
@@ -467,13 +467,25 @@ class SelectionSetGeneratorTest {
     @Test
     void generateWithNestingLoopBreakingStrategyShortLoopedItemTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(ShortLoopedItem1.class);
-        int nestingLevel = 1;
+        int nestingLevel = 0;
         LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 shortLoopedItem2{field2}}} "
                 + "shortLoopedItem3{field3 shortLoopedItem2{field2}}}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateWithNestingLoopBreakingStrategySelfReferencedItemLevelZeroTest() {
+        TypeMeta<?> modelMeta = new TypeMeta<>(SelfReferencedItem.class);
+        int nestingLevel = 0;
+        LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
+        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
+                new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
+        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
+        String expectedResult = "{id}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -485,7 +497,7 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id}";
+        String expectedResult = "{id item{id}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -497,18 +509,6 @@ class SelectionSetGeneratorTest {
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id item{id}}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    void generateWithNestingLoopBreakingStrategySelfReferencedItemLevelThreeTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(SelfReferencedItem.class);
-        int nestingLevel = 3;
-        LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{id item{id item{id}}}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -516,7 +516,7 @@ class SelectionSetGeneratorTest {
     @Test
     void generateWithNestingLoopBreakingStrategySameAsWithDefaultOneTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(LongLoopedItem1.class);
-        int nestingLevel = 1;
+        int nestingLevel = 0;
         LoopBreakingStrategy nestedLoopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
         LoopBreakingStrategy defaultLoopBreakingStrategy = EndlessLoopBreakingStrategy.defaultStrategy()
                 .getLoopBreakingStrategy();
