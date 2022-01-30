@@ -47,7 +47,7 @@ public enum SelectionSetGenerationStrategy {
     WITHOUT_SELECTION_SETS(new WithoutFieldsWithSelectionSetPickingStrategy());
 
     @Getter
-    private FieldsPickingStrategy fieldsPickingStrategy;
+    private final FieldsPickingStrategy fieldsPickingStrategy;
 
     SelectionSetGenerationStrategy(FieldsPickingStrategy fieldsPickingStrategy) {
         this.fieldsPickingStrategy = fieldsPickingStrategy;

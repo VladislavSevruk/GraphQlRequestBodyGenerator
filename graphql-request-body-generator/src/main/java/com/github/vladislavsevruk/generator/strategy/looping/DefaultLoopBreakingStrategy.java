@@ -36,7 +36,7 @@ public class DefaultLoopBreakingStrategy implements LoopBreakingStrategy {
      * {@inheritDoc}
      */
     @Override
-    public TypeMeta<?> pickLoopBreakingItem(List<TypeMeta<?>> trace) {
-        return trace.get(trace.size() - 1);
+    public boolean isShouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
+        return trace.indexOf(typeMeta) != trace.size() - 1;
     }
 }

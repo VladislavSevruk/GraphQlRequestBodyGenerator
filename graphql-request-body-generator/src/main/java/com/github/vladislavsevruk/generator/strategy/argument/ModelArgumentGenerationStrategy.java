@@ -41,7 +41,7 @@ public enum ModelArgumentGenerationStrategy {
     ONLY_INPUT_ARGUMENT(new OnlyInputArgumentStrategy());
 
     @Getter
-    private ModelArgumentStrategy modelArgumentStrategy;
+    private final ModelArgumentStrategy modelArgumentStrategy;
 
     ModelArgumentGenerationStrategy(ModelArgumentStrategy modelArgumentStrategy) {
         this.modelArgumentStrategy = modelArgumentStrategy;

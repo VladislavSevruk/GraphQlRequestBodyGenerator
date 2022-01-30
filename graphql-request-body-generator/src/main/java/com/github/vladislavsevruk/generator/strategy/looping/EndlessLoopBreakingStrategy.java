@@ -38,10 +38,17 @@ public enum EndlessLoopBreakingStrategy {
     EXCLUDE_FIRST_ENTRY(new DefaultLoopBreakingStrategy());
 
     @Getter
-    private LoopBreakingStrategy loopBreakingStrategy;
+    private final LoopBreakingStrategy loopBreakingStrategy;
 
     EndlessLoopBreakingStrategy(LoopBreakingStrategy loopBreakingStrategy) {
         this.loopBreakingStrategy = loopBreakingStrategy;
+    }
+
+    /**
+     * Returns default loop breaking strategy.
+     */
+    public static LoopBreakingStrategy nestingStrategy(int nestingLevel) {
+        return new NestingLoopBreakingStrategy(nestingLevel);
     }
 
     /**
