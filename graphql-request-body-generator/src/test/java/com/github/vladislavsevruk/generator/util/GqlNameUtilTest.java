@@ -23,16 +23,12 @@
  */
 package com.github.vladislavsevruk.generator.util;
 
-import com.github.vladislavsevruk.generator.GqlRequestBodyGenerator;
-import com.github.vladislavsevruk.generator.annotation.GqlField;
-import com.github.vladislavsevruk.generator.strategy.looping.EndlessLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.test.data.AnnotatedVariableAllMethodsTestModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
 
 class GqlNameUtilTest {
 
