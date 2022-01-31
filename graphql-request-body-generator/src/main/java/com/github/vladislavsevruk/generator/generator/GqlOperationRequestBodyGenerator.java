@@ -136,7 +136,7 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
     public T arguments(VariablePickingStrategy variablePickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         setExtendedArgumentsStrategiesToDefault();
-        this.arguments = arguments;
+        this.arguments = arguments;;
         this.variablePickingStrategy = variablePickingStrategy;
         return thisInstance();
     }
