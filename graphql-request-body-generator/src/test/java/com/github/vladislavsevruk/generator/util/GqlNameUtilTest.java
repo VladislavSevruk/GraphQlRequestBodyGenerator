@@ -23,12 +23,16 @@
  */
 package com.github.vladislavsevruk.generator.util;
 
+import com.github.vladislavsevruk.generator.GqlRequestBodyGenerator;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.strategy.looping.EndlessLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.test.data.AnnotatedVariableAllMethodsTestModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 class GqlNameUtilTest {
 
@@ -112,5 +116,31 @@ class GqlNameUtilTest {
         String value = "value";
         String typeName = GqlNamePicker.getGqlTypeName(value);
         Assertions.assertEquals(STRING_TYPE_NAME, typeName);
+    }
+
+
+
+
+    @Test
+    void aTest() {
+        String query = GqlRequestBodyGenerator.query("allUsers")
+                .selectionSet(Parent.class,
+                        (typeMeta, trace) -> typeMeta.getType().equals(Parent.class))
+                .generate();
+        Assertions.assertEquals(STRING_TYPE_NAME, query);
+    }
+
+    public static class Parent {
+        @GqlField
+        private Long id;
+        @GqlField(withSelectionSet = true)
+        private List<Child> children;
+    }
+
+    public static class Child {
+        @GqlField
+        private Long id;
+        @GqlField(withSelectionSet = true)
+        private Parent parent;
     }
 }

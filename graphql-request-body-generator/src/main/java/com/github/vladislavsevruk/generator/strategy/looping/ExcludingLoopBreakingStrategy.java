@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Provides default loop breaking strategy for excluding looped element from looping sequence.
  */
-public class DefaultLoopBreakingStrategy implements LoopBreakingStrategy {
+public class ExcludingLoopBreakingStrategy implements LoopBreakingStrategy {
 
     /**
      * {@inheritDoc}

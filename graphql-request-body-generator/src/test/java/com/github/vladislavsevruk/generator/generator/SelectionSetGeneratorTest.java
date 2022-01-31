@@ -23,7 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.generator;
 
-import com.github.vladislavsevruk.generator.strategy.looping.DefaultLoopBreakingStrategy;
+import com.github.vladislavsevruk.generator.strategy.looping.ExcludingLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.looping.EndlessLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.looping.LoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
@@ -51,7 +51,7 @@ class SelectionSetGeneratorTest {
     void generateAllExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
                 + "idField id customNamedField customNamedNonNullField nonNullField} collectionField "
@@ -78,7 +78,7 @@ class SelectionSetGeneratorTest {
     void generateAllExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
                 + "customNamedField customNamedNonNullField nonNullField newEntityAtDescendant{collectionField "
@@ -108,7 +108,7 @@ class SelectionSetGeneratorTest {
     void generateAllExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation fieldWithoutAnnotations "
                 + "idField id customNamedField customNamedNonNullField nonNullField} collectionField entity{"
@@ -143,7 +143,7 @@ class SelectionSetGeneratorTest {
     void generateNonNullExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
         String expectedResult = "{customNamedNonNullField nonNullField "
                 + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
@@ -155,7 +155,7 @@ class SelectionSetGeneratorTest {
     void generateNonNullExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
         String expectedResult = "{customNamedNonNullField nonNullField "
                 + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
@@ -167,7 +167,7 @@ class SelectionSetGeneratorTest {
     void generateNonNullExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
         String expectedResult = "{customNamedNonNullField nonNullField "
                 + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
@@ -179,7 +179,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyIdExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
                 + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
@@ -191,7 +191,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyIdExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{id newEntityAtDescendant{id} collectionEntity{id} "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} "
@@ -203,7 +203,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyIdExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} entity{id} aliasForEntityWithAlias:entityWithAlias{id} "
                 + "aliasForEntityWithAliasAndArgument:entityWithAliasAndArgument(argumentForEntityWithAliasAndArgument:"
@@ -217,7 +217,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation idField id "
                 + "customNamedField customNamedNonNullField nonNullField} collectionField aliasForFieldWithAlias:"
@@ -241,7 +241,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedIdGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} id fieldWithEntityAnnotation{id} "
                 + "listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} nonNullEntity{id} "
@@ -253,7 +253,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedIdInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{id newEntityAtDescendant{id} collectionEntity{id} "
                 + "fieldWithEntityAnnotation{id} listEntity{id} customNamedEntity{id} customNamedNonNullEntity{id} "
@@ -265,7 +265,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedIdModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{id} entity{id} aliasForEntityWithAlias:entityWithAlias{id} "
                 + "aliasForEntityWithAliasAndArgument:entityWithAliasAndArgument(argumentForEntityWithAliasAndArgument:"
@@ -279,7 +279,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedIdModelWithUnionsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyIdFieldsPickingStrategy());
         String expectedResult = "{severalUnionTypes{... on UnionType1{id}} id singleUnionType{... on UnionType1{id}}}";
         Assertions.assertEquals(expectedResult, result);
@@ -289,7 +289,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation idField customNamedField "
                 + "customNamedNonNullField nonNullField newEntityAtDescendant{collectionField fieldWithFieldAnnotation "
@@ -315,7 +315,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{collectionEntity{collectionField fieldWithFieldAnnotation idField id "
                 + "customNamedField customNamedNonNullField nonNullField} collectionField entity{collectionField "
@@ -346,7 +346,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedModelWithUnionsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
         String expectedResult = "{severalUnionTypes{... on UnionType1{id nonNullField} ... on UnionType{simpleField}} "
                 + "id singleUnionType{... on UnionType1{id nonNullField}}}";
@@ -357,7 +357,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedNonNullGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
         String expectedResult = "{customNamedNonNullField nonNullField "
                 + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
@@ -369,7 +369,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedNonNullInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
         String expectedResult = "{customNamedNonNullField nonNullField "
                 + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
@@ -381,7 +381,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedNonNullModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
         String expectedResult = "{customNamedNonNullField nonNullField "
                 + "customNamedNonNullEntity{customNamedNonNullField nonNullField} nonNullEntity{"
@@ -393,7 +393,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedNonNullModelWithUnionsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new OnlyNonNullFieldsPickingStrategy());
         String expectedResult = "{severalUnionTypes{... on UnionType1{id nonNullField}} id}";
         Assertions.assertEquals(expectedResult, result);
@@ -403,7 +403,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedWithoutFieldsWithSelectionSetGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
                 + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
@@ -417,7 +417,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedWithoutFieldsWithSelectionSetInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation idField customNamedField "
                 + "customNamedNonNullField nonNullField newFieldAtDescendant aliasForFieldWithAlias:fieldWithAlias "
@@ -431,7 +431,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
                 + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
@@ -445,7 +445,7 @@ class SelectionSetGeneratorTest {
     void generateOnlyMarkedWithoutFieldsWithSelectionSetModelWithUnionsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModelWithUnion.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta, new OnlyMarkedFieldMarkingStrategy(),
-                new DefaultLoopBreakingStrategy());
+                new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{id}";
         Assertions.assertEquals(expectedResult, result);
@@ -533,7 +533,7 @@ class SelectionSetGeneratorTest {
     void generateWithoutFieldsWithSelectionSetExceptIgnoredGenericModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeProvider<GenericTestModel<NestedTestModel>>() {}.getTypeMeta();
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
                 + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
@@ -547,7 +547,7 @@ class SelectionSetGeneratorTest {
     void generateWithoutFieldsWithSelectionSetExceptIgnoredInheritedModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(InheritedTestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{id collectionField fieldWithFieldAnnotation fieldWithoutAnnotations idField "
                 + "customNamedField customNamedNonNullField nonNullField newFieldAtDescendant "
@@ -562,7 +562,7 @@ class SelectionSetGeneratorTest {
     void generateWithoutFieldsWithSelectionSetExceptIgnoredModelWithAnnotationsTest() {
         TypeMeta<?> modelMeta = new TypeMeta<>(TestModel.class);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), new DefaultLoopBreakingStrategy());
+                new AllExceptIgnoredFieldMarkingStrategy(), new ExcludingLoopBreakingStrategy());
         String result = bodyGenerator.generate(new WithoutFieldsWithSelectionSetPickingStrategy());
         String expectedResult = "{collectionField aliasForFieldWithAlias:fieldWithAlias "
                 + "aliasForFieldWithAliasAndArguments:fieldWithAliasAndArguments("
