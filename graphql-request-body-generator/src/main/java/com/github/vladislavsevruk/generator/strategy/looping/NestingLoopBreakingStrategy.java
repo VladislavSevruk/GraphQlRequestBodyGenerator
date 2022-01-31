@@ -7,39 +7,34 @@ import java.util.List;
 
 /**
  * Provides loop breaking strategy that allows to generate looped items with allowed level of nesting starting from 1
- * to keep only single item at query, e.g. for self-referencing structure <pre>item{id item{...}}</pre>
+ * to keep only single item at query, e.g. for self-referencing structure <pre>{@code item{id item{...}}}</pre>
  * nesting level 0 (nesting disabled) -
- * <pre>
- * {@code
+ * <pre>{@code
  * {
  *   id
  * }
- * </pre>
+ * }</pre>
  * nesting level 1 -
- * <pre>
- * {@code
+ * <pre>{@code
  * {
  *   id
  *   item {
  *     id
  *   }
  * }
- * }
- * </pre>
+ * }</pre>
  * nesting level 2 -
- * <pre>
- * {@code
- *  {
- *    id
- *    item {
- *      id
- *      item {
- *        id
- *      }
+ * <pre>{@code
+ * {
+ *   id
+ *   item {
+ *     id
+ *     item {
+ *       id
+ *     }
  *   }
  * }
- * }
- * </pre>
+ * }</pre>
  */
 @Log4j2
 public class NestingLoopBreakingStrategy implements LoopBreakingStrategy {
