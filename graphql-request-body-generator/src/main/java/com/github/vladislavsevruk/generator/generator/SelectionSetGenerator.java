@@ -89,7 +89,7 @@ public class SelectionSetGenerator {
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
         loopDetector.addToTrace(fieldTypeMeta);
-        if (loopDetector.shouldBreakOnItem(fieldTypeMeta)) {
+        if (loopDetector.isShouldBreakOnItem(fieldTypeMeta)) {
             log.warn(() -> String
                     .format("'%s' won't be added to selection set to avoid endless loop.", loopDetector.getTrace()));
         } else {
@@ -131,7 +131,7 @@ public class SelectionSetGenerator {
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> unionTypeMeta = new TypeMeta<>(unionType.value());
         loopDetector.addToTrace(unionTypeMeta);
-        if (loopDetector.shouldBreakOnItem(unionTypeMeta)) {
+        if (loopDetector.isShouldBreakOnItem(unionTypeMeta)) {
             log.warn(() -> String
                     .format("'%s' won't be added to selection set to avoid endless loop.", loopDetector.getTrace()));
         } else {

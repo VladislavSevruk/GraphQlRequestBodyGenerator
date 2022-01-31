@@ -30,13 +30,13 @@ import java.util.List;
 /**
  * Provides default loop breaking strategy for excluding looped element from looping sequence.
  */
-public class DefaultLoopBreakingStrategy implements LoopBreakingStrategy {
+public class ExcludingLoopBreakingStrategy implements LoopBreakingStrategy {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public TypeMeta<?> pickLoopBreakingItem(List<TypeMeta<?>> trace) {
-        return trace.get(trace.size() - 1);
+    public boolean isShouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
+        return trace.indexOf(typeMeta) != trace.size() - 1;
     }
 }

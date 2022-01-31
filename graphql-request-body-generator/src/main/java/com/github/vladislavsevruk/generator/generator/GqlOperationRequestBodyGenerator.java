@@ -46,14 +46,14 @@ import java.util.function.Supplier;
  *
  * @param <T> self type to return subclass type at chain methods.
  */
-public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationRequestBodyGenerator> {
+public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationRequestBodyGenerator<T>> {
 
     @Getter(AccessLevel.PROTECTED)
     private Iterable<? extends GqlParameterValue<?>> arguments = Collections.emptyList();
     private LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.defaultStrategy()
             .getLoopBreakingStrategy();
     @Getter(AccessLevel.PROTECTED)
-    private String operationName;
+    private final String operationName;
     @Getter(AccessLevel.PROTECTED)
     private FieldsPickingStrategy selectionSetFieldsPickingStrategy = SelectionSetGenerationStrategy.defaultStrategy()
             .getFieldsPickingStrategy();
