@@ -41,7 +41,7 @@ public enum InputGenerationStrategy {
     WITHOUT_NULLS(new WithoutNullsInputFieldsPickingStrategy());
 
     @Getter
-    private InputFieldsPickingStrategy inputFieldsPickingStrategy;
+    private final InputFieldsPickingStrategy inputFieldsPickingStrategy;
 
     InputGenerationStrategy(InputFieldsPickingStrategy inputFieldsPickingStrategy) {
         this.inputFieldsPickingStrategy = inputFieldsPickingStrategy;

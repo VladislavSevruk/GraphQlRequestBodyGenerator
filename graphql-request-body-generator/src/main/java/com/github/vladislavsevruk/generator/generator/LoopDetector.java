@@ -35,10 +35,8 @@ import java.util.stream.Collectors;
  */
 public final class LoopDetector {
 
-    private boolean isLoopDetected;
-    // ArrayList is permissible as we delete elements only from list end
-    private final List<TypeMeta<?>> itemsToBreakOn = new ArrayList<>();
     private final LoopBreakingStrategy loopBreakingStrategy;
+    // ArrayList is permissible as we delete elements only from list end
     private final List<TypeMeta<?>> loopedItems = new ArrayList<>();
     private final List<TypeMeta<?>> trace = new ArrayList<>();
 
@@ -65,47 +63,39 @@ public final class LoopDetector {
     }
 
     /**
-     * Removes last item from trace and checks if elements looping is still present at trace.
-     */
-    public void removeLastItemFromTrace() {
-        TypeMeta<?> lastItem = trace.remove(trace.size() - 1);
-        if (!loopedItems.isEmpty()) {
-            int lastLoopedItemIndex = loopedItems.size() - 1;
-            if (lastItem.equals(loopedItems.get(lastLoopedItemIndex))) {
-                loopedItems.remove(lastLoopedItemIndex);
-                itemsToBreakOn.remove(lastLoopedItemIndex);
-                isLoopDetected = loopedItems.isEmpty();
-            }
-        }
-    }
-
-    /**
      * Checks if received type meta is the item on which looping should be broken.
      *
      * @param typeMeta <code>TypeMeta</code> to check.
      * @return <code>true</code> if received <code>TypeMeta</code> is the item on which looping should be broken,
      * <code>false</code> otherwise.
      */
-    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta) {
-        if (!isLoopDetected) {
+    public boolean isShouldBreakOnItem(TypeMeta<?> typeMeta) {
+        if (!isLoopDetected()) {
             return false;
         }
-        return itemsToBreakOn.contains(typeMeta) || equalToAnyButNotTheSame(loopedItems, typeMeta);
+        return loopBreakingStrategy.isShouldBreakOnItem(typeMeta, trace);
+    }
+
+    /**
+     * Removes last item from trace and checks if elements looping is still present at trace.
+     */
+    public void removeLastItemFromTrace() {
+        TypeMeta<?> lastItem = trace.remove(trace.size() - 1);
+        if (isLoopDetected()) {
+            int lastLoopedItemIndex = loopedItems.size() - 1;
+            if (lastItem.equals(loopedItems.get(lastLoopedItemIndex))) {
+                loopedItems.remove(lastLoopedItemIndex);
+            }
+        }
     }
 
     private void checkForLooping(TypeMeta<?> typeMeta) {
         if (trace.indexOf(typeMeta) != trace.size() - 1) {
-            isLoopDetected = true;
             loopedItems.add(typeMeta);
-            itemsToBreakOn.add(loopBreakingStrategy.pickLoopBreakingItem(trace));
         }
     }
 
-    private boolean equalToAnyButNotTheSame(List<TypeMeta<?>> typeMetaList, TypeMeta<?> typeMeta) {
-        int indexOfItem = typeMetaList.indexOf(typeMeta);
-        if (indexOfItem == -1) {
-            return false;
-        }
-        return typeMetaList.get(indexOfItem) != typeMeta;
+    private boolean isLoopDetected() {
+        return !loopedItems.isEmpty();
     }
 }

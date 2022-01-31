@@ -25,6 +25,7 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
       * [GqlIgnore](#gqlignore-1)
   * [Generate request body](#generate-request-body)
     * [Operation selection set](#operation-selection-set)
+    * [Loop breaking strategy](#loop-breaking-strategy)
     * [Arguments](#arguments)
       * [Input argument](#input-argument)
       * [Variables](#variables)
@@ -40,13 +41,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.7</version>
+      <version>1.0.8</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.7'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.8'
 ```
 
 ## Usage
@@ -406,10 +407,12 @@ Generated operation is wrapped into json and can be passed as body to any API Cl
 #### Operation selection set
 By default, all marked fields will be used for selection set generation. However, you can generate selection set using
 one of [predefined fields picking strategies](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/strategy/picker/selection/SelectionSetGenerationStrategy.java):
-- pick all marked fields
+- pick all marked fields \[default]
 ```kotlin
 String query = GqlRequestBodyGenerator.query("allUsers")
         .selectionSet(User.class, SelectionSetGenerationStrategy.allFields()).generate();
+// same result as
+String query2 = GqlRequestBodyGenerator.query("allUsers").selectionSet(User.class).generate();
 ```
 
 - pick only fields with __id__ name or fields that have nested field with __id__ name
@@ -443,6 +446,57 @@ If you want to use generic models it's recommended to provide them via
 ```kotlin
 String query = GqlRequestBodyGenerator.query("allUsers")
         .selectionSet(new TypeProvider<User<UserInfo>>() {}).generate();
+```
+
+#### Loop breaking strategy
+Some models may contain circular type reference on each other, like
+```java
+public class Parent {
+  @GqlField
+  private Long id;
+  @GqlField(withSelectionSet = true)
+  private List<Child> children;
+}
+
+public class Child {
+  @GqlField
+  private Long id;
+  @GqlField(withSelectionSet = true)
+  private Parent parent;
+}
+```
+which leads to stack overflow during selection set generation. To avoid this library uses loop breaking mechanism that
+can be customized using one of 
+[predefined loop breaking strategies](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/strategy/looping/LoopBreakingStrategy.java):
+- do not include detected looped item to selection set \[default]
+```kotlin
+String query = GqlRequestBodyGenerator.query("queryName").selectionSet(Parent.class)
+        .generate();
+```
+will result to
+```json
+{"query":"{queryName{id children{id}}}"}
+```
+- allow received nesting level
+```kotlin
+int nestingLevel = 1;
+String query = GqlRequestBodyGenerator.query("queryName")
+        .selectionSet(Parent.class, EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel))
+        .generate();
+```
+will result to
+```json
+{"query":"{queryName{id children{id parent{id children{id}}}}}"}
+```
+
+Also you can provide your own custom loop breaking strategy that implements
+[LoopBreakingStrategy](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/strategy/looping/LoopBreakingStrategy.java)
+functional interface:
+```kotlin
+String query = GqlRequestBodyGenerator.query("queryName")
+        .selectionSet(Parent.class,
+                (typeMeta, trace) -> typeMeta.getType().equals(Parent.class))
+        .generate();
 ```
 
 #### Arguments
