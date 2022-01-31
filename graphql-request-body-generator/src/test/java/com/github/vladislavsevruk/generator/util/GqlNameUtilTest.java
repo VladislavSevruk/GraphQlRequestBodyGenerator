@@ -117,30 +117,4 @@ class GqlNameUtilTest {
         String typeName = GqlNamePicker.getGqlTypeName(value);
         Assertions.assertEquals(STRING_TYPE_NAME, typeName);
     }
-
-
-
-
-    @Test
-    void aTest() {
-        String query = GqlRequestBodyGenerator.query("allUsers")
-                .selectionSet(Parent.class,
-                        (typeMeta, trace) -> typeMeta.getType().equals(Parent.class))
-                .generate();
-        Assertions.assertEquals(STRING_TYPE_NAME, query);
-    }
-
-    public static class Parent {
-        @GqlField
-        private Long id;
-        @GqlField(withSelectionSet = true)
-        private List<Child> children;
-    }
-
-    public static class Child {
-        @GqlField
-        private Long id;
-        @GqlField(withSelectionSet = true)
-        private Parent parent;
-    }
 }
