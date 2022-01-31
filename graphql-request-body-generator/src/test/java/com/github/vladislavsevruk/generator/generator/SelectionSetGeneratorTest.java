@@ -47,6 +47,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.stream.Stream;
 
@@ -493,10 +494,10 @@ class SelectionSetGeneratorTest {
         Assertions.assertEquals(expectedResult, result);
     }
 
-    @Test
-    void generateWithNestingLoopBreakingStrategySameAsWithDefaultOneTest() {
+    @ParameterizedTest
+    @ValueSource(ints = { 0, -1 })
+    void generateWithNestingLoopBreakingStrategySameAsWithDefaultOneTest(int nestingLevel) {
         TypeMeta<?> modelMeta = new TypeMeta<>(LongLoopedItem1.class);
-        int nestingLevel = 0;
         LoopBreakingStrategy nestedLoopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
         LoopBreakingStrategy defaultLoopBreakingStrategy = EndlessLoopBreakingStrategy.defaultStrategy()
                 .getLoopBreakingStrategy();
