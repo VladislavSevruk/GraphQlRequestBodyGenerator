@@ -34,12 +34,11 @@ import java.util.List;
 public interface LoopBreakingStrategy {
 
     /**
-     * TODO
-     * Picks item from trace on which loop should be broken.
+     * Checks if loop should be broken on received item.
      *
-     * @param trace <code>List</code> of <code>TypeMeta</code> with generation items trace.
-     * @param typeMeta <code>TypeMeta</code> of <code>TypeMeta</code> with generation items trace.
-     * @return <code>true</code> if received  on which loop should be broken.
+     * @param typeMeta <code>TypeMeta</code> to check.
+     * @param trace    <code>List</code> of <code>TypeMeta</code> with generation item trace.
+     * @return <code>true</code> if loop should be broken on received item, <code>false</code> otherwise.
      */
     @SuppressWarnings("java:S1452")
     boolean isShouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace);

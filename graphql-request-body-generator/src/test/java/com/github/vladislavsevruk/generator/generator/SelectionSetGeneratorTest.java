@@ -23,8 +23,8 @@
  */
 package com.github.vladislavsevruk.generator.generator;
 
-import com.github.vladislavsevruk.generator.strategy.looping.ExcludingLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.looping.EndlessLoopBreakingStrategy;
+import com.github.vladislavsevruk.generator.strategy.looping.ExcludingLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.looping.LoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.OnlyMarkedFieldMarkingStrategy;
@@ -44,6 +44,11 @@ import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import com.github.vladislavsevruk.resolver.type.TypeProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 class SelectionSetGeneratorTest {
 
@@ -477,39 +482,14 @@ class SelectionSetGeneratorTest {
         Assertions.assertEquals(expectedResult, result);
     }
 
-    @Test
-    void generateWithNestingLoopBreakingStrategySelfReferencedItemLevelZeroTest() {
+    @ParameterizedTest
+    @MethodSource("provideNestingLoopBreakingStrategyValues")
+    void generateWithNestingLoopBreakingStrategySelfReferencedItemTest(int nestingLevel, String expectedResult) {
         TypeMeta<?> modelMeta = new TypeMeta<>(SelfReferencedItem.class);
-        int nestingLevel = 0;
         LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
         SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
                 new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
         String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    void generateWithNestingLoopBreakingStrategySelfReferencedItemLevelOneTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(SelfReferencedItem.class);
-        int nestingLevel = 1;
-        LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id item{id}}";
-        Assertions.assertEquals(expectedResult, result);
-    }
-
-    @Test
-    void generateWithNestingLoopBreakingStrategySelfReferencedItemLevelTwoTest() {
-        TypeMeta<?> modelMeta = new TypeMeta<>(SelfReferencedItem.class);
-        int nestingLevel = 2;
-        LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.nestingStrategy(nestingLevel);
-        SelectionSetGenerator bodyGenerator = new SelectionSetGenerator(modelMeta,
-                new AllExceptIgnoredFieldMarkingStrategy(), loopBreakingStrategy);
-        String result = bodyGenerator.generate(new AllFieldsPickingStrategy());
-        String expectedResult = "{id item{id item{id}}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -571,5 +551,10 @@ class SelectionSetGeneratorTest {
                 + "fieldWithFieldAnnotation fieldWithoutAnnotations idField id customNamedField "
                 + "customNamedNonNullField nonNullField}";
         Assertions.assertEquals(expectedResult, result);
+    }
+
+    private static Stream<Arguments> provideNestingLoopBreakingStrategyValues() {
+        return Stream.of(Arguments.of(0, "{id}"), Arguments.of(1, "{id item{id}}"),
+                Arguments.of(2, "{id item{id item{id}}}"));
     }
 }
