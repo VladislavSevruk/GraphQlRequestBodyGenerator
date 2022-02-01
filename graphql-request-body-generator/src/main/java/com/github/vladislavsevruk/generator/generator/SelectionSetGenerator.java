@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -89,7 +89,7 @@ public class SelectionSetGenerator {
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> fieldTypeMeta = fieldTypeResolver.resolveField(typeMeta, field);
         loopDetector.addToTrace(fieldTypeMeta);
-        if (loopDetector.isShouldBreakOnItem(fieldTypeMeta)) {
+        if (loopDetector.shouldBreakOnItem(fieldTypeMeta)) {
             log.warn(() -> String
                     .format("'%s' won't be added to selection set to avoid endless loop.", loopDetector.getTrace()));
         } else {
@@ -131,7 +131,7 @@ public class SelectionSetGenerator {
             FieldsPickingStrategy fieldsPickingStrategy) {
         TypeMeta<?> unionTypeMeta = new TypeMeta<>(unionType.value());
         loopDetector.addToTrace(unionTypeMeta);
-        if (loopDetector.isShouldBreakOnItem(unionTypeMeta)) {
+        if (loopDetector.shouldBreakOnItem(unionTypeMeta)) {
             log.warn(() -> String
                     .format("'%s' won't be added to selection set to avoid endless loop.", loopDetector.getTrace()));
         } else {

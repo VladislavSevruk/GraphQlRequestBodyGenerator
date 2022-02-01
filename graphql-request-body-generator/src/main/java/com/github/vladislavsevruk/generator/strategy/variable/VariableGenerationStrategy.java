@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Uladzislau Seuruk
+ * Copyright (c) 2021-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ public enum VariableGenerationStrategy {
     BY_ARGUMENT_TYPE(new VariableArgumentTypeStrategy());
 
     @Getter
-    private VariablePickingStrategy variablePickingStrategy;
+    private final VariablePickingStrategy variablePickingStrategy;
 
     VariableGenerationStrategy(VariablePickingStrategy variablePickingStrategy) {
         this.variablePickingStrategy = variablePickingStrategy;

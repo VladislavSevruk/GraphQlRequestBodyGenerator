@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,5 +41,5 @@ public interface LoopBreakingStrategy {
      * @return <code>true</code> if loop should be broken on received item, <code>false</code> otherwise.
      */
     @SuppressWarnings("java:S1452")
-    boolean isShouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace);
+    boolean shouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace);
 }
