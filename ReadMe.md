@@ -489,6 +489,24 @@ will result to
 {"query":"{queryName{id children{id parent{id children{id}}}}}"}
 ```
 
+This strategy will be used as default during generation but you can set another max nesting level for specific field
+using ``maxNestingLoopLevel`` method at [GqlField](#gqlfield) and [GqlUnionType](#gqlunion) annotations.
+```java
+public class Parent {
+  @GqlField
+  private Long id;
+  @GqlField(withSelectionSet = true, maxNestingLoopLevel = 1)
+  private List<Child> children;
+}
+
+public class Child {
+  @GqlField
+  private Long id;
+  @GqlField(withSelectionSet = true)
+  private Parent parent;
+}
+```
+
 Also you can provide your own custom loop breaking strategy that implements
 [LoopBreakingStrategy](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/strategy/looping/LoopBreakingStrategy.java)
 functional interface:
