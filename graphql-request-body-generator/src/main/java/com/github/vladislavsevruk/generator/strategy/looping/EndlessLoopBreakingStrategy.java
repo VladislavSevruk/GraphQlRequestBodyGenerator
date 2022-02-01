@@ -47,8 +47,8 @@ public enum EndlessLoopBreakingStrategy {
     /**
      * Returns default loop breaking strategy.
      */
-    public static LoopBreakingStrategy nestingStrategy(int nestingLevel) {
-        return new NestingLoopBreakingStrategy(nestingLevel);
+    public static LoopBreakingStrategy nestingStrategy(int maxNestingLoopLevel) {
+        return new NestingLoopBreakingStrategy(maxNestingLoopLevel);
     }
 
     /**

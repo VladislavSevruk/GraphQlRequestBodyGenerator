@@ -33,8 +33,7 @@ public class ShortLoopedUnionItem1 {
 
     @GqlField
     private long field1;
-    @GqlUnion(@GqlUnionType(value = ShortLoopedUnionItem2.class, maxNestingLoopLevel = 1 ))
-    private List<ShortLoopedUnionItem2> shortLoopedItem2;
-    @GqlUnion(@GqlUnionType(value = ShortLoopedUnionItem3.class))
-    private ShortLoopedUnionItem3[] shortLoopedItem3;
+    @GqlUnion({ @GqlUnionType(value = ShortLoopedUnionItem2.class, maxNestingLoopLevel = 1 ),
+            @GqlUnionType(value = ShortLoopedUnionItem3.class ) })
+    private List<?> shortLoopedItems;
 }
