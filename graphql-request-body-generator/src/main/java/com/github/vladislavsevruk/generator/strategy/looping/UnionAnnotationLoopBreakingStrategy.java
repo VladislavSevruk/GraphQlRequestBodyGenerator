@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,18 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.test.data.loop;
+package com.github.vladislavsevruk.generator.strategy.looping;
 
-import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
 
-import java.util.List;
+/**
+ * Provides loop breaking strategy for excluding looped element from looping sequence based on values from
+ * <code>GqlUnionType</code> annotation.
+ *
+ * @see GqlUnionType
+ * @see LoopBreakingStrategy
+ */
+public class UnionAnnotationLoopBreakingStrategy extends BaseNestingLevelOverrideLoopBreakingStrategy {
 
-public class ShortLoopedItem1 {
-
-    @GqlField
-    private long field1;
-    @GqlField(withSelectionSet = true, maxNestingLoopLevel = 1)
-    private List<ShortLoopedItem2> shortLoopedItem2;
-    @GqlField(withSelectionSet = true)
-    private ShortLoopedItem3[] shortLoopedItem3;
+    public UnionAnnotationLoopBreakingStrategy(GqlUnionType unionTypeAnnotation,
+            LoopBreakingStrategy defaultLoopBreakingStrategy) {
+        super(unionTypeAnnotation != null ? unionTypeAnnotation.maxNestingLoopLevel() : -1,
+                defaultLoopBreakingStrategy);
+    }
 }

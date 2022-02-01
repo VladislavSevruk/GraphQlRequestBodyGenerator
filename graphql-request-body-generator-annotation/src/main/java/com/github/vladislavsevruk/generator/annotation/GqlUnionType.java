@@ -39,4 +39,10 @@ public @interface GqlUnionType {
      * Returns model class that represent one of possible values for union.
      */
     Class<?> value();
+
+    /**
+     * Returns <code>int</code> with max recursive level for loop breaking that should be used for field during GraphQL
+     * operation generation.
+     */
+    int maxNestingLoopLevel() default -1;
 }

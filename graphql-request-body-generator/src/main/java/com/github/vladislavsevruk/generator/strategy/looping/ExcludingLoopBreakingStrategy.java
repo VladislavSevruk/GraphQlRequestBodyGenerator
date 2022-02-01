@@ -28,8 +28,12 @@ import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import java.util.List;
 
 /**
- * Provides default loop breaking strategy for excluding looped element from looping sequence.
+ * Provides loop breaking strategy for excluding looped element from looping sequence.
+ *
+ * @deprecated use <code>NestingLoopBreakingStrategy</code> with '0' value for nesting level parameter instead.
+ * @see NestingLoopBreakingStrategy
  */
+@Deprecated
 public class ExcludingLoopBreakingStrategy implements LoopBreakingStrategy {
 
     /**

@@ -31,11 +31,11 @@ import lombok.Getter;
  * </ul>
  *
  * @see LoopBreakingStrategy
- * @see ExcludingLoopBreakingStrategy
+ * @see NestingLoopBreakingStrategy
  */
 public enum EndlessLoopBreakingStrategy {
 
-    EXCLUDE_FIRST_ENTRY(new ExcludingLoopBreakingStrategy());
+    EXCLUDE_FIRST_ENTRY(new NestingLoopBreakingStrategy(0));
 
     @Getter
     private final LoopBreakingStrategy loopBreakingStrategy;

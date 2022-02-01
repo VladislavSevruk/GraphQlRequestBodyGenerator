@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,18 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.test.data.loop;
+package com.github.vladislavsevruk.generator.strategy.looping;
 
-import com.github.vladislavsevruk.generator.annotation.GqlField;
+import com.github.vladislavsevruk.resolver.type.TypeMeta;
 
 import java.util.List;
 
-public class ShortLoopedItem1 {
+/**
+ * Provides loop breaking strategy for excluding looped element from looping sequence based on values from annotation.
+ *
+ * @see LoopBreakingStrategy
+ */
+public class BaseNestingLevelOverrideLoopBreakingStrategy implements LoopBreakingStrategy {
 
-    @GqlField
-    private long field1;
-    @GqlField(withSelectionSet = true, maxNestingLoopLevel = 1)
-    private List<ShortLoopedItem2> shortLoopedItem2;
-    @GqlField(withSelectionSet = true)
-    private ShortLoopedItem3[] shortLoopedItem3;
+    private final LoopBreakingStrategy delegate;
+
+    protected BaseNestingLevelOverrideLoopBreakingStrategy(int nestingLevel,
+            LoopBreakingStrategy defaultLoopBreakingStrategy) {
+        if (nestingLevel >= 0) {
+            delegate = new NestingLoopBreakingStrategy(nestingLevel);
+        } else {
+            delegate = defaultLoopBreakingStrategy;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
+        return delegate.shouldBreakOnItem(typeMeta, trace);
+    }
 }

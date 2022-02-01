@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,12 +27,14 @@ import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlUnion;
 import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
 
+import java.util.Set;
+
 public class ShortLoopedUnionItem3 {
 
     @GqlField
     private long field3;
-    @GqlUnion(@GqlUnionType(ShortLoopedUnionItem1.class))
+    @GqlUnion(@GqlUnionType(value = ShortLoopedUnionItem1.class))
     private ShortLoopedUnionItem1 shortLoopedItem1;
-    @GqlUnion(@GqlUnionType(ShortLoopedUnionItem2.class))
-    private ShortLoopedUnionItem2 shortLoopedItem2;
+    @GqlUnion(@GqlUnionType(value = ShortLoopedUnionItem2.class))
+    private Set<ShortLoopedUnionItem2[]> shortLoopedItem2;
 }
