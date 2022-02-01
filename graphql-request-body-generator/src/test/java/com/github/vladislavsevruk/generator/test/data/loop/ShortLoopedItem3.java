@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@ package com.github.vladislavsevruk.generator.test.data.loop;
 
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 
+import java.util.Set;
+
 public class ShortLoopedItem3 {
 
     @GqlField
@@ -32,5 +34,5 @@ public class ShortLoopedItem3 {
     @GqlField(withSelectionSet = true)
     private ShortLoopedItem1 shortLoopedItem1;
     @GqlField(withSelectionSet = true)
-    private ShortLoopedItem2 shortLoopedItem2;
+    private Set<ShortLoopedItem2[]> shortLoopedItem2;
 }

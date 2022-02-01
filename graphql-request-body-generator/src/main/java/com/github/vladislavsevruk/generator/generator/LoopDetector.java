@@ -35,13 +35,11 @@ import java.util.stream.Collectors;
  */
 public final class LoopDetector {
 
-    private final LoopBreakingStrategy loopBreakingStrategy;
     // ArrayList is permissible as we delete elements only from list end
     private final List<TypeMeta<?>> loopedItems = new ArrayList<>();
     private final List<TypeMeta<?>> trace = new ArrayList<>();
 
-    public LoopDetector(TypeMeta<?> initialTypeMeta, LoopBreakingStrategy loopBreakingStrategy) {
-        this.loopBreakingStrategy = loopBreakingStrategy;
+    public LoopDetector(TypeMeta<?> initialTypeMeta) {
         trace.add(initialTypeMeta);
     }
 
@@ -78,11 +76,12 @@ public final class LoopDetector {
     /**
      * Checks if received type meta is the item on which looping should be broken.
      *
-     * @param typeMeta <code>TypeMeta</code> to check.
+     * @param typeMeta             <code>TypeMeta</code> to check.
+     * @param loopBreakingStrategy <code>LoopBreakingStrategy</code> to use.
      * @return <code>true</code> if received <code>TypeMeta</code> is the item on which looping should be broken,
      * <code>false</code> otherwise.
      */
-    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta) {
+    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta, LoopBreakingStrategy loopBreakingStrategy) {
         if (!isLoopDetected()) {
             return false;
         }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,45 +23,33 @@
  */
 package com.github.vladislavsevruk.generator.strategy.looping;
 
-import lombok.Getter;
+import com.github.vladislavsevruk.resolver.type.TypeMeta;
+
+import java.util.List;
 
 /**
- * Contains predefined {@link LoopBreakingStrategy} for selection set:<ul>
- * <li> break on first element of looping sequence
- * </ul>
+ * Provides loop breaking strategy for excluding looped element from looping sequence based on values from annotation.
  *
  * @see LoopBreakingStrategy
- * @see NestingLoopBreakingStrategy
  */
-public enum EndlessLoopBreakingStrategy {
+public class BaseNestingLevelOverrideLoopBreakingStrategy implements LoopBreakingStrategy {
 
-    EXCLUDE_FIRST_ENTRY(new NestingLoopBreakingStrategy(0));
+    private final LoopBreakingStrategy delegate;
 
-    @Getter
-    private final LoopBreakingStrategy loopBreakingStrategy;
-
-    EndlessLoopBreakingStrategy(LoopBreakingStrategy loopBreakingStrategy) {
-        this.loopBreakingStrategy = loopBreakingStrategy;
+    protected BaseNestingLevelOverrideLoopBreakingStrategy(int nestingLevel,
+            LoopBreakingStrategy defaultLoopBreakingStrategy) {
+        if (nestingLevel >= 0) {
+            delegate = new NestingLoopBreakingStrategy(nestingLevel);
+        } else {
+            delegate = defaultLoopBreakingStrategy;
+        }
     }
 
     /**
-     * Returns default loop breaking strategy.
+     * {@inheritDoc}
      */
-    public static LoopBreakingStrategy nestingStrategy(int maxNestingLoopLevel) {
-        return new NestingLoopBreakingStrategy(maxNestingLoopLevel);
-    }
-
-    /**
-     * Returns default loop breaking strategy.
-     */
-    public static EndlessLoopBreakingStrategy defaultStrategy() {
-        return excludeFirstEntry();
-    }
-
-    /**
-     * Returns strategy for loop breaking excluding first looped element of looping sequence.
-     */
-    public static EndlessLoopBreakingStrategy excludeFirstEntry() {
-        return EXCLUDE_FIRST_ENTRY;
+    @Override
+    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
+        return delegate.shouldBreakOnItem(typeMeta, trace);
     }
 }

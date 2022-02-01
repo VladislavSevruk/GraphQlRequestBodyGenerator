@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,4 +39,10 @@ public @interface GqlUnionType {
      * Returns model class that represent one of possible values for union.
      */
     Class<?> value();
+
+    /**
+     * Returns <code>int</code> with max recursive level for loop breaking that should be used for field during GraphQL
+     * operation generation.
+     */
+    int maxNestingLoopLevel() default -1;
 }

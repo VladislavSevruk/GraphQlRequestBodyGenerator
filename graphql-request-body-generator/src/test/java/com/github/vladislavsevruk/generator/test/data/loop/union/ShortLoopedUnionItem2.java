@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,8 @@ public class ShortLoopedUnionItem2 {
 
     @GqlField
     private long field2;
-    @GqlUnion(@GqlUnionType(ShortLoopedUnionItem1.class))
+    @GqlUnion(@GqlUnionType(value = ShortLoopedUnionItem1.class, maxNestingLoopLevel = 1))
     private ShortLoopedUnionItem1 shortLoopedItem1;
-    @GqlUnion(@GqlUnionType(ShortLoopedUnionItem3.class))
+    @GqlUnion(@GqlUnionType(value = ShortLoopedUnionItem3.class))
     private ShortLoopedUnionItem3[] shortLoopedItem3;
 }

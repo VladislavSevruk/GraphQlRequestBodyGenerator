@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,45 +23,19 @@
  */
 package com.github.vladislavsevruk.generator.strategy.looping;
 
-import lombok.Getter;
+import com.github.vladislavsevruk.generator.annotation.GqlField;
 
 /**
- * Contains predefined {@link LoopBreakingStrategy} for selection set:<ul>
- * <li> break on first element of looping sequence
- * </ul>
+ * Provides loop breaking strategy for excluding looped element from looping sequence based on values from
+ * <code>GqlField</code> annotation.
  *
+ * @see GqlField
  * @see LoopBreakingStrategy
- * @see NestingLoopBreakingStrategy
  */
-public enum EndlessLoopBreakingStrategy {
+public class FieldAnnotationLoopBreakingStrategy extends BaseNestingLevelOverrideLoopBreakingStrategy {
 
-    EXCLUDE_FIRST_ENTRY(new NestingLoopBreakingStrategy(0));
-
-    @Getter
-    private final LoopBreakingStrategy loopBreakingStrategy;
-
-    EndlessLoopBreakingStrategy(LoopBreakingStrategy loopBreakingStrategy) {
-        this.loopBreakingStrategy = loopBreakingStrategy;
-    }
-
-    /**
-     * Returns default loop breaking strategy.
-     */
-    public static LoopBreakingStrategy nestingStrategy(int maxNestingLoopLevel) {
-        return new NestingLoopBreakingStrategy(maxNestingLoopLevel);
-    }
-
-    /**
-     * Returns default loop breaking strategy.
-     */
-    public static EndlessLoopBreakingStrategy defaultStrategy() {
-        return excludeFirstEntry();
-    }
-
-    /**
-     * Returns strategy for loop breaking excluding first looped element of looping sequence.
-     */
-    public static EndlessLoopBreakingStrategy excludeFirstEntry() {
-        return EXCLUDE_FIRST_ENTRY;
+    public FieldAnnotationLoopBreakingStrategy(GqlField fieldAnnotation,
+            LoopBreakingStrategy defaultLoopBreakingStrategy) {
+        super(fieldAnnotation.maxNestingLoopLevel(), defaultLoopBreakingStrategy);
     }
 }

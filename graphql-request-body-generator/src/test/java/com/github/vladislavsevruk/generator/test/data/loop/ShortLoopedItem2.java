@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@ public class ShortLoopedItem2 {
 
     @GqlField
     private long field2;
-    @GqlField(withSelectionSet = true)
+    @GqlField(withSelectionSet = true, maxNestingLoopLevel = 1)
     private ShortLoopedItem1 shortLoopedItem1;
     @GqlField(withSelectionSet = true)
     private ShortLoopedItem3[] shortLoopedItem3;
