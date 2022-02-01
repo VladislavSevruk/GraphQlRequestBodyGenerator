@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,11 +31,11 @@ import lombok.Getter;
  * </ul>
  *
  * @see LoopBreakingStrategy
- * @see ExcludingLoopBreakingStrategy
+ * @see NestingLoopBreakingStrategy
  */
 public enum EndlessLoopBreakingStrategy {
 
-    EXCLUDE_FIRST_ENTRY(new ExcludingLoopBreakingStrategy());
+    EXCLUDE_FIRST_ENTRY(new NestingLoopBreakingStrategy(0));
 
     @Getter
     private final LoopBreakingStrategy loopBreakingStrategy;
@@ -47,8 +47,8 @@ public enum EndlessLoopBreakingStrategy {
     /**
      * Returns default loop breaking strategy.
      */
-    public static LoopBreakingStrategy nestingStrategy(int nestingLevel) {
-        return new NestingLoopBreakingStrategy(nestingLevel);
+    public static LoopBreakingStrategy nestingStrategy(int maxNestingLoopLevel) {
+        return new NestingLoopBreakingStrategy(maxNestingLoopLevel);
     }
 
     /**

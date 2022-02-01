@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,15 +28,19 @@ import com.github.vladislavsevruk.resolver.type.TypeMeta;
 import java.util.List;
 
 /**
- * Provides default loop breaking strategy for excluding looped element from looping sequence.
+ * Provides loop breaking strategy for excluding looped element from looping sequence.
+ *
+ * @deprecated use <code>NestingLoopBreakingStrategy</code> with '0' value for nesting level parameter instead.
+ * @see NestingLoopBreakingStrategy
  */
+@Deprecated
 public class ExcludingLoopBreakingStrategy implements LoopBreakingStrategy {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isShouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
+    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
         return trace.indexOf(typeMeta) != trace.size() - 1;
     }
 }

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Uladzislau Seuruk
+ * Copyright (c) 2021-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ public class VariableArgumentTypeStrategy implements VariablePickingStrategy {
      */
     @Override
     public String getDefaultValue(GqlParameterValue<?> argument) {
-        return ((GqlVariableArgument) argument).getDefaultValue();
+        return ((GqlVariableArgument<?>) argument).getDefaultValue();
     }
 
     /**
@@ -44,7 +44,7 @@ public class VariableArgumentTypeStrategy implements VariablePickingStrategy {
      */
     @Override
     public String getVariableName(GqlParameterValue<?> argument) {
-        return ((GqlVariableArgument) argument).getVariableName();
+        return ((GqlVariableArgument<?>) argument).getVariableName();
     }
 
     /**
@@ -52,7 +52,7 @@ public class VariableArgumentTypeStrategy implements VariablePickingStrategy {
      */
     @Override
     public String getVariableType(GqlParameterValue<?> argument) {
-        return ((GqlVariableArgument) argument).getType();
+        return ((GqlVariableArgument<?>) argument).getType();
     }
 
     /**
@@ -60,7 +60,7 @@ public class VariableArgumentTypeStrategy implements VariablePickingStrategy {
      */
     @Override
     public boolean isRequired(GqlParameterValue<?> argument) {
-        return ((GqlVariableArgument) argument).isRequired();
+        return ((GqlVariableArgument<?>) argument).isRequired();
     }
 
     /**

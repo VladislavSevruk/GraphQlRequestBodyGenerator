@@ -41,13 +41,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.9</version>
+      <version>1.0.10</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.9'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.10'
 ```
 
 ## Usage
@@ -487,6 +487,24 @@ String query = GqlRequestBodyGenerator.query("queryName")
 will result to
 ```json
 {"query":"{queryName{id children{id parent{id children{id}}}}}"}
+```
+
+This strategy will be used as default during generation but you can set another max nesting level for specific field
+using ``maxNestingLoopLevel`` method at [GqlField](#gqlfield) and [GqlUnionType](#gqlunion) annotations.
+```java
+public class Parent {
+  @GqlField
+  private Long id;
+  @GqlField(withSelectionSet = true, maxNestingLoopLevel = 1)
+  private List<Child> children;
+}
+
+public class Child {
+  @GqlField
+  private Long id;
+  @GqlField(withSelectionSet = true)
+  private Parent parent;
+}
 ```
 
 Also you can provide your own custom loop breaking strategy that implements

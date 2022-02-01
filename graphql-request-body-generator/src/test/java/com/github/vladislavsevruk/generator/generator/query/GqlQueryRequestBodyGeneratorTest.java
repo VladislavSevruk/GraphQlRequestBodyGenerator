@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,7 @@ import java.util.List;
 
 class GqlQueryRequestBodyGeneratorTest {
 
-    private FieldsPickingStrategy customFieldsPickingStrategy = field -> field.getName().startsWith("named");
+    private final FieldsPickingStrategy customFieldsPickingStrategy = field -> field.getName().startsWith("named");
 
     @AfterAll
     static void setInitialAutoContextRefresh() {
@@ -782,8 +782,9 @@ class GqlQueryRequestBodyGeneratorTest {
     void generateShortLoopedItemsAtSelectionSetDefaultLoopBreakingStrategyTest() {
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").selectionSet(ShortLoopedItem1.class)
                 .generate();
-        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
-                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem1{field1 "
+                + "shortLoopedItem2{field2 shortLoopedItem3{field3}} shortLoopedItem3{field3}} "
+                + "shortLoopedItem3{field3}} shortLoopedItem3{field3}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -791,8 +792,9 @@ class GqlQueryRequestBodyGeneratorTest {
     void generateShortLoopedItemsAtSelectionSetDefaultLoopBreakingStrategyTypeProviderTest() {
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(new TypeProvider<ShortLoopedItem1>() {}).generate();
-        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
-                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem1{field1 "
+                + "shortLoopedItem2{field2 shortLoopedItem3{field3}} shortLoopedItem3{field3}} "
+                + "shortLoopedItem3{field3}} shortLoopedItem3{field3}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -800,8 +802,9 @@ class GqlQueryRequestBodyGeneratorTest {
     void generateShortLoopedItemsAtSelectionSetExcludeFirstEntityLoopBreakingStrategyTest() {
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(ShortLoopedItem1.class, EndlessLoopBreakingStrategy.excludeFirstEntry()).generate();
-        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
-                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem1{field1 "
+                + "shortLoopedItem2{field2 shortLoopedItem3{field3}} shortLoopedItem3{field3}} "
+                + "shortLoopedItem3{field3}} shortLoopedItem3{field3}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -810,8 +813,9 @@ class GqlQueryRequestBodyGeneratorTest {
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
                 .selectionSet(new TypeProvider<ShortLoopedItem1>() {}, EndlessLoopBreakingStrategy.excludeFirstEntry())
                 .generate();
-        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem3{field3 "
-                + "shortLoopedItem2{field2}}} shortLoopedItem3{field3 shortLoopedItem2{field2}}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{field2 shortLoopedItem1{field1 "
+                + "shortLoopedItem2{field2 shortLoopedItem3{field3}} shortLoopedItem3{field3}} "
+                + "shortLoopedItem3{field3}} shortLoopedItem3{field3}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -819,9 +823,13 @@ class GqlQueryRequestBodyGeneratorTest {
     void generateShortLoopedUnionItemsAtSelectionSetDefaultLoopBreakingStrategyTest() {
         String result = new GqlQueryRequestBodyGenerator("customGqlQuery").selectionSet(ShortLoopedUnionItem1.class)
                 .generate();
-        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItem2{... on ShortLoopedUnionItem2{"
-                + "field2 shortLoopedItem3{... on ShortLoopedUnionItem3{field3}}}} shortLoopedItem3{"
-                + "... on ShortLoopedUnionItem3{field3 shortLoopedItem2{... on ShortLoopedUnionItem2{field2}}}}}}\"}";
+        String expectedResult = "{\"query\":\"{customGqlQuery{field1 shortLoopedItems{... on ShortLoopedUnionItem2{"
+                + "field2 shortLoopedItem1{... on ShortLoopedUnionItem1{field1 shortLoopedItems{"
+                + "... on ShortLoopedUnionItem2{field2 shortLoopedItem3{... on ShortLoopedUnionItem3{field3}}} "
+                + "... on ShortLoopedUnionItem3{field3}}}} shortLoopedItem3{... on ShortLoopedUnionItem3{field3}}} "
+                + "... on ShortLoopedUnionItem3{field3 shortLoopedItem2{... on ShortLoopedUnionItem2{field2 "
+                + "shortLoopedItem1{... on ShortLoopedUnionItem1{field1 shortLoopedItems{... on ShortLoopedUnionItem2{"
+                + "field2}}}}}}}}}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 

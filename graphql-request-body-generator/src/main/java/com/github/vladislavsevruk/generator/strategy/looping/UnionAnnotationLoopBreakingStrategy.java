@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2021 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.generator.query;
+package com.github.vladislavsevruk.generator.strategy.looping;
 
-import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
-import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
+import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
 
 /**
- * Generates request body for GraphQL queries with received arguments and selection set according to different field
- * picking strategies.
+ * Provides loop breaking strategy for excluding looped element from looping sequence based on values from
+ * <code>GqlUnionType</code> annotation.
  *
- * @see FieldMarkingStrategySourceManager
+ * @see GqlUnionType
+ * @see LoopBreakingStrategy
  */
-public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
+public class UnionAnnotationLoopBreakingStrategy extends BaseNestingLevelOverrideLoopBreakingStrategy {
 
-    public GqlQueryRequestBodyGenerator(String queryName) {
-        super(queryName);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String generate() {
-        return new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
-                .generate(getSelectionSetFieldsPickingStrategy(), getVariablePickingStrategy(), getArguments());
+    public UnionAnnotationLoopBreakingStrategy(GqlUnionType unionTypeAnnotation,
+            LoopBreakingStrategy defaultLoopBreakingStrategy) {
+        super(unionTypeAnnotation.maxNestingLoopLevel(), defaultLoopBreakingStrategy);
     }
 }
-

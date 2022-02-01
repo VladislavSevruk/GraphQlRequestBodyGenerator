@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,13 +35,11 @@ import java.util.stream.Collectors;
  */
 public final class LoopDetector {
 
-    private final LoopBreakingStrategy loopBreakingStrategy;
     // ArrayList is permissible as we delete elements only from list end
     private final List<TypeMeta<?>> loopedItems = new ArrayList<>();
     private final List<TypeMeta<?>> trace = new ArrayList<>();
 
-    public LoopDetector(TypeMeta<?> initialTypeMeta, LoopBreakingStrategy loopBreakingStrategy) {
-        this.loopBreakingStrategy = loopBreakingStrategy;
+    public LoopDetector(TypeMeta<?> initialTypeMeta) {
         trace.add(initialTypeMeta);
     }
 
@@ -63,20 +61,6 @@ public final class LoopDetector {
     }
 
     /**
-     * Checks if received type meta is the item on which looping should be broken.
-     *
-     * @param typeMeta <code>TypeMeta</code> to check.
-     * @return <code>true</code> if received <code>TypeMeta</code> is the item on which looping should be broken,
-     * <code>false</code> otherwise.
-     */
-    public boolean isShouldBreakOnItem(TypeMeta<?> typeMeta) {
-        if (!isLoopDetected()) {
-            return false;
-        }
-        return loopBreakingStrategy.isShouldBreakOnItem(typeMeta, trace);
-    }
-
-    /**
      * Removes last item from trace and checks if elements looping is still present at trace.
      */
     public void removeLastItemFromTrace() {
@@ -87,6 +71,21 @@ public final class LoopDetector {
                 loopedItems.remove(lastLoopedItemIndex);
             }
         }
+    }
+
+    /**
+     * Checks if received type meta is the item on which looping should be broken.
+     *
+     * @param typeMeta             <code>TypeMeta</code> to check.
+     * @param loopBreakingStrategy <code>LoopBreakingStrategy</code> to use.
+     * @return <code>true</code> if received <code>TypeMeta</code> is the item on which looping should be broken,
+     * <code>false</code> otherwise.
+     */
+    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta, LoopBreakingStrategy loopBreakingStrategy) {
+        if (!isLoopDetected()) {
+            return false;
+        }
+        return loopBreakingStrategy.shouldBreakOnItem(typeMeta, trace);
     }
 
     private void checkForLooping(TypeMeta<?> typeMeta) {

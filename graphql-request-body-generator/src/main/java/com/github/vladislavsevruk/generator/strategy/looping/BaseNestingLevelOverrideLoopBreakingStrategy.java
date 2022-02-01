@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2021 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.generator.query;
+package com.github.vladislavsevruk.generator.strategy.looping;
 
-import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
-import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
+import com.github.vladislavsevruk.resolver.type.TypeMeta;
+
+import java.util.List;
 
 /**
- * Generates request body for GraphQL queries with received arguments and selection set according to different field
- * picking strategies.
+ * Provides loop breaking strategy for excluding looped element from looping sequence based on values from annotation.
  *
- * @see FieldMarkingStrategySourceManager
+ * @see LoopBreakingStrategy
  */
-public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
+public class BaseNestingLevelOverrideLoopBreakingStrategy implements LoopBreakingStrategy {
 
-    public GqlQueryRequestBodyGenerator(String queryName) {
-        super(queryName);
+    private final LoopBreakingStrategy delegate;
+
+    protected BaseNestingLevelOverrideLoopBreakingStrategy(int nestingLevel,
+            LoopBreakingStrategy defaultLoopBreakingStrategy) {
+        if (nestingLevel >= 0) {
+            delegate = new NestingLoopBreakingStrategy(nestingLevel);
+        } else {
+            delegate = defaultLoopBreakingStrategy;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String generate() {
-        return new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator())
-                .generate(getSelectionSetFieldsPickingStrategy(), getVariablePickingStrategy(), getArguments());
+    public boolean shouldBreakOnItem(TypeMeta<?> typeMeta, List<TypeMeta<?>> trace) {
+        return delegate.shouldBreakOnItem(typeMeta, trace);
     }
 }
-
