@@ -36,6 +36,6 @@ public class FieldAnnotationLoopBreakingStrategy extends BaseNestingLevelOverrid
 
     public FieldAnnotationLoopBreakingStrategy(GqlField fieldAnnotation,
             LoopBreakingStrategy defaultLoopBreakingStrategy) {
-        super(fieldAnnotation != null ? fieldAnnotation.maxNestingLoopLevel() : -1, defaultLoopBreakingStrategy);
+        super(fieldAnnotation.maxNestingLoopLevel(), defaultLoopBreakingStrategy);
     }
 }

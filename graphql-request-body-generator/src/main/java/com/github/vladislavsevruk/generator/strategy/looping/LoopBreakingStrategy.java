@@ -34,28 +34,6 @@ import java.util.List;
 public interface LoopBreakingStrategy {
 
     /**
-     * Creates new loop breaking strategy that should match both this one's condition and received one's.
-     *
-     * @param anotherStrategy <code>LoopBreakingStrategy</code> to combine with.
-     * @return resulted <code>LoopBreakingStrategy</code>.
-     */
-    default LoopBreakingStrategy and(LoopBreakingStrategy anotherStrategy) {
-        return (fieldTypeMeta, trace) -> this.shouldBreakOnItem(fieldTypeMeta, trace)
-                && anotherStrategy.shouldBreakOnItem(fieldTypeMeta, trace);
-    }
-
-    /**
-     * Creates new loop breaking strategy that should match one of this one's condition or received one's.
-     *
-     * @param anotherStrategy <code>LoopBreakingStrategy</code> to combine with.
-     * @return resulted <code>LoopBreakingStrategy</code>.
-     */
-    default LoopBreakingStrategy or(LoopBreakingStrategy anotherStrategy) {
-        return (fieldTypeMeta, trace) -> this.shouldBreakOnItem(fieldTypeMeta, trace)
-                || anotherStrategy.shouldBreakOnItem(fieldTypeMeta, trace);
-    }
-
-    /**
      * Checks if loop should be broken on received item.
      *
      * @param typeMeta <code>TypeMeta</code> to check.

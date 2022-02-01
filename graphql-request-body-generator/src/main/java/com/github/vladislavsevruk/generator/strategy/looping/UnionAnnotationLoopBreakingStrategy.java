@@ -36,7 +36,6 @@ public class UnionAnnotationLoopBreakingStrategy extends BaseNestingLevelOverrid
 
     public UnionAnnotationLoopBreakingStrategy(GqlUnionType unionTypeAnnotation,
             LoopBreakingStrategy defaultLoopBreakingStrategy) {
-        super(unionTypeAnnotation != null ? unionTypeAnnotation.maxNestingLoopLevel() : -1,
-                defaultLoopBreakingStrategy);
+        super(unionTypeAnnotation.maxNestingLoopLevel(), defaultLoopBreakingStrategy);
     }
 }
