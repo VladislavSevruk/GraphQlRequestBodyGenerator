@@ -30,6 +30,7 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
       * [Input argument](#input-argument)
       * [Variables](#variables)
       * [Mutation argument strategy](#mutation-argument-strategy)
+    * [Operation Alias](#operation-alias)
 * [License](#license)
 
 ## Getting started
@@ -41,13 +42,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.9</version>
+      <version>1.0.10</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.9'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.10'
 ```
 
 ## Usage
@@ -592,7 +593,7 @@ can generate GraphQL operation body that way passing values as operation argumen
   type:
 ```kotlin
 String variableName = "id";
-GqlParameterValue<String> variable = GqlVariableArgument.of(variableName, variableName, 1, true);
+GqlParameterValue<Integer> variable = GqlVariableArgument.of(variableName, variableName, 1, true);
 String query = GqlRequestBodyGenerator.query("getProfile")
         .arguments(VariableGenerationStrategy.byArgumentType(), variable)
         .selectionSet(User.class).generate();
@@ -651,6 +652,19 @@ interface:
 ModelArgumentStrategy modelArgumentStrategy = argument -> argument.getName().contains("Model");
 String query = GqlRequestBodyGenerator.mutation("newUser")
         .arguments(modelArgumentStrategy, inputArgument).selectionSet(User.class).generate();
+```
+
+### Operation Alias
+When generating operation with [variables](#variables) resulted new operation will be anonymous by default. You can set
+operation alias for convenience using ``operationAlias`` method:
+```kotlin
+String variableName = "id";
+String operationAlias = "id";
+GqlParameterValue<Integer> variable = GqlVariableArgument.of(variableName, variableName, 1, true);
+String query = GqlRequestBodyGenerator.query("getProfile")
+        .operationAlias("getProfileParameterized")
+        .arguments(VariableGenerationStrategy.byArgumentType(), variable)
+        .selectionSet(User.class).generate();
 ```
 
 ## License

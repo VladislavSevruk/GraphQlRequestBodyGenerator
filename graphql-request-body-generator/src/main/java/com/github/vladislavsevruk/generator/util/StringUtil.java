@@ -94,6 +94,16 @@ public final class StringUtil {
         return String.valueOf(value);
     }
 
+    /**
+     * Checks if received value contains any non-space symbols.
+     *
+     * @param value <code>String</code> to check.
+     * @return <code>true</code> if received value contains any non-space symbols, <code>false</code> otherwise.
+     */
+    public static boolean isNotBlank(String value) {
+        return value != null && !value.replaceAll("\\s", "").isEmpty();
+    }
+
     private static List<String> convertToStringList(Object elements) {
         return StreamUtil.createStream(elements)
                 .map(value -> CharSequence.class.isAssignableFrom(value.getClass()) ? addQuotesForStringArgument(
