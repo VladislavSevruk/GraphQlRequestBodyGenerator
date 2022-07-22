@@ -53,6 +53,8 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
     private LoopBreakingStrategy loopBreakingStrategy = EndlessLoopBreakingStrategy.defaultStrategy()
             .getLoopBreakingStrategy();
     @Getter(AccessLevel.PROTECTED)
+    private String operationAlias;
+    @Getter(AccessLevel.PROTECTED)
     private final String operationName;
     @Getter(AccessLevel.PROTECTED)
     private FieldsPickingStrategy selectionSetFieldsPickingStrategy = SelectionSetGenerationStrategy.defaultStrategy()
@@ -145,6 +147,17 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
      * Returns generated GraphQL operation body with predefined parameters.
      */
     public abstract String generate();
+
+    /**
+     * Sets operation alias for GraphQL operation.
+     *
+     * @param operationAlias <code>String</code> with alias that should be used for GraphQL operation generation.
+     * @return this.
+     */
+    public T operationAlias(String operationAlias) {
+        this.operationAlias = operationAlias;
+        return thisInstance();
+    }
 
     /**
      * Sets selection set model for GraphQL operation with default selection set fields picking strategy.

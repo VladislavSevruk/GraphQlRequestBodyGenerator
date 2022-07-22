@@ -340,7 +340,7 @@ public class GqlMutationRequestBodyGenerator extends GqlOperationRequestBodyGene
     public String generate() {
         return new GqlMutationBodyGenerator(getOperationName(), getSelectionSetGenerator())
                 .generate(inputFieldsPickingStrategy, modelArgumentStrategy, getSelectionSetFieldsPickingStrategy(),
-                        getVariablePickingStrategy(), getArguments());
+                        getVariablePickingStrategy(), getOperationAlias(), getArguments());
     }
 
     @Override

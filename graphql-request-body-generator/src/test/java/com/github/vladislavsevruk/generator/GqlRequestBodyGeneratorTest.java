@@ -54,6 +54,19 @@ class GqlRequestBodyGeneratorTest {
     }
 
     @Test
+    void mutationWithAliasTest() {
+        InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
+        inputModel.setTestField("testFieldValue");
+        String result = GqlRequestBodyGenerator.mutation("customGqlMutation")
+                .operationAlias("customGqlMutationAlias")
+                .arguments(GqlInputArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"mutation customGqlMutationAlias{customGqlMutation(input:{subClassField:"
+                + "\\\"subClassFieldValue\\\",testField:\\\"testFieldValue\\\"}){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
     void mutationWithSeveralVariableArgumentsTest() {
         AnnotatedVariableAllMethodsTestModel testData1 = new AnnotatedVariableAllMethodsTestModel().setName("user1")
                 .setAddress("street1");
@@ -129,6 +142,31 @@ class GqlRequestBodyGeneratorTest {
                 .generate();
         String expectedResult = "{\"variables\":{\"search\":{\"address\":\"AddressData\",\"name\":\"NameData\"}},"
                 + "\"query\":\"query($search:AnnotatedVariableRequiredTestModel!){"
+                + "gqlQueryWithVariables(search:$search){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithAliasTest() {
+        String result = GqlRequestBodyGenerator.query("gqlQuery")
+                .operationAlias("gqlQueryAlias")
+                .selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"query\":\"query gqlQueryAlias{gqlQuery{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithAliasAndAnnotatedRequiredVariableTest() {
+        AnnotatedVariableRequiredTestModel testVariable = new AnnotatedVariableRequiredTestModel().setName("NameData")
+                .setAddress("AddressData");
+        String result = GqlRequestBodyGenerator.query("gqlQueryWithVariables")
+                .operationAlias("gqlQueryAlias")
+                .arguments(VariableGenerationStrategy.annotatedArgumentValueType(),
+                        GqlArgument.of("search", testVariable)).selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"variables\":{\"search\":{\"address\":\"AddressData\",\"name\":\"NameData\"}},"
+                + "\"query\":\"query gqlQueryAlias($search:AnnotatedVariableRequiredTestModel!){"
                 + "gqlQueryWithVariables(search:$search){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }

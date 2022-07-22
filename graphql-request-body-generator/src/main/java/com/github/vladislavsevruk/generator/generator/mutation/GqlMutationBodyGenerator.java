@@ -88,14 +88,16 @@ public class GqlMutationBodyGenerator extends GqlBodyGenerator {
      * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for
      *                                          mutation selection set.
      * @param variablePickingStrategy           <code>VariablePickingStrategy</code> for mutation variables generation.
+     * @param operationAlias                    <code>String</code> with alias that should be used for GraphQL operation
+     *                                          generation.
      * @param arguments                         <code>GqlParameterValue</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL mutation.
      */
     public String generate(InputFieldsPickingStrategy inputFieldsPickingStrategy,
             ModelArgumentStrategy modelArgumentStrategy, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
-            VariablePickingStrategy variablePickingStrategy, GqlParameterValue<?>... arguments) {
+            VariablePickingStrategy variablePickingStrategy, String operationAlias, GqlParameterValue<?>... arguments) {
         return generate(inputFieldsPickingStrategy, modelArgumentStrategy, selectionSetFieldsPickingStrategy,
-                variablePickingStrategy, Arrays.asList(arguments));
+                variablePickingStrategy, operationAlias, Arrays.asList(arguments));
     }
 
     /**
@@ -107,13 +109,16 @@ public class GqlMutationBodyGenerator extends GqlBodyGenerator {
      * @param selectionSetFieldsPickingStrategy <code>FieldsPickingStrategy</code> to filter required fields for
      *                                          mutation selection set.
      * @param variablePickingStrategy           <code>VariablePickingStrategy</code> for mutation variables generation.
+     * @param operationAlias                    <code>String</code> with alias that should be used for GraphQL operation
+     *                                          generation.
      * @param arguments                         <code>Iterable</code> of <code>GqlParameterValue</code> with argument
      *                                          names and values.
      * @return <code>String</code> with resulted GraphQL mutation.
      */
     public String generate(InputFieldsPickingStrategy inputFieldsPickingStrategy,
             ModelArgumentStrategy modelArgumentStrategy, FieldsPickingStrategy selectionSetFieldsPickingStrategy,
-            VariablePickingStrategy variablePickingStrategy, Iterable<? extends GqlParameterValue<?>> arguments) {
+            VariablePickingStrategy variablePickingStrategy, String operationAlias,
+            Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
         log.info(() -> String.format("Generating '%s' GraphQL mutation.", mutationName));
         String selectionSet = selectionSetGenerator.generate(selectionSetFieldsPickingStrategy);
@@ -121,7 +126,9 @@ public class GqlMutationBodyGenerator extends GqlBodyGenerator {
         String operationArgumentsStr = generateOperationArguments(variablePickingStrategy, arguments);
         String argumentsStr = generateGqlArguments(inputFieldsPickingStrategy, modelArgumentStrategy,
                 variablePickingStrategy, arguments);
-        String mutation = "mutation" + operationArgumentsStr + "{" + mutationName + argumentsStr + selectionSet + "}";
+        String operationPrefix = StringUtil.isNotBlank(operationAlias) ? "mutation " + operationAlias : "mutation";
+        String mutation = operationPrefix + operationArgumentsStr + "{" + mutationName + argumentsStr + selectionSet
+                + "}";
         String wrappedMutation = wrapForRequestBody(mutation, variablesStr);
         log.debug(() -> "Resulted mutation: " + wrappedMutation);
         return wrappedMutation;
@@ -300,8 +307,8 @@ public class GqlMutationBodyGenerator extends GqlBodyGenerator {
     private Object generateArgumentValue(Field field, Object value) {
         Method getterMethod = findGetterMethod(field);
         if (getterMethod != null) {
-            log.debug(() -> String
-                    .format("Found '%s' getter method for '%s' field.", getterMethod.getName(), field.getName()));
+            log.debug(() -> String.format("Found '%s' getter method for '%s' field.", getterMethod.getName(),
+                    field.getName()));
             return generateArgumentValueByMethod(value, getterMethod);
         } else {
             log.debug(() -> String.format("There was no getter method for '%s' field found.", field.getName()));
@@ -373,8 +380,8 @@ public class GqlMutationBodyGenerator extends GqlBodyGenerator {
     private String removeGetterPrefixIfPresent(String methodName) {
         if (methodName.startsWith(GETTER_PREFIX)) {
             int prefixLength = GETTER_PREFIX.length();
-            return methodName.substring(prefixLength, prefixLength + 1).toLowerCase() + methodName
-                    .substring(prefixLength + 1);
+            return methodName.substring(prefixLength, prefixLength + 1).toLowerCase() + methodName.substring(
+                    prefixLength + 1);
         }
         return methodName;
     }
