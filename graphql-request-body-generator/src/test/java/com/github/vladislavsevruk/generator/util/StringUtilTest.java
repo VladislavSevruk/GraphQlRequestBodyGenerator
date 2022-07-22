@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,31 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.generator.query;
+package com.github.vladislavsevruk.generator.util;
 
-import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
-import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-/**
- * Generates request body for GraphQL queries with received arguments and selection set according to different field
- * picking strategies.
- *
- * @see FieldMarkingStrategySourceManager
- */
-public class GqlQueryRequestBodyGenerator extends GqlOperationRequestBodyGenerator<GqlQueryRequestBodyGenerator> {
+import java.util.stream.Stream;
 
-    public GqlQueryRequestBodyGenerator(String queryName) {
-        super(queryName);
+class StringUtilTest {
+
+    @Test
+    void isBlankNullTest() {
+        Assertions.assertFalse(StringUtil.isNotBlank(null));
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String generate() {
-        return new GqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator()).generate(
-                getSelectionSetFieldsPickingStrategy(), getVariablePickingStrategy(), getOperationAlias(),
-                getArguments());
+    @ParameterizedTest
+    @MethodSource("nonBlankValues")
+    void isNotBlankTest(String value) {
+        Assertions.assertTrue(StringUtil.isNotBlank(value));
+    }
+
+    @ParameterizedTest
+    @MethodSource("blankValues")
+    void isBlankTest(String value) {
+        Assertions.assertFalse(StringUtil.isNotBlank(value));
+    }
+
+    private static Stream<Arguments> blankValues() {
+        return Stream.of(Arguments.of(" "), Arguments.of("\t"), Arguments.of("\n"), Arguments.of("\r"));
+    }
+
+    private static Stream<Arguments> nonBlankValues() {
+        return Stream.of(Arguments.of("a"), Arguments.of("1"), Arguments.of("!"));
     }
 }
-

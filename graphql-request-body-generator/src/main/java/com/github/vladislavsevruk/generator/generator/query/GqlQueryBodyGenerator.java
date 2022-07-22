@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2021 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,12 +57,14 @@ public class GqlQueryBodyGenerator extends GqlBodyGenerator {
      *
      * @param fieldsPickingStrategy   <code>FieldsPickingStrategy</code> to filter required fields for query.
      * @param variablePickingStrategy <code>VariablePickingStrategy</code> for mutation variables generation.
+     * @param operationAlias          <code>String</code> with alias that should be used for GraphQL operation
+     *                                generation.
      * @param arguments               <code>GqlArgument</code> varargs with argument names and values.
      * @return <code>String</code> with resulted GraphQL query.
      */
     public String generate(FieldsPickingStrategy fieldsPickingStrategy, VariablePickingStrategy variablePickingStrategy,
-            GqlParameterValue<?>... arguments) {
-        return generate(fieldsPickingStrategy, variablePickingStrategy, Arrays.asList(arguments));
+            String operationAlias, GqlParameterValue<?>... arguments) {
+        return generate(fieldsPickingStrategy, variablePickingStrategy, operationAlias, Arrays.asList(arguments));
     }
 
     /**
@@ -70,20 +72,23 @@ public class GqlQueryBodyGenerator extends GqlBodyGenerator {
      *
      * @param fieldsPickingStrategy   <code>FieldsPickingStrategy</code> to filter required fields for query.
      * @param variablePickingStrategy <code>VariablePickingStrategy</code> for mutation variables generation.
+     * @param operationAlias          <code>String</code> with alias that should be used for GraphQL operation
+     *                                generation.
      * @param arguments               <code>Iterable</code> of <code>GqlParameterValue</code> with argument names and
      *                                values.
      * @return <code>String</code> with resulted GraphQL query.
      */
     public String generate(FieldsPickingStrategy fieldsPickingStrategy, VariablePickingStrategy variablePickingStrategy,
-            Iterable<? extends GqlParameterValue<?>> arguments) {
+            String operationAlias, Iterable<? extends GqlParameterValue<?>> arguments) {
         Objects.requireNonNull(arguments);
         log.info(() -> String.format("Generating '%s' GraphQL query.", queryName));
         String selectionSet = selectionSetGenerator.generate(fieldsPickingStrategy);
         String variablesStr = generateVariables(variablePickingStrategy, arguments);
         String operationArgumentsStr = generateOperationArguments(variablePickingStrategy, arguments);
         String query = "{" + queryName + generateGqlArguments(variablePickingStrategy, arguments) + selectionSet + "}";
-        if (!variablesStr.isEmpty()) {
-            query = "query" + operationArgumentsStr + query;
+        if (StringUtil.isNotBlank(operationAlias) || !variablesStr.isEmpty()) {
+            String operationPrefix = StringUtil.isNotBlank(operationAlias) ? "query " + operationAlias : "query";
+            query = operationPrefix + operationArgumentsStr + query;
         }
         String wrappedQuery = wrapForRequestBody(query, variablesStr);
         log.debug(() -> "Resulted query: " + wrappedQuery);

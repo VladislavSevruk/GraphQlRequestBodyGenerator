@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2021 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,6 +49,19 @@ class GqlRequestBodyGeneratorTest {
         String result = GqlRequestBodyGenerator.mutation("customGqlMutation").arguments(GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "{\"query\":\"mutation{customGqlMutation(input:{subClassField:"
+                + "\\\"subClassFieldValue\\\",testField:\\\"testFieldValue\\\"}){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void mutationWithAliasTest() {
+        InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
+        inputModel.setTestField("testFieldValue");
+        String result = GqlRequestBodyGenerator.mutation("customGqlMutation")
+                .operationAlias("customGqlMutationAlias")
+                .arguments(GqlInputArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"mutation customGqlMutationAlias{customGqlMutation(input:{subClassField:"
                 + "\\\"subClassFieldValue\\\",testField:\\\"testFieldValue\\\"}){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -129,6 +142,31 @@ class GqlRequestBodyGeneratorTest {
                 .generate();
         String expectedResult = "{\"variables\":{\"search\":{\"address\":\"AddressData\",\"name\":\"NameData\"}},"
                 + "\"query\":\"query($search:AnnotatedVariableRequiredTestModel!){"
+                + "gqlQueryWithVariables(search:$search){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithAliasTest() {
+        String result = GqlRequestBodyGenerator.query("gqlQuery")
+                .operationAlias("gqlQueryAlias")
+                .selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"query\":\"query gqlQueryAlias{gqlQuery{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithAliasAndAnnotatedRequiredVariableTest() {
+        AnnotatedVariableRequiredTestModel testVariable = new AnnotatedVariableRequiredTestModel().setName("NameData")
+                .setAddress("AddressData");
+        String result = GqlRequestBodyGenerator.query("gqlQueryWithVariables")
+                .operationAlias("gqlQueryAlias")
+                .arguments(VariableGenerationStrategy.annotatedArgumentValueType(),
+                        GqlArgument.of("search", testVariable)).selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"variables\":{\"search\":{\"address\":\"AddressData\",\"name\":\"NameData\"}},"
+                + "\"query\":\"query gqlQueryAlias($search:AnnotatedVariableRequiredTestModel!){"
                 + "gqlQueryWithVariables(search:$search){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }

@@ -1,1 +1,1 @@
-include 'graphql-request-body-generator-base', 'graphql-request-body-generator-annottion'
+include 'graphql-request-body-generator-base', 'graphql-request-body-generator-annotation'

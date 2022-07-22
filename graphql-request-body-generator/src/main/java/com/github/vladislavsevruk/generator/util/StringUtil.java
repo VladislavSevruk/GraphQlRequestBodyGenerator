@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -92,6 +92,16 @@ public final class StringUtil {
             return addQuotesForStringArgument(value.toString());
         }
         return String.valueOf(value);
+    }
+
+    /**
+     * Checks if received value contains any non-space symbols.
+     *
+     * @param value <code>String</code> to check.
+     * @return <code>true</code> if received value contains any non-space symbols, <code>false</code> otherwise.
+     */
+    public static boolean isNotBlank(String value) {
+        return value != null && !value.replaceAll("\\s", "").isEmpty();
     }
 
     private static List<String> convertToStringList(Object elements) {
