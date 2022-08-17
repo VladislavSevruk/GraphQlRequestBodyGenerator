@@ -80,9 +80,9 @@ public class SelectionSetGenerator {
      */
     public String generate(FieldsPickingStrategy fieldsPickingStrategy) {
         Objects.requireNonNull(fieldsPickingStrategy);
-        log.debug(() -> String.format("Generating selection set for '%s' model using '%s' field marking strategy "
-                        + "and '%s' field picking strategy.", modelTypeMeta.getType().getName(),
-                fieldMarkingStrategy.getClass().getName(), fieldsPickingStrategy.getClass().getName()));
+        log.debug("Generating selection set for '{}' model using '{}' field marking strategy "
+                        + "and '{}' field picking strategy.", modelTypeMeta.getType().getName(),
+                fieldMarkingStrategy.getClass().getName(), fieldsPickingStrategy.getClass().getName());
         MappedVariableHierarchy<TypeMeta<?>> hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
                 .get(modelTypeMeta);
         Set<String> queryParams = collectQueryParameters(hierarchy, modelTypeMeta, fieldsPickingStrategy);
@@ -96,8 +96,7 @@ public class SelectionSetGenerator {
         LoopBreakingStrategy fieldAnnotationLoopBreakingStrategy = new FieldAnnotationLoopBreakingStrategy(
                 field.getAnnotation(GqlField.class), defaultLoopBreakingStrategy);
         if (loopDetector.shouldBreakOnItem(fieldTypeMeta, fieldAnnotationLoopBreakingStrategy)) {
-            log.warn(() -> String.format("'%s' won't be added to selection set to avoid endless loop.",
-                    loopDetector.getTrace()));
+            log.warn("'{}' won't be added to selection set to avoid endless loop.", loopDetector.getTrace());
         } else {
             Set<String> fieldWithSelectionSetQueryParams = collectFieldWithSelectionSetQueryParameters(fieldTypeMeta,
                     fieldsPickingStrategy);
@@ -114,19 +113,19 @@ public class SelectionSetGenerator {
     private void addQueryParameter(Set<String> queryParams, TypeMeta<?> typeMeta, Field field,
             FieldsPickingStrategy fieldsPickingStrategy) {
         if (field.getAnnotation(GqlDelegate.class) != null) {
-            log.debug(() -> String.format("'%s' is delegate.", field.getName()));
+            log.debug("'{}' is delegate.", field.getName());
             queryParams.addAll(collectDelegatedQueryParameters(typeMeta, field, fieldsPickingStrategy));
         } else if (field.getAnnotation(GqlUnion.class) != null) {
             GqlUnion unionAnnotation = field.getAnnotation(GqlUnion.class);
-            log.debug(() -> String.format("'%s' is union.", field.getName()));
+            log.debug("'{}' is union.", field.getName());
             addUnionQueryParameters(queryParams, unionAnnotation.value(), field, fieldsPickingStrategy);
         } else {
             GqlField fieldAnnotation = field.getAnnotation(GqlField.class);
             if (fieldAnnotation != null && fieldAnnotation.withSelectionSet()) {
-                log.debug(() -> String.format("'%s' is field with selection set.", field.getName()));
+                log.debug("'{}' is field with selection set.", field.getName());
                 addFieldWithSelectionSetQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
             } else {
-                log.debug(() -> String.format("'%s' is field.", field.getName()));
+                log.debug("'{}' is field.", field.getName());
                 String fieldNameWithArgumentsAndAlias = GqlNamePicker.getFieldNameWithArgumentsAndAlias(field);
                 queryParams.add(fieldNameWithArgumentsAndAlias);
             }
@@ -140,8 +139,7 @@ public class SelectionSetGenerator {
         LoopBreakingStrategy unionAnnotationLoopBreakingStrategy = new UnionAnnotationLoopBreakingStrategy(unionType,
                 defaultLoopBreakingStrategy);
         if (loopDetector.shouldBreakOnItem(unionTypeMeta, unionAnnotationLoopBreakingStrategy)) {
-            log.warn(() -> String.format("'%s' won't be added to selection set to avoid endless loop.",
-                    loopDetector.getTrace()));
+            log.warn("'{}' won't be added to selection set to avoid endless loop.", loopDetector.getTrace());
         } else {
             MappedVariableHierarchy<TypeMeta<?>> hierarchy = resolvingContext.getMappedVariableHierarchyStorage()
                     .get(unionTypeMeta);
@@ -194,15 +192,15 @@ public class SelectionSetGenerator {
 
     private Set<String> collectQueryParameters(MappedVariableHierarchy<TypeMeta<?>> hierarchy, TypeMeta<?> typeMeta,
             FieldsPickingStrategy fieldsPickingStrategy) {
-        log.debug(() -> String.format("Collecting GraphQL fields for '%s' model.", typeMeta.getType().getName()));
+        log.debug("Collecting GraphQL fields for '{}' model.", typeMeta.getType().getName());
         Set<String> queryParams = new LinkedHashSet<>();
         for (Field field : typeMeta.getType().getDeclaredFields()) {
             if (field.isSynthetic() || !fieldMarkingStrategy.isMarkedField(field)) {
                 continue;
             }
-            log.debug(() -> String.format("Marked '%s' selection set field.", field.getName()));
+            log.debug("Marked '{}' selection set field.", field.getName());
             if (fieldsPickingStrategy.shouldBePicked(field)) {
-                log.debug(() -> String.format("Picked '%s' selection set field.", field.getName()));
+                log.debug("Picked '{}' selection set field.", field.getName());
                 addQueryParameter(queryParams, typeMeta, field, fieldsPickingStrategy);
             }
         }
