@@ -383,7 +383,7 @@ public abstract class GqlOperationRequestBodyGenerator<T extends GqlOperationReq
     }
 
     @SuppressWarnings("unchecked")
-    private T thisInstance() {
+    protected final T thisInstance() {
         return (T) this;
     }
 }

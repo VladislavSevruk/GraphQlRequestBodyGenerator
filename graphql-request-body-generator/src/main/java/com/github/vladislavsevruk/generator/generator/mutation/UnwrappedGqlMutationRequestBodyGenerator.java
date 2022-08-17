@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,13 @@
 package com.github.vladislavsevruk.generator.generator.mutation;
 
 /**
- * Generates request body for GraphQL mutations with received arguments and selection set according to different field
- * picking strategies.
+ * Generates unwrapped request body for GraphQL mutations with received arguments and selection set according to
+ * different field picking strategies.
  */
-public class GqlMutationRequestBodyGenerator
-        extends GqlMutationOperationRequestBodyGenerator<GqlMutationRequestBodyGenerator> {
+public class UnwrappedGqlMutationRequestBodyGenerator
+        extends GqlMutationOperationRequestBodyGenerator<UnwrappedGqlMutationRequestBodyGenerator> {
 
-    public GqlMutationRequestBodyGenerator(String mutationName) {
+    public UnwrappedGqlMutationRequestBodyGenerator(String mutationName) {
         super(mutationName);
     }
 
@@ -39,7 +39,7 @@ public class GqlMutationRequestBodyGenerator
      */
     @Override
     public String generate() {
-        return new GqlMutationBodyGenerator(getOperationName(), getSelectionSetGenerator()).generate(
+        return new UnwrappedGqlMutationBodyGenerator(getOperationName(), getSelectionSetGenerator()).generate(
                 inputFieldsPickingStrategy, modelArgumentStrategy, getSelectionSetFieldsPickingStrategy(),
                 getVariablePickingStrategy(), getOperationAlias(), getArguments());
     }

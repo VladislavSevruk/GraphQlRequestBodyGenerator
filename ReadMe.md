@@ -42,13 +42,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.10</version>
+      <version>1.0.11</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.10'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.11'
 ```
 
 ## Usage
@@ -387,8 +387,14 @@ public class UserInfo {
 ```
 
 ### Generate request body
-Once POJO models are ready we can generate GraphQL operation using
-[GqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/GqlRequestBodyGenerator.java):
+Once POJO models are ready we can generate GraphQL operation.
+There are two classes with same methods that can be used for request body generation:
+[GqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/GqlRequestBodyGenerator.java) and
+[UnwrappedGqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/UnwrappedGqlRequestBodyGenerator.java).
+The difference between these classes is that the first one generates operation that is wrapped into json and can be 
+passed as body to any API Client while second one generates pure GraphQL request body without any additional wrapping.
+Here and further we'll be using [GqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/GqlRequestBodyGenerator.java)
+at code samples:
 ```kotlin
 // query
 String query = GqlRequestBodyGenerator.query("allUsers").selectionSet(User.class).generate();
@@ -402,8 +408,6 @@ GqlInputArgument input = GqlInputArgument.of(newUser);
 String mutation = GqlRequestBodyGenerator.mutation("newUser").arguments(input).selectionSet(User.class)
         .generate();
 ```
-
-Generated operation is wrapped into json and can be passed as body to any API Client.
 
 #### Operation selection set
 By default, all marked fields will be used for selection set generation. However, you can generate selection set using
