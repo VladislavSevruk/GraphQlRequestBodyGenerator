@@ -47,7 +47,7 @@ public abstract class GqlMutationOperationRequestBodyGenerator<T extends GqlMuta
     protected ModelArgumentStrategy modelArgumentStrategy = ModelArgumentGenerationStrategy.defaultStrategy()
             .getModelArgumentStrategy();
 
-    public GqlMutationOperationRequestBodyGenerator(String mutationName) {
+    protected GqlMutationOperationRequestBodyGenerator(String mutationName) {
         super(mutationName);
     }
 
