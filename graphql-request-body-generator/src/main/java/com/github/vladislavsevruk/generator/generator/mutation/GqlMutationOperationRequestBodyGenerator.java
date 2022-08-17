@@ -340,9 +340,4 @@ public abstract class GqlMutationOperationRequestBodyGenerator<T extends GqlMuta
         inputFieldsPickingStrategy = InputGenerationStrategy.defaultStrategy().getInputFieldsPickingStrategy();
         modelArgumentStrategy = ModelArgumentGenerationStrategy.defaultStrategy().getModelArgumentStrategy();
     }
-
-    @SuppressWarnings("unchecked")
-    private T thisInstance() {
-        return (T) this;
-    }
 }
