@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,17 +21,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.generator.mutation;
+package com.github.vladislavsevruk.generator.generator.query;
+
+import com.github.vladislavsevruk.generator.generator.GqlOperationRequestBodyGenerator;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 
 /**
- * Generates request body for GraphQL mutations with received arguments and selection set according to different field
- * picking strategies.
+ * Generates unwrapped request body for GraphQL queries with received arguments and selection set according to
+ * different field picking strategies.
+ *
+ * @see FieldMarkingStrategySourceManager
  */
-public class GqlMutationRequestBodyGenerator
-        extends GqlMutationOperationRequestBodyGenerator<GqlMutationRequestBodyGenerator> {
+public class UnwrappedGqlQueryRequestBodyGenerator
+        extends GqlOperationRequestBodyGenerator<UnwrappedGqlQueryRequestBodyGenerator> {
 
-    public GqlMutationRequestBodyGenerator(String mutationName) {
-        super(mutationName);
+    public UnwrappedGqlQueryRequestBodyGenerator(String queryName) {
+        super(queryName);
     }
 
     /**
@@ -39,8 +44,9 @@ public class GqlMutationRequestBodyGenerator
      */
     @Override
     public String generate() {
-        return new GqlMutationBodyGenerator(getOperationName(), getSelectionSetGenerator()).generate(
-                inputFieldsPickingStrategy, modelArgumentStrategy, getSelectionSetFieldsPickingStrategy(),
-                getVariablePickingStrategy(), getOperationAlias(), getArguments());
+        return new UnwrappedGqlQueryBodyGenerator(getOperationName(), getSelectionSetGenerator()).generate(
+                getSelectionSetFieldsPickingStrategy(), getVariablePickingStrategy(), getOperationAlias(),
+                getArguments());
     }
 }
+

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Uladzislau Seuruk
+ * Copyright (c) 2021-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,6 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -44,25 +43,6 @@ import java.util.stream.StreamSupport;
 public class GqlBodyGenerator {
 
     protected static ObjectMapper jsonMapper = new ObjectMapper();
-
-    protected String generateOperationArgument(VariablePickingStrategy variablePickingStrategy,
-            GqlParameterValue<?> argument) {
-        String variableName = variablePickingStrategy.getVariableName(argument);
-        String variableType = variablePickingStrategy.getVariableType(argument);
-        String requiredArgumentPostfix = Optional.ofNullable(variablePickingStrategy.getDefaultValue(argument))
-                .filter(value -> !value.isEmpty()).map(value -> "=" + value)
-                .orElseGet(() -> variablePickingStrategy.isRequired(argument) ? "!" : "");
-        return String.format("$%s:%s%s", variableName, variableType, requiredArgumentPostfix);
-    }
-
-    protected String generateOperationArguments(VariablePickingStrategy variablePickingStrategy,
-            Iterable<? extends GqlParameterValue<?>> arguments) {
-        String operationArguments = StreamSupport.stream(arguments.spliterator(), false)
-                .filter(variablePickingStrategy::isVariable)
-                .map(argument -> generateOperationArgument(variablePickingStrategy, argument))
-                .collect(Collectors.joining(","));
-        return operationArguments.isEmpty() ? "" : "(" + operationArguments + ")";
-    }
 
     protected String generateVariables(VariablePickingStrategy variablePickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
