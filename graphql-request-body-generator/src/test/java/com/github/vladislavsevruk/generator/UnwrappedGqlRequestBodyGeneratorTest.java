@@ -46,8 +46,8 @@ class UnwrappedGqlRequestBodyGeneratorTest {
     void mutationTest() {
         InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
         inputModel.setTestField("testFieldValue");
-        String result = UnwrappedGqlRequestBodyGenerator.mutation("customGqlMutation").arguments(GqlInputArgument.of(inputModel))
-                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String result = GqlRequestBodyGenerator.unwrapped().mutation("customGqlMutation")
+                .arguments(GqlInputArgument.of(inputModel)).selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "mutation{customGqlMutation(input:{subClassField:"
                 + "\"subClassFieldValue\",testField:\"testFieldValue\"}){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
@@ -57,7 +57,7 @@ class UnwrappedGqlRequestBodyGeneratorTest {
     void mutationWithAliasTest() {
         InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
         inputModel.setTestField("testFieldValue");
-        String result = UnwrappedGqlRequestBodyGenerator.mutation("customGqlMutation")
+        String result = GqlRequestBodyGenerator.unwrapped().mutation("customGqlMutation")
                 .operationAlias("customGqlMutationAlias")
                 .arguments(GqlInputArgument.of(inputModel))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
@@ -78,7 +78,7 @@ class UnwrappedGqlRequestBodyGeneratorTest {
         GqlParameterValue<?> variable2 = GqlVariableArgument
                 .of(variableName2, variableName2, testData2, "InputData", false);
         List<GqlParameterValue<?>> variables = Arrays.asList(variable1, variable2);
-        String result = UnwrappedGqlRequestBodyGenerator.mutation("customGqlMutation")
+        String result = GqlRequestBodyGenerator.unwrapped().mutation("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), VariableGenerationStrategy.byArgumentType(),
                         ModelArgumentGenerationStrategy.anyArgument(), variables)
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
@@ -96,7 +96,7 @@ class UnwrappedGqlRequestBodyGeneratorTest {
         String variableName = "userProfile1";
         GqlParameterValue<?> variable = GqlVariableArgument.of(variableName, testData1);
         GqlParameterValue<?> argument = GqlArgument.of("userProfile2", testData2);
-        String result = UnwrappedGqlRequestBodyGenerator.mutation("customGqlMutation")
+        String result = GqlRequestBodyGenerator.unwrapped().mutation("customGqlMutation")
                 .arguments(InputGenerationStrategy.nonNullsFields(), VariableGenerationStrategy.byArgumentType(),
                         ModelArgumentGenerationStrategy.anyArgument(), variable, argument)
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
@@ -107,8 +107,8 @@ class UnwrappedGqlRequestBodyGeneratorTest {
 
     @Test
     void queryTest() {
-        String result = UnwrappedGqlRequestBodyGenerator.query("customGqlQuery").selectionSet(SimpleSelectionSetTestModel.class)
-                .generate();
+        String result = GqlRequestBodyGenerator.unwrapped().query("customGqlQuery")
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "{customGqlQuery{selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }
@@ -117,7 +117,7 @@ class UnwrappedGqlRequestBodyGeneratorTest {
     void queryWithAnnotatedAllMethodsVariableTest() {
         AnnotatedVariableAllMethodsTestModel testVariable = new AnnotatedVariableAllMethodsTestModel()
                 .setName("NameData").setAddress("AddressData");
-        String result = UnwrappedGqlRequestBodyGenerator.query("gqlQueryWithVariables")
+        String result = GqlRequestBodyGenerator.unwrapped().query("gqlQueryWithVariables")
                 .arguments(VariableGenerationStrategy.annotatedArgumentValueType(),
                         GqlArgument.of("search", testVariable)).selectionSet(SimpleSelectionSetTestModel.class)
                 .generate();
@@ -131,7 +131,7 @@ class UnwrappedGqlRequestBodyGeneratorTest {
     void queryWithAnnotatedRequiredVariableTest() {
         AnnotatedVariableRequiredTestModel testVariable = new AnnotatedVariableRequiredTestModel().setName("NameData")
                 .setAddress("AddressData");
-        String result = UnwrappedGqlRequestBodyGenerator.query("gqlQueryWithVariables")
+        String result = GqlRequestBodyGenerator.unwrapped().query("gqlQueryWithVariables")
                 .arguments(VariableGenerationStrategy.annotatedArgumentValueType(),
                         GqlArgument.of("search", testVariable)).selectionSet(SimpleSelectionSetTestModel.class)
                 .generate();
@@ -142,7 +142,7 @@ class UnwrappedGqlRequestBodyGeneratorTest {
 
     @Test
     void queryWithAliasTest() {
-        String result = UnwrappedGqlRequestBodyGenerator.query("gqlQuery")
+        String result = GqlRequestBodyGenerator.unwrapped().query("gqlQuery")
                 .operationAlias("gqlQueryAlias")
                 .selectionSet(SimpleSelectionSetTestModel.class)
                 .generate();
@@ -154,7 +154,7 @@ class UnwrappedGqlRequestBodyGeneratorTest {
     void queryWithAliasAndAnnotatedRequiredVariableTest() {
         AnnotatedVariableRequiredTestModel testVariable = new AnnotatedVariableRequiredTestModel().setName("NameData")
                 .setAddress("AddressData");
-        String result = UnwrappedGqlRequestBodyGenerator.query("gqlQueryWithVariables")
+        String result = GqlRequestBodyGenerator.unwrapped().query("gqlQueryWithVariables")
                 .operationAlias("gqlQueryAlias")
                 .arguments(VariableGenerationStrategy.annotatedArgumentValueType(),
                         GqlArgument.of("search", testVariable)).selectionSet(SimpleSelectionSetTestModel.class)

@@ -53,4 +53,11 @@ public class GqlRequestBodyGenerator {
     public static GqlQueryRequestBodyGenerator query(String queryName) {
         return new GqlQueryRequestBodyGenerator(queryName);
     }
+
+    /**
+     * Returns new instance of {@link UnwrappedGqlRequestBodyGenerator} for unwrapped GraphQL operation generation.
+     */
+    public static UnwrappedGqlRequestBodyGenerator unwrapped() {
+        return new UnwrappedGqlRequestBodyGenerator();
+    }
 }
