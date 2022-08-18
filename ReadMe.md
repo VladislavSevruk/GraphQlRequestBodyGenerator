@@ -42,13 +42,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.12</version>
+      <version>1.0.13</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.12'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.13'
 ```
 
 ## Usage
@@ -387,14 +387,8 @@ public class UserInfo {
 ```
 
 ### Generate request body
-Once POJO models are ready we can generate GraphQL operation.
-There are two classes with same methods that can be used for request body generation:
-[GqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/GqlRequestBodyGenerator.java) and
-[UnwrappedGqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/UnwrappedGqlRequestBodyGenerator.java).
-The difference between these classes is that the first one generates operation that is wrapped into json and can be 
-passed as body to any API Client while second one generates pure GraphQL request body without any additional wrapping.
-Here and further we'll be using [GqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/GqlRequestBodyGenerator.java)
-at code samples:
+Once POJO models are ready we can generate GraphQL operation using
+[GqlRequestBodyGenerator](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/GqlRequestBodyGenerator.java):
 ```kotlin
 // query
 String query = GqlRequestBodyGenerator.query("allUsers").selectionSet(User.class).generate();
@@ -407,6 +401,24 @@ newUser.setLastName("Doe");
 GqlInputArgument input = GqlInputArgument.of(newUser);
 String mutation = GqlRequestBodyGenerator.mutation("newUser").arguments(input).selectionSet(User.class)
         .generate();
+```
+
+Generated operation is wrapped into json and can be passed as body to any API Client. If you want to generate pure 
+unwrapped to JSON GraphQL query you can use ``GqlRequestBodyGenerator.unwrapped()`` first, all other methods calls 
+remain the same:
+```kotlin
+// query
+String query = GqlRequestBodyGenerator.unwrapped().query("allUsers").selectionSet(User.class)
+        .generate();
+
+// prepare input model
+User newUser = new User();
+newUser.setFirstName("John");
+newUser.setLastName("Doe");
+// mutation
+GqlInputArgument input = GqlInputArgument.of(newUser);
+String mutation = GqlRequestBodyGenerator.unwrapped().mutation("newUser").arguments(input)
+        .selectionSet(User.class).generate();
 ```
 
 #### Operation selection set

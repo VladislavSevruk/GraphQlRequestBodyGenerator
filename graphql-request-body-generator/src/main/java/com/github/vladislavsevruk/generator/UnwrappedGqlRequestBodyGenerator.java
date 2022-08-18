@@ -31,7 +31,7 @@ import com.github.vladislavsevruk.generator.generator.query.UnwrappedGqlQueryReq
  */
 public class UnwrappedGqlRequestBodyGenerator {
 
-    private UnwrappedGqlRequestBodyGenerator() {
+    UnwrappedGqlRequestBodyGenerator() {
     }
 
     /**
@@ -40,7 +40,7 @@ public class UnwrappedGqlRequestBodyGenerator {
      * @param mutationName <code>String</code> with name of mutation to generate.
      * @return <code>UnwrappedGqlMutationGenerator</code> with received mutation name.
      */
-    public static UnwrappedGqlMutationRequestBodyGenerator mutation(String mutationName) {
+    public UnwrappedGqlMutationRequestBodyGenerator mutation(String mutationName) {
         return new UnwrappedGqlMutationRequestBodyGenerator(mutationName);
     }
 
@@ -50,7 +50,7 @@ public class UnwrappedGqlRequestBodyGenerator {
      * @param queryName <code>String</code> with name of query to generate.
      * @return <code>UnwrappedGqlMutationGenerator</code> with received mutation name.
      */
-    public static UnwrappedGqlQueryRequestBodyGenerator query(String queryName) {
+    public UnwrappedGqlQueryRequestBodyGenerator query(String queryName) {
         return new UnwrappedGqlQueryRequestBodyGenerator(queryName);
     }
 }
