@@ -33,11 +33,13 @@ import lombok.Getter;
  *
  * @see ModelArgumentStrategy
  * @see AnyArgumentStrategy
+ * @see NoneArgumentStrategy
  * @see OnlyInputArgumentStrategy
  */
 public enum ModelArgumentGenerationStrategy {
 
     ANY_ARGUMENT(new AnyArgumentStrategy()),
+    NONE_ARGUMENT(new NoneArgumentStrategy()),
     ONLY_INPUT_ARGUMENT(new OnlyInputArgumentStrategy());
 
     @Getter
@@ -59,6 +61,13 @@ public enum ModelArgumentGenerationStrategy {
      */
     public static ModelArgumentGenerationStrategy defaultStrategy() {
         return onlyInputArgument();
+    }
+
+    /**
+     * Returns strategy for treating all field as simple types.
+     */
+    public static ModelArgumentGenerationStrategy noneArgument() {
+        return NONE_ARGUMENT;
     }
 
     /**

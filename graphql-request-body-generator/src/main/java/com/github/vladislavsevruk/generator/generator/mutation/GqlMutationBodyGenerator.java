@@ -24,10 +24,12 @@
 package com.github.vladislavsevruk.generator.generator.mutation;
 
 import com.github.vladislavsevruk.generator.generator.GqlBodyGenerator;
+import com.github.vladislavsevruk.generator.generator.GqlVariablesGenerator;
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.argument.ModelArgumentStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStrategy;
@@ -43,16 +45,17 @@ import java.util.Arrays;
 public class GqlMutationBodyGenerator extends GqlBodyGenerator {
 
     private final UnwrappedGqlMutationBodyGenerator unwrappedGqlMutationBodyGenerator;
+    private final GqlVariablesGenerator variablesGenerator;
 
     public GqlMutationBodyGenerator(String mutationName, SelectionSetGenerator selectionSetGenerator) {
-        this.unwrappedGqlMutationBodyGenerator = new UnwrappedGqlMutationBodyGenerator(mutationName,
-                selectionSetGenerator);
+        this(mutationName, selectionSetGenerator, FieldMarkingStrategySourceManager.input().getStrategy());
     }
 
     public GqlMutationBodyGenerator(String mutationName, SelectionSetGenerator selectionSetGenerator,
             FieldMarkingStrategy inputFieldMarkingStrategy) {
-        this.unwrappedGqlMutationBodyGenerator = new UnwrappedGqlMutationBodyGenerator(mutationName,
+        unwrappedGqlMutationBodyGenerator = new UnwrappedGqlMutationBodyGenerator(mutationName,
                 selectionSetGenerator, inputFieldMarkingStrategy);
+        variablesGenerator = new GqlVariablesGenerator(inputFieldMarkingStrategy);
     }
 
     /**
@@ -97,7 +100,8 @@ public class GqlMutationBodyGenerator extends GqlBodyGenerator {
             Iterable<? extends GqlParameterValue<?>> arguments) {
         String mutation = unwrappedGqlMutationBodyGenerator.generate(inputFieldsPickingStrategy, modelArgumentStrategy,
                 selectionSetFieldsPickingStrategy, variablePickingStrategy, operationAlias, arguments);
-        String variablesStr = generateVariables(variablePickingStrategy, arguments);
+        String variablesStr = variablesGenerator.generate(inputFieldsPickingStrategy, variablePickingStrategy,
+                arguments);
         String wrappedMutation = wrapForRequestBody(mutation, variablesStr);
         log.debug("Resulted wrapped mutation: {}", wrappedMutation);
         return wrappedMutation;

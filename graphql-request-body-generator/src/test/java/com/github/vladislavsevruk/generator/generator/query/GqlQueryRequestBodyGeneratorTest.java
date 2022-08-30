@@ -24,12 +24,15 @@
 package com.github.vladislavsevruk.generator.generator.query;
 
 import com.github.vladislavsevruk.generator.param.GqlArgument;
+import com.github.vladislavsevruk.generator.param.GqlDelegateArgument;
 import com.github.vladislavsevruk.generator.strategy.looping.EndlessLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.looping.LoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.SelectionSetGenerationStrategy;
 import com.github.vladislavsevruk.generator.test.data.GenericTestModel;
+import com.github.vladislavsevruk.generator.test.data.InheritedInputTestModel;
+import com.github.vladislavsevruk.generator.test.data.InputWithVariableFieldTestModel;
 import com.github.vladislavsevruk.generator.test.data.NestedTestModel;
 import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestModel;
 import com.github.vladislavsevruk.generator.test.data.TestEnum;
@@ -917,6 +920,35 @@ class GqlQueryRequestBodyGeneratorTest {
                 .selectionSet(new TypeProvider<SimpleSelectionSetTestModel>() {}, null, (LoopBreakingStrategy) null)
                 .generate();
         String expectedResult = "{\"query\":\"{customGqlQuery{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateWithDelegateArgumentTest() {
+        InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
+        inputModel.setTestField("testFieldValue");
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .arguments(GqlDelegateArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"{customGqlQuery(subClassField:"
+                + "\\\"subClassFieldValue\\\",testField:\\\"testFieldValue\\\")"
+                + "{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateWithDelegateArgumentWithVariablesTest() {
+        InputWithVariableFieldTestModel inputModel = new InputWithVariableFieldTestModel()
+                .setTestField("testField").setTestFieldWithAnnotationValues("testFieldWithAnnotationValues");
+        inputModel.setTestField("testFieldValue");
+        String result = new GqlQueryRequestBodyGenerator("customGqlQuery")
+                .arguments(GqlDelegateArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"variables\":{\"testField\":\"getTestField method\",\"variableMethodName\":"
+                + "\"getVariableTypeInputMethod\"},\"query\":\"query($testField:String,$variableMethodName:"
+                + "CustomType=\\\"test\\\"){customGqlQuery(testField:$testField,"
+                + "testFieldWithAnnotationValues:\\\"testFieldWithAnnotationValues\\\","
+                + "variableTypeInputMethod:$variableMethodName){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 }

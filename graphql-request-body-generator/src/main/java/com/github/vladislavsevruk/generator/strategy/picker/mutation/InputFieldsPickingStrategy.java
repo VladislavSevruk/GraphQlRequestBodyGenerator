@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,9 @@ public interface InputFieldsPickingStrategy {
      * Checks if received field should be picked according to current strategy.
      *
      * @param fieldName  <code>String</code> with input field to check.
-     * @param fieldValue <code>String</code> with resulted <code>Field</code> value.
+     * @param fieldValue <code>Object</code> with resulted <code>Field</code> value.
      * @return <code>true</code> if received field should be picked according to current strategy, <code>false</code>
      * otherwise.
      */
-    boolean shouldBePicked(String fieldName, String fieldValue);
+    boolean shouldBePicked(String fieldName, Object fieldValue);
 }

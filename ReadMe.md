@@ -29,6 +29,7 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
     * [Arguments](#arguments)
       * [Input argument](#input-argument)
       * [Variables](#variables)
+      * [Delegate argument](#delegate-argument)
       * [Mutation argument strategy](#mutation-argument-strategy)
     * [Operation Alias](#operation-alias)
 * [License](#license)
@@ -42,13 +43,13 @@ Add the following dependency to your pom.xml:
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
       <artifactId>graphql-request-body-generator</artifactId>
-      <version>1.0.12</version>
+      <version>1.0.13</version>
 </dependency>
 ```
 ### Gradle
 Add the following dependency to your build.gradle:
 ```groovy
-implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.12'
+implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.13'
 ```
 
 ## Usage
@@ -641,6 +642,17 @@ String query = GqlRequestBodyGenerator.mutation("updateContacts")
 Or you can provide your own variables generation strategy that implements
 [VariablePickingStrategy](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/strategy/variable/VariablePickingStrategy.java)
 interface.
+
+#### Delegate argument
+If query or mutation has big arguments number it may be easier to create object to keep them all at one place and manage
+together. In that case you can use [GqlDelegateArgument](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/param/GqlDelegateArgument.java)
+to simply pass such object as argument:
+```kotlin
+Contacts contacts = new Contacts().setEmail("test@domain.com").setPhoneNumber("3751945");
+GqlArgument<Contacts> delegateArgument = GqlDelegateArgument.of(contacts);
+String query = GqlRequestBodyGenerator.mutation("updateContacts")
+        .arguments(delegateArgument).selectionSet(Contacts.class).generate();
+```
 
 #### Mutation argument strategy
 By default, only __input__ argument value is treated as [complex input objects](http://spec.graphql.org/June2018/#sec-Input-Objects)

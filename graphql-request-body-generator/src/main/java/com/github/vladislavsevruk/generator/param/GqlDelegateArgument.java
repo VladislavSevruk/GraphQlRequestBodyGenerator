@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,21 +21,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.generator;
+package com.github.vladislavsevruk.generator.param;
 
-import com.github.vladislavsevruk.generator.util.StringUtil;
-import lombok.extern.log4j.Log4j2;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 /**
- * Class body generator with common logic for GraphQL operation.
+ * Delegate input for GraphQL operations to its value.
+ *
+ * @param <T> type of value.
  */
-@Log4j2
-public class GqlBodyGenerator {
+@RequiredArgsConstructor(staticName = "of")
+@Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+public class GqlDelegateArgument<T> implements GqlParameterValue<T> {
 
-    protected String wrapForRequestBody(String operationBody, String variables) {
-        if (variables.isEmpty()) {
-            return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
-        }
-        return "{\"variables\":" + variables + ",\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
+    T value;
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

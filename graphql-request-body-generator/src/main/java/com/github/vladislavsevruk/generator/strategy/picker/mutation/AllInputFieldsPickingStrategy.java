@@ -32,7 +32,7 @@ public class AllInputFieldsPickingStrategy implements InputFieldsPickingStrategy
      * {@inheritDoc}
      */
     @Override
-    public boolean shouldBePicked(String fieldName, String fieldValue) {
+    public boolean shouldBePicked(String fieldName, Object fieldValue) {
         return true;
     }
 }
