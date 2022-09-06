@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021 Uladzislau Seuruk
+ * Copyright (c) 2021-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  * Annotation that marks model which value should be treated as operation variable provided it was met at operation
  * arguments.
  */
-@Target(ElementType.TYPE)
+@Target({ ElementType.TYPE, ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GqlVariableType {
 

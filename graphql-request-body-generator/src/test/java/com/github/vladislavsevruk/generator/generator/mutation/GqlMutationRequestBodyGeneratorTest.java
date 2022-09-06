@@ -24,6 +24,7 @@
 package com.github.vladislavsevruk.generator.generator.mutation;
 
 import com.github.vladislavsevruk.generator.param.GqlArgument;
+import com.github.vladislavsevruk.generator.param.GqlDelegateArgument;
 import com.github.vladislavsevruk.generator.param.GqlInputArgument;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.argument.ModelArgumentGenerationStrategy;
@@ -31,6 +32,7 @@ import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputGenerationStrategy;
 import com.github.vladislavsevruk.generator.test.data.InheritedInputTestModel;
+import com.github.vladislavsevruk.generator.test.data.InputWithVariableFieldTestModel;
 import com.github.vladislavsevruk.generator.test.data.SimpleInputTestModel;
 import com.github.vladislavsevruk.generator.test.data.SimpleSelectionSetTestModel;
 import com.github.vladislavsevruk.generator.test.data.TestInputModel;
@@ -48,7 +50,7 @@ import java.util.Map;
 class GqlMutationRequestBodyGeneratorTest {
 
     private final InputFieldsPickingStrategy customInputFieldsPickingStrategy = (name, value) -> name.startsWith("custom")
-            || value.contains("Ignored");
+            || value.toString().contains("Ignored");
 
     @AfterAll
     static void setInitialAutoContextRefresh() {
@@ -817,6 +819,48 @@ class GqlMutationRequestBodyGeneratorTest {
         String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "{\"query\":\"mutation{customGqlMutation{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void withDelegateArgumentTest() {
+        InheritedInputTestModel inputModel = new InheritedInputTestModel().setSubClassField("subClassFieldValue");
+        inputModel.setTestField("testFieldValue");
+        String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
+                .arguments(GqlDelegateArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"mutation{customGqlMutation(subClassField:"
+                + "\\\"subClassFieldValue\\\",testField:\\\"testFieldValue\\\")"
+                + "{selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void withDelegateArgumentWithVariablesTest() {
+        InputWithVariableFieldTestModel inputModel = new InputWithVariableFieldTestModel()
+                .setTestField("testField").setTestFieldWithAnnotationValues("testFieldWithAnnotationValues");
+        inputModel.setTestField("testFieldValue");
+        String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
+                .arguments(GqlDelegateArgument.of(inputModel, true))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"variables\":{\"testField\":\"getTestField method\",\"variableMethodName\":"
+                + "\"getVariableTypeInputMethod\"},\"query\":\"mutation($testField:String,$variableMethodName:"
+                + "CustomType=\\\"test\\\"){customGqlMutation(testField:$testField,testFieldWithAnnotationValues:"
+                + "\\\"testFieldWithAnnotationValues\\\",variableTypeInputMethod:$variableMethodName){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void withDelegateArgumentWithoutVariablesTest() {
+        InputWithVariableFieldTestModel inputModel = new InputWithVariableFieldTestModel()
+                .setTestField("testField").setTestFieldWithAnnotationValues("testFieldWithAnnotationValues");
+        inputModel.setTestField("testFieldValue");
+        String result = new GqlMutationRequestBodyGenerator("customGqlMutation")
+                .arguments(GqlDelegateArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{\"query\":\"mutation{customGqlMutation(testField:\\\"getTestField method\\\","
+                + "testFieldWithAnnotationValues:\\\"testFieldWithAnnotationValues\\\","
+                + "variableTypeInputMethod:\\\"getVariableTypeInputMethod\\\"){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 

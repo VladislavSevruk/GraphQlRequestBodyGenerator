@@ -27,6 +27,7 @@ import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlArgument;
 import com.github.vladislavsevruk.generator.strategy.looping.NestingLoopBreakingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.AllFieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.variable.VariableArgumentTypeStrategy;
@@ -45,8 +46,9 @@ class UnwrappedGqlQueryBodyGeneratorTest {
         SelectionSetGenerator selectionSetGenerator = new SelectionSetGenerator(
                 new TypeMeta<>(SimpleSelectionSetTestModel.class), new AllExceptIgnoredFieldMarkingStrategy(),
                 new NestingLoopBreakingStrategy(nestingLevel));
-        String result = new UnwrappedGqlQueryBodyGenerator("customGqlQuery", selectionSetGenerator).generate(
-                new AllFieldsPickingStrategy(), new VariableArgumentTypeStrategy(), "", argument);
+        FieldMarkingStrategy fieldMarkingStrategy = new AllExceptIgnoredFieldMarkingStrategy();
+        String result = new UnwrappedGqlQueryBodyGenerator("customGqlQuery", selectionSetGenerator, fieldMarkingStrategy)
+                .generate(new AllFieldsPickingStrategy(), new VariableArgumentTypeStrategy(), "", argument);
         String expectedResult = "{customGqlQuery(argument:3){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }

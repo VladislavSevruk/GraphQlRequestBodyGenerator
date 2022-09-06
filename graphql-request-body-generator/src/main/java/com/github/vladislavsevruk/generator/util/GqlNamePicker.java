@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020-2021 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,12 @@ package com.github.vladislavsevruk.generator.util;
 
 import com.github.vladislavsevruk.generator.annotation.GqlField;
 import com.github.vladislavsevruk.generator.annotation.GqlFieldArgument;
+import com.github.vladislavsevruk.generator.annotation.GqlInput;
 import com.github.vladislavsevruk.generator.annotation.GqlUnionType;
 import com.github.vladislavsevruk.resolver.util.PrimitiveWrapperUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -43,7 +45,7 @@ public final class GqlNamePicker {
     }
 
     /**
-     * Gets name for GraphQL operation from {@link GqlField} annotation if present or using field name.
+     * Gets field name for GraphQL operation from {@link GqlField} annotation if present or using field name.
      *
      * @param field <code>Field</code> to get name for.
      * @return <code>String</code> with field name.
@@ -95,6 +97,20 @@ public final class GqlNamePicker {
             return "Float";
         }
         return value.getClass().getSimpleName();
+    }
+
+    /**
+     * Gets input name for GraphQL operation from {@link GqlInput} annotation if present or using field name.
+     *
+     * @param method <code>Method</code> to get name for.
+     * @return <code>String</code> with input method name.
+     */
+    public static String getInputName(Method method) {
+        GqlInput inputAnnotation = method.getAnnotation(GqlInput.class);
+        if (inputAnnotation != null && !inputAnnotation.name().isEmpty()) {
+            return inputAnnotation.name();
+        }
+        return method.getName();
     }
 
     /**
