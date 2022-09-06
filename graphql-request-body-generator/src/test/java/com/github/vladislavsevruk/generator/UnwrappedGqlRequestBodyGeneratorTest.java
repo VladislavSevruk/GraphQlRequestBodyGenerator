@@ -211,8 +211,8 @@ class UnwrappedGqlRequestBodyGeneratorTest {
                 nestedTestInputModel);
         String result = GqlRequestBodyGenerator.unwrapped().mutation("gqlMutationWithMethodInput")
                 .arguments(InputGenerationStrategy.nonNullsFields(), ModelArgumentGenerationStrategy.anyArgument(),
-                        GqlArgument.of("search", testArgument))
-                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+                        GqlArgument.of("search", testArgument)).selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
         String expectedResult = "mutation{gqlMutationWithMethodInput(search:{nestedValue:\"nested value from method\"})"
                 + "{selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
@@ -239,8 +239,8 @@ class UnwrappedGqlRequestBodyGeneratorTest {
                 nestedTestInputModel);
         String result = GqlRequestBodyGenerator.unwrapped().mutation("gqlMutationWithMethodInput")
                 .arguments(InputGenerationStrategy.nonNullsFields(), ModelArgumentGenerationStrategy.anyArgument(),
-                        GqlDelegateArgument.of(testArgument, true))
-                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+                        GqlDelegateArgument.of(testArgument, true)).selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
         String expectedResult = "mutation{gqlMutationWithMethodInput(nestedValue:\"nested value from method\")"
                 + "{selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
@@ -251,10 +251,8 @@ class UnwrappedGqlRequestBodyGeneratorTest {
         Map<String, Object> delegateMap = Collections.singletonMap("mapKey", "testValue");
         String result = GqlRequestBodyGenerator.unwrapped().mutation("gqlMutationWithMethodInput")
                 .arguments(InputGenerationStrategy.nonNullsFields(), ModelArgumentGenerationStrategy.anyArgument(),
-                        GqlDelegateArgument.of(delegateMap))
-                .selectionSet(SimpleSelectionSetTestModel.class).generate();
-        String expectedResult = "mutation{gqlMutationWithMethodInput(mapKey:\"testValue\")"
-                + "{selectionSetField}}";
+                        GqlDelegateArgument.of(delegateMap)).selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "mutation{gqlMutationWithMethodInput(mapKey:\"testValue\")" + "{selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 
@@ -265,12 +263,24 @@ class UnwrappedGqlRequestBodyGeneratorTest {
         Map<String, Object> delegateMap = Collections.singletonMap("mapKey", value);
         String result = GqlRequestBodyGenerator.unwrapped().mutation("gqlMutationWithMethodInput")
                 .arguments(InputGenerationStrategy.nonNullsFields(), ModelArgumentGenerationStrategy.anyArgument(),
-                        GqlDelegateArgument.of(delegateMap, true))
-                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+                        GqlDelegateArgument.of(delegateMap, true)).selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
         String expectedResult = "mutation($testField:String,$variableMethodName:CustomType=\"test\"){"
                 + "gqlMutationWithMethodInput(mapKey:{testField:$testField,testFieldWithAnnotationValues:"
                 + "\"testFieldWithAnnotationValues\",variableTypeInputMethod:$variableMethodName})"
                 + "{selectionSetField}}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void mutationWithDelegateAndNonDelegateArgumentsTest() {
+        SimpleTestModelWithDelegates testArgument = new SimpleTestModelWithDelegates();
+        String result = GqlRequestBodyGenerator.unwrapped().mutation("gqlMutationWithMethodInput")
+                .arguments(ModelArgumentGenerationStrategy.anyArgument(), GqlArgument.of("testArgument", "testValue"),
+                        GqlDelegateArgument.of(testArgument)).selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "mutation{gqlMutationWithMethodInput(testArgument:\"testValue\",nestedValue:"
+                + "\"nested value from method\"){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 }
