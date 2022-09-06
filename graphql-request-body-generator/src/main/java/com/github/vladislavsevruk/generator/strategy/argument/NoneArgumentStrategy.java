@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2021-2022 Uladzislau Seuruk
+ * Copyright (c) 2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,21 +21,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.generator;
+package com.github.vladislavsevruk.generator.strategy.argument;
 
-import com.github.vladislavsevruk.generator.util.StringUtil;
-import lombok.extern.log4j.Log4j2;
+import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 
 /**
- * Class body generator with common logic for GraphQL operation.
+ * Provides argument strategy for treating all arguments as simple types.
  */
-@Log4j2
-public class GqlBodyGenerator {
+public class NoneArgumentStrategy implements ModelArgumentStrategy {
 
-    protected String wrapForRequestBody(String operationBody, String variables) {
-        if (variables.isEmpty()) {
-            return "{\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
-        }
-        return "{\"variables\":" + variables + ",\"query\":\"" + StringUtil.escapeQuotes(operationBody) + "\"}";
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isModelArgument(GqlParameterValue<?> argument) {
+        return false;
     }
 }

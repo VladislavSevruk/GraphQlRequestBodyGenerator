@@ -24,8 +24,12 @@
 package com.github.vladislavsevruk.generator.generator.query;
 
 import com.github.vladislavsevruk.generator.generator.GqlBodyGenerator;
+import com.github.vladislavsevruk.generator.generator.GqlVariablesGenerator;
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
+import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputGenerationStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStrategy;
 import lombok.extern.log4j.Log4j2;
@@ -40,9 +44,17 @@ import java.util.Arrays;
 public class GqlQueryBodyGenerator extends GqlBodyGenerator {
 
     private final UnwrappedGqlQueryBodyGenerator unwrappedGqlQueryBodyGenerator;
+    private final GqlVariablesGenerator variablesGenerator;
 
     public GqlQueryBodyGenerator(String queryName, SelectionSetGenerator selectionSetGenerator) {
-        this.unwrappedGqlQueryBodyGenerator = new UnwrappedGqlQueryBodyGenerator(queryName, selectionSetGenerator);
+        this(queryName, selectionSetGenerator, FieldMarkingStrategySourceManager.input().getStrategy());
+    }
+
+    private GqlQueryBodyGenerator(String queryName, SelectionSetGenerator selectionSetGenerator,
+            FieldMarkingStrategy inputFieldMarkingStrategy) {
+        unwrappedGqlQueryBodyGenerator = new UnwrappedGqlQueryBodyGenerator(queryName, selectionSetGenerator,
+                inputFieldMarkingStrategy);
+        variablesGenerator = new GqlVariablesGenerator(inputFieldMarkingStrategy);
     }
 
     /**
@@ -75,7 +87,9 @@ public class GqlQueryBodyGenerator extends GqlBodyGenerator {
             String operationAlias, Iterable<? extends GqlParameterValue<?>> arguments) {
         String query = unwrappedGqlQueryBodyGenerator.generate(fieldsPickingStrategy, variablePickingStrategy,
                 operationAlias, arguments);
-        String variablesStr = generateVariables(variablePickingStrategy, arguments);
+        String variablesStr = variablesGenerator.generate(
+                InputGenerationStrategy.nonNullsFields().getInputFieldsPickingStrategy(), variablePickingStrategy,
+                arguments);
         String wrappedQuery = wrapForRequestBody(query, variablesStr);
         log.debug("Resulted wrapped query: {}", wrappedQuery);
         return wrappedQuery;

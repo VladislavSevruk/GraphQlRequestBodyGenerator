@@ -23,9 +23,11 @@
  */
 package com.github.vladislavsevruk.generator.generator.query;
 
+import com.github.vladislavsevruk.generator.generator.GqlVariableArgumentsGenerator;
 import com.github.vladislavsevruk.generator.generator.SelectionSetGenerator;
-import com.github.vladislavsevruk.generator.generator.UnwrappedGqlBodyGenerator;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
+import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategySourceManager;
 import com.github.vladislavsevruk.generator.strategy.picker.selection.FieldsPickingStrategy;
 import com.github.vladislavsevruk.generator.strategy.variable.VariablePickingStrategy;
 import com.github.vladislavsevruk.generator.util.StringUtil;
@@ -33,23 +35,30 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Generates unwrapped GraphQL queries with received arguments and selection set according to different field picking
  * strategies.
  */
 @Log4j2
-public class UnwrappedGqlQueryBodyGenerator extends UnwrappedGqlBodyGenerator {
+public class UnwrappedGqlQueryBodyGenerator {
 
     private final String queryName;
+    private final GqlQueryArgumentsGenerator queryArgumentsGenerator = new GqlQueryArgumentsGenerator();
+    private final GqlVariableArgumentsGenerator operationArgumentsGenerator;
     private final SelectionSetGenerator selectionSetGenerator;
 
     public UnwrappedGqlQueryBodyGenerator(String queryName, SelectionSetGenerator selectionSetGenerator) {
+        this(queryName, selectionSetGenerator, FieldMarkingStrategySourceManager.input().getStrategy());
+    }
+
+    public UnwrappedGqlQueryBodyGenerator(String queryName, SelectionSetGenerator selectionSetGenerator,
+            FieldMarkingStrategy inputFieldMarkingStrategy) {
         Objects.requireNonNull(selectionSetGenerator);
+        Objects.requireNonNull(inputFieldMarkingStrategy);
         this.selectionSetGenerator = selectionSetGenerator;
         this.queryName = queryName;
+        this.operationArgumentsGenerator = new GqlVariableArgumentsGenerator(inputFieldMarkingStrategy);
     }
 
     /**
@@ -83,32 +92,14 @@ public class UnwrappedGqlQueryBodyGenerator extends UnwrappedGqlBodyGenerator {
         Objects.requireNonNull(arguments);
         log.info("Generating '{}' GraphQL query.", queryName);
         String selectionSet = selectionSetGenerator.generate(fieldsPickingStrategy);
-        String operationArgumentsStr = generateOperationArguments(variablePickingStrategy, arguments);
-        String query = "{" + queryName + generateGqlArguments(variablePickingStrategy, arguments) + selectionSet + "}";
+        String operationArgumentsStr = operationArgumentsGenerator.generate(variablePickingStrategy, arguments);
+        String query = "{" + queryName + queryArgumentsGenerator.generate(variablePickingStrategy, arguments)
+                + selectionSet + "}";
         if (StringUtil.isNotBlank(operationAlias) || StringUtil.isNotBlank(operationArgumentsStr)) {
             String operationPrefix = StringUtil.isNotBlank(operationAlias) ? "query " + operationAlias : "query";
             query = operationPrefix + operationArgumentsStr + query;
         }
         log.debug("Resulted query: {}", query);
         return query;
-    }
-
-    private String generateArgumentValue(VariablePickingStrategy variablePickingStrategy,
-            GqlParameterValue<?> argument) {
-        if (variablePickingStrategy.isVariable(argument)) {
-            return argument.getName() + ":$" + variablePickingStrategy.getVariableName(argument);
-        }
-        return argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue());
-    }
-
-    private String generateGqlArguments(VariablePickingStrategy variablePickingStrategy,
-            Iterable<? extends GqlParameterValue<?>> argumentValue) {
-        if (!argumentValue.iterator().hasNext()) {
-            log.debug("GraphQL query argument iterable is empty.");
-            return "";
-        }
-        return "(" + StreamSupport.stream(argumentValue.spliterator(), false)
-                .map(argument -> generateArgumentValue(variablePickingStrategy, argument))
-                .collect(Collectors.joining(",")) + ")";
     }
 }
