@@ -91,7 +91,7 @@ public class BaseGqlArgumentsGenerator {
 
     protected String generateModelArguments(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy,
             boolean withVariables) {
-        LinkedHashMap<String, String> modelValues = collectValuesMap(value, value.getClass(),
+        Map<String, String> modelValues = collectValuesMap(value, value.getClass(),
                 inputFieldsPickingStrategy, new LinkedHashMap<>(), withVariables);
         return modelValues.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue())
                 .collect(Collectors.joining(DELIMITER));
@@ -101,12 +101,8 @@ public class BaseGqlArgumentsGenerator {
         return GqlDelegateArgument.class.equals(argument.getClass());
     }
 
-    protected boolean isDelegateWithVariable(GqlParameterValue<?> argument) {
-        return ((GqlDelegateArgument<?>) argument).isShouldUseVariables();
-    }
-
     private void collectValue(String fieldName, String fieldValue,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, String> mutationValues) {
         log.debug("Received '{}' value for '{}' input field.", fieldValue, fieldName);
         if (inputFieldsPickingStrategy.shouldBePicked(fieldName, fieldValue)) {
             log.debug("Picked '{}' input field.", fieldName);
@@ -187,11 +183,10 @@ public class BaseGqlArgumentsGenerator {
         }
     }
 
-    private LinkedHashMap<String, String> collectValuesForMap(Object value,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
+    private Map<String, String> collectValuesForMap(Object value,
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, String> mutationValues,
             boolean withVariables) {
-        for (Object object : ((Map) value).entrySet()) {
-            Entry<?, ?> entry = (Entry<?, ?>) object;
+        for (Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
             String entryKey = entry.getKey().toString();
             if (mutationValues.containsKey(entryKey)) {
                 log.debug("Input field '{}' is already collected.", entryKey);
@@ -235,7 +230,7 @@ public class BaseGqlArgumentsGenerator {
         return mutationValues;
     }
 
-    private LinkedHashMap<String, String> collectValuesMap(Object value, Class<?> valueClass,
+    private Map<String, String> collectValuesMap(Object value, Class<?> valueClass,
             InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
             boolean withVariables) {
         if (Map.class.isAssignableFrom(valueClass)) {

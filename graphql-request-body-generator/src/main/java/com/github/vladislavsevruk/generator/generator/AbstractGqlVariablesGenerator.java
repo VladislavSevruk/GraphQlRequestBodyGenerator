@@ -35,8 +35,8 @@ import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * GraphQL variables generator with common logic for GraphQL operation.
@@ -56,7 +56,8 @@ public abstract class AbstractGqlVariablesGenerator {
             Object delegate, Class<?> delegateClass, Map<String, Object> operationVariables, boolean withVariables) {
         if (Map.class.isAssignableFrom(delegateClass)) {
             log.debug("{} is map.", delegateClass.getName());
-            return Collections.emptyMap();
+            return collectDelegatedValuesForMap(delegate, inputFieldsPickingStrategy, operationVariables,
+                    withVariables);
         }
         return collectDelegatedValuesForModel(delegate, delegateClass, inputFieldsPickingStrategy, operationVariables,
                 withVariables);
@@ -121,6 +122,21 @@ public abstract class AbstractGqlVariablesGenerator {
                 collectDelegatedValuesForMethodVariable(value, method, inputFieldsPickingStrategy, mutationValues);
             }
         }
+    }
+
+    private Map<String, Object> collectDelegatedValuesForMap(Object delegate,
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, Object> operationVariables,
+            boolean withVariables) {
+        for (Entry<?, ?> entry : ((Map<?, ?>) delegate).entrySet()) {
+            String entryKey = entry.getKey().toString();
+            if (operationVariables.containsKey(entryKey)) {
+                log.debug("Input field '{}' is already collected.", entryKey);
+            } else {
+                collectDelegatedValuesForModel(entry.getValue(), entry.getValue().getClass(),
+                        inputFieldsPickingStrategy, operationVariables, withVariables);
+            }
+        }
+        return operationVariables;
     }
 
     private void collectDelegatedValuesForMethodVariable(Object value, Method method,
