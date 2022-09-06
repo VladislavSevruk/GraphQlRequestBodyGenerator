@@ -39,6 +39,11 @@ import lombok.experimental.FieldDefaults;
 public class GqlDelegateArgument<T> implements GqlParameterValue<T> {
 
     T value;
+    boolean shouldUseVariables;
+
+    public static <T> GqlDelegateArgument<T> of(T value) {
+        return of(value, false);
+    }
 
     @Override
     public String getName() {

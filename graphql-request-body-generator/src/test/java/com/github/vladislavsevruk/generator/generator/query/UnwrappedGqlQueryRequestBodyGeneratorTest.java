@@ -943,11 +943,25 @@ class UnwrappedGqlQueryRequestBodyGeneratorTest {
                 .setTestField("testField").setTestFieldWithAnnotationValues("testFieldWithAnnotationValues");
         inputModel.setTestField("testFieldValue");
         String result = new UnwrappedGqlQueryRequestBodyGenerator("customGqlQuery")
-                .arguments(GqlDelegateArgument.of(inputModel))
+                .arguments(GqlDelegateArgument.of(inputModel, true))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "query($testField:String,$variableMethodName:CustomType=\"test\"){customGqlQuery(testField:"
                 + "$testField,testFieldWithAnnotationValues:\"testFieldWithAnnotationValues\",variableTypeInputMethod:"
                 + "$variableMethodName){selectionSetField}}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void generateWithDelegateArgumentWithoutVariablesTest() {
+        InputWithVariableFieldTestModel inputModel = new InputWithVariableFieldTestModel()
+                .setTestField("testField").setTestFieldWithAnnotationValues("testFieldWithAnnotationValues");
+        inputModel.setTestField("testFieldValue");
+        String result = new UnwrappedGqlQueryRequestBodyGenerator("customGqlQuery")
+                .arguments(GqlDelegateArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "{customGqlQuery(testField:\"getTestField method\","
+                + "testFieldWithAnnotationValues:\"testFieldWithAnnotationValues\",variableTypeInputMethod:"
+                + "\"getVariableTypeInputMethod\"){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 }

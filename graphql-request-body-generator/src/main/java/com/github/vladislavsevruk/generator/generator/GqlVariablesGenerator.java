@@ -98,15 +98,16 @@ public class GqlVariablesGenerator extends AbstractGqlVariablesGenerator {
     }
 
     private static <T> BinaryOperator<T> throwingMerger() {
-        return (u, v) -> { throw newDuplicateKeyException(((GqlParameterValue<?>) u).getName()); };
+        return (u, v) -> {throw newDuplicateKeyException(((GqlParameterValue<?>) u).getName());};
     }
 
     private Map<String, Object> getDelegatedVariablesMap(InputFieldsPickingStrategy inputFieldsPickingStrategy,
             Iterable<? extends GqlParameterValue<?>> arguments) {
         return StreamSupport.stream(arguments.spliterator(), false).filter(this::isDelegate)
-                .map(GqlParameterValue::getValue)
-                .map(value -> collectDelegatedValuesMap(inputFieldsPickingStrategy, value, value.getClass(),
-                        new LinkedHashMap<>())).map(Map::entrySet).flatMap(Collection::stream)
+                .map(argument -> (GqlDelegateArgument<?>) argument)
+                .map(argument -> collectDelegatedValuesMap(inputFieldsPickingStrategy, argument.getValue(),
+                        argument.getValue().getClass(), new LinkedHashMap<>(), argument.isShouldUseVariables()))
+                .map(Map::entrySet).flatMap(Collection::stream)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue, throwingMerger(), LinkedHashMap::new));
     }
 

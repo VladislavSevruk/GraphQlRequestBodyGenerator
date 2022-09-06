@@ -654,6 +654,31 @@ String query = GqlRequestBodyGenerator.mutation("updateContacts")
         .arguments(delegateArgument).selectionSet(Contacts.class).generate();
 ```
 
+If you want to generate variables for delegated values you need to pass flag to
+[GqlDelegateArgument](graphql-request-body-generator/src/main/java/com/github/vladislavsevruk/generator/param/GqlDelegateArgument.java)
+and add [GqlVariableType](graphql-request-body-generator-annotation/src/main/java/com/github/vladislavsevruk/generator/annotation/GqlVariableType.java)
+annotations to fields that should be passed as variables:
+
+```java
+public class Contacts {
+  @GqlField
+  @GqlVariableType
+  private String email;
+  @GqlField
+  @GqlVariableType
+  private String phoneNumber;
+
+  // getters and setters
+    ...
+}
+```
+```kotlin
+Contacts contacts = new Contacts().setEmail("test@domain.com").setPhoneNumber("3751945");
+GqlArgument<Contacts> delegateArgument = GqlDelegateArgument.of(contacts, true);
+String query = GqlRequestBodyGenerator.mutation("updateContacts")
+        .arguments(delegateArgument).selectionSet(Contacts.class).generate();
+```
+
 #### Mutation argument strategy
 By default, only __input__ argument value is treated as [complex input objects](http://spec.graphql.org/June2018/#sec-Input-Objects)
 according to GraphQL specification. However, you can use other

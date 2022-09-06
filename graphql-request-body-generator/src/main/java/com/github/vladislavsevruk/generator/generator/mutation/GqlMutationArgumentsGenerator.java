@@ -24,6 +24,7 @@
 package com.github.vladislavsevruk.generator.generator.mutation;
 
 import com.github.vladislavsevruk.generator.generator.BaseGqlArgumentsGenerator;
+import com.github.vladislavsevruk.generator.param.GqlDelegateArgument;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.argument.ModelArgumentStrategy;
 import com.github.vladislavsevruk.generator.strategy.marker.FieldMarkingStrategy;
@@ -75,7 +76,8 @@ public class GqlMutationArgumentsGenerator extends BaseGqlArgumentsGenerator {
             return argument.getName() + ":$" + variablePickingStrategy.getVariableName(argument);
         }
         if (isDelegate(argument)) {
-            return generateModelArguments(argument.getValue(), inputFieldsPickingStrategy);
+            boolean withVariables = ((GqlDelegateArgument<?>) argument).isShouldUseVariables();
+            return generateModelArguments(argument.getValue(), inputFieldsPickingStrategy, withVariables);
         }
         if (!modelArgumentStrategy.isModelArgument(argument)) {
             return argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue());
@@ -85,6 +87,6 @@ public class GqlMutationArgumentsGenerator extends BaseGqlArgumentsGenerator {
                         + "marking strategy and '{}' field picking strategy.", argument.getName(),
                 inputValue.getClass().getName(), inputFieldMarkingStrategy.getClass().getName(),
                 inputFieldsPickingStrategy.getClass().getName());
-        return argument.getName() + ":" + generateArgumentModelValue(inputValue, inputFieldsPickingStrategy);
+        return argument.getName() + ":" + generateArgumentModelValue(inputValue, inputFieldsPickingStrategy, true);
     }
 }

@@ -65,7 +65,8 @@ public class BaseGqlArgumentsGenerator {
         this.inputFieldMarkingStrategy = inputFieldMarkingStrategy;
     }
 
-    protected String generateArgumentModelValue(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
+    protected String generateArgumentModelValue(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy,
+            boolean withVariables) {
         if (Objects.isNull(value)) {
             log.debug("Value is null.");
             return null;
@@ -83,20 +84,25 @@ public class BaseGqlArgumentsGenerator {
         if (Iterable.class.isAssignableFrom(valueClass) || valueClass.isArray()) {
             log.debug("{} is iterable or array.", valueClass.getName());
             // compose all elements through the comma and surround by square brackets
-            return "[" + String.join(",", convertToStringList(value, inputFieldsPickingStrategy)) + "]";
+            return "[" + String.join(",", convertToStringList(value, inputFieldsPickingStrategy, withVariables)) + "]";
         }
-        return "{" + generateModelArguments(value, inputFieldsPickingStrategy) + "}";
+        return "{" + generateModelArguments(value, inputFieldsPickingStrategy, withVariables) + "}";
     }
 
-    protected String generateModelArguments(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
+    protected String generateModelArguments(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy,
+            boolean withVariables) {
         LinkedHashMap<String, String> modelValues = collectValuesMap(value, value.getClass(),
-                inputFieldsPickingStrategy, new LinkedHashMap<>());
+                inputFieldsPickingStrategy, new LinkedHashMap<>(), withVariables);
         return modelValues.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue())
                 .collect(Collectors.joining(DELIMITER));
     }
 
     protected boolean isDelegate(GqlParameterValue<?> argument) {
         return GqlDelegateArgument.class.equals(argument.getClass());
+    }
+
+    protected boolean isDelegateWithVariable(GqlParameterValue<?> argument) {
+        return ((GqlDelegateArgument<?>) argument).isShouldUseVariables();
     }
 
     private void collectValue(String fieldName, String fieldValue,
@@ -109,7 +115,8 @@ public class BaseGqlArgumentsGenerator {
     }
 
     private void collectValuesByFields(Object value, Class<?> valueClass,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
+            boolean withVariables) {
         for (Field field : valueClass.getDeclaredFields()) {
             if (field.isSynthetic() || !inputFieldMarkingStrategy.isMarkedField(field)) {
                 continue;
@@ -118,8 +125,8 @@ public class BaseGqlArgumentsGenerator {
             if (field.getAnnotation(GqlDelegate.class) != null) {
                 log.debug("'{}' is delegate.", field.getName());
                 Object delegateObject = ArgumentValueUtil.getValue(field, value);
-                collectValuesForDelegate(delegateObject, inputFieldsPickingStrategy, mutationValues);
-            } else if (field.getAnnotation(GqlVariableType.class) != null) {
+                collectValuesForDelegate(delegateObject, inputFieldsPickingStrategy, mutationValues, withVariables);
+            } else if (withVariables && field.getAnnotation(GqlVariableType.class) != null) {
                 log.debug("'{}' is variable.", field.getName());
                 String fieldName = GqlNamePicker.getFieldName(field);
                 GqlVariableType variableType = field.getAnnotation(GqlVariableType.class);
@@ -127,17 +134,18 @@ public class BaseGqlArgumentsGenerator {
                 collectValue(fieldName, variableValue, inputFieldsPickingStrategy, mutationValues);
             } else {
                 log.debug("'{}' is input field.", field.getName());
-                collectValuesForField(value, field, inputFieldsPickingStrategy, mutationValues);
+                collectValuesForField(value, field, inputFieldsPickingStrategy, mutationValues, withVariables);
             }
         }
         Class<?> superclass = valueClass.getSuperclass();
         if (superclass != null && !Object.class.equals(superclass)) {
-            collectValuesByFields(value, superclass, inputFieldsPickingStrategy, mutationValues);
+            collectValuesByFields(value, superclass, inputFieldsPickingStrategy, mutationValues, withVariables);
         }
     }
 
     private void collectValuesByMethods(Object value, Class<?> valueClass,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
+            boolean withVariables) {
         for (Method method : valueClass.getMethods()) {
             GqlInput inputAnnotation = method.getAnnotation(GqlInput.class);
             GqlDelegate delegateAnnotation = method.getAnnotation(GqlDelegate.class);
@@ -148,45 +156,48 @@ public class BaseGqlArgumentsGenerator {
             if (delegateAnnotation != null) {
                 log.debug("'{}' is delegate.", method.getName());
                 Object delegateObject = ArgumentValueUtil.getValueByMethod(value, method);
-                collectValuesForDelegate(delegateObject, inputFieldsPickingStrategy, mutationValues);
-            } else if (method.getAnnotation(GqlVariableType.class) != null) {
+                collectValuesForDelegate(delegateObject, inputFieldsPickingStrategy, mutationValues, withVariables);
+            } else if (withVariables && method.getAnnotation(GqlVariableType.class) != null) {
                 log.debug("'{}' is variable.", method.getName());
                 collectValuesForMethodVariable(method, inputFieldsPickingStrategy, mutationValues);
             } else {
                 log.debug("'{}' is input method.", method.getName());
-                collectValuesForMethod(value, method, inputFieldsPickingStrategy, mutationValues);
+                collectValuesForMethod(value, method, inputFieldsPickingStrategy, mutationValues, withVariables);
             }
         }
     }
 
     private void collectValuesForDelegate(Object delegateObject, InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            LinkedHashMap<String, String> mutationValues) {
+            LinkedHashMap<String, String> mutationValues, boolean withVariables) {
         if (delegateObject != null) {
-            collectValuesMap(delegateObject, delegateObject.getClass(), inputFieldsPickingStrategy, mutationValues);
+            collectValuesMap(delegateObject, delegateObject.getClass(), inputFieldsPickingStrategy, mutationValues,
+                    withVariables);
         }
     }
 
     private void collectValuesForField(Object value, Field field, InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            LinkedHashMap<String, String> mutationValues) {
+            LinkedHashMap<String, String> mutationValues, boolean withVariables) {
         String fieldName = GqlNamePicker.getFieldName(field);
         if (mutationValues.containsKey(fieldName)) {
             log.debug("Input field '{}' is already collected.", fieldName);
         } else {
             String argumentValue = generateArgumentModelValue(ArgumentValueUtil.getValue(field, value),
-                    inputFieldsPickingStrategy);
+                    inputFieldsPickingStrategy, withVariables);
             collectValue(fieldName, argumentValue, inputFieldsPickingStrategy, mutationValues);
         }
     }
 
     private LinkedHashMap<String, String> collectValuesForMap(Object value,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
+            boolean withVariables) {
         for (Object object : ((Map) value).entrySet()) {
             Entry<?, ?> entry = (Entry<?, ?>) object;
             String entryKey = entry.getKey().toString();
             if (mutationValues.containsKey(entryKey)) {
                 log.debug("Input field '{}' is already collected.", entryKey);
             } else {
-                String entryValue = generateArgumentModelValue(entry.getValue(), inputFieldsPickingStrategy);
+                String entryValue = generateArgumentModelValue(entry.getValue(), inputFieldsPickingStrategy,
+                        withVariables);
                 collectValue(entryKey, entryValue, inputFieldsPickingStrategy, mutationValues);
             }
         }
@@ -194,11 +205,12 @@ public class BaseGqlArgumentsGenerator {
     }
 
     private void collectValuesForMethod(Object value, Method method,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
+            boolean withVariables) {
         String methodName = GqlNamePicker.getInputName(method);
         if (!mutationValues.containsKey(methodName)) {
             String argumentValue = generateArgumentModelValue(ArgumentValueUtil.getValueByMethod(value, method),
-                    inputFieldsPickingStrategy);
+                    inputFieldsPickingStrategy, withVariables);
             collectValue(methodName, argumentValue, inputFieldsPickingStrategy, mutationValues);
         }
     }
@@ -215,24 +227,28 @@ public class BaseGqlArgumentsGenerator {
     }
 
     private LinkedHashMap<String, String> collectValuesForModel(Object value, Class<?> valueClass,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
+            boolean withVariables) {
         log.debug("Generating mutation value for {}", valueClass.getName());
-        collectValuesByFields(value, valueClass, inputFieldsPickingStrategy, mutationValues);
-        collectValuesByMethods(value, valueClass, inputFieldsPickingStrategy, mutationValues);
+        collectValuesByFields(value, valueClass, inputFieldsPickingStrategy, mutationValues, withVariables);
+        collectValuesByMethods(value, valueClass, inputFieldsPickingStrategy, mutationValues, withVariables);
         return mutationValues;
     }
 
     private LinkedHashMap<String, String> collectValuesMap(Object value, Class<?> valueClass,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, LinkedHashMap<String, String> mutationValues,
+            boolean withVariables) {
         if (Map.class.isAssignableFrom(valueClass)) {
             log.debug("{} is map.", valueClass.getName());
-            return collectValuesForMap(value, inputFieldsPickingStrategy, mutationValues);
+            return collectValuesForMap(value, inputFieldsPickingStrategy, mutationValues, withVariables);
         }
-        return collectValuesForModel(value, valueClass, inputFieldsPickingStrategy, mutationValues);
+        return collectValuesForModel(value, valueClass, inputFieldsPickingStrategy, mutationValues, withVariables);
     }
 
-    private List<String> convertToStringList(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy) {
-        return StreamUtil.createStream(value).map(item -> generateArgumentModelValue(item, inputFieldsPickingStrategy))
+    private List<String> convertToStringList(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy,
+            boolean withVariables) {
+        return StreamUtil.createStream(value).map(item -> generateArgumentModelValue(item, inputFieldsPickingStrategy,
+                        withVariables))
                 .collect(Collectors.toList());
     }
 

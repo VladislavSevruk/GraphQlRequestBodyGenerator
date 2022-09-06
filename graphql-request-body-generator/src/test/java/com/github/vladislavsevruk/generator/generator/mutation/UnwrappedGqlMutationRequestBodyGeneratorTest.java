@@ -841,11 +841,25 @@ class UnwrappedGqlMutationRequestBodyGeneratorTest {
                 .setTestField("testField").setTestFieldWithAnnotationValues("testFieldWithAnnotationValues");
         inputModel.setTestField("testFieldValue");
         String result = new UnwrappedGqlMutationRequestBodyGenerator("customGqlMutation")
-                .arguments(GqlDelegateArgument.of(inputModel))
+                .arguments(GqlDelegateArgument.of(inputModel, true))
                 .selectionSet(SimpleSelectionSetTestModel.class).generate();
         String expectedResult = "mutation($testField:String,$variableMethodName:CustomType=\"test\"){customGqlMutation("
                 + "testField:$testField,testFieldWithAnnotationValues:\"testFieldWithAnnotationValues\","
                 + "variableTypeInputMethod:$variableMethodName){selectionSetField}}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void withDelegateArgumentWithoutVariablesTest() {
+        InputWithVariableFieldTestModel inputModel = new InputWithVariableFieldTestModel()
+                .setTestField("testField").setTestFieldWithAnnotationValues("testFieldWithAnnotationValues");
+        inputModel.setTestField("testFieldValue");
+        String result = new UnwrappedGqlMutationRequestBodyGenerator("customGqlMutation")
+                .arguments(GqlDelegateArgument.of(inputModel))
+                .selectionSet(SimpleSelectionSetTestModel.class).generate();
+        String expectedResult = "mutation{customGqlMutation("
+                + "testField:\"getTestField method\",testFieldWithAnnotationValues:\"testFieldWithAnnotationValues\","
+                + "variableTypeInputMethod:\"getVariableTypeInputMethod\"){selectionSetField}}";
         Assertions.assertEquals(expectedResult, result);
     }
 

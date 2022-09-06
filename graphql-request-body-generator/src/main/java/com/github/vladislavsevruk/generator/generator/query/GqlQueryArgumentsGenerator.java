@@ -24,6 +24,7 @@
 package com.github.vladislavsevruk.generator.generator.query;
 
 import com.github.vladislavsevruk.generator.generator.BaseGqlArgumentsGenerator;
+import com.github.vladislavsevruk.generator.param.GqlDelegateArgument;
 import com.github.vladislavsevruk.generator.param.GqlParameterValue;
 import com.github.vladislavsevruk.generator.strategy.marker.AllExceptIgnoredFieldMarkingStrategy;
 import com.github.vladislavsevruk.generator.strategy.picker.mutation.InputGenerationStrategy;
@@ -69,8 +70,9 @@ public class GqlQueryArgumentsGenerator extends BaseGqlArgumentsGenerator {
             return argument.getName() + ":$" + variablePickingStrategy.getVariableName(argument);
         }
         if (isDelegate(argument)) {
+            boolean withVariables = ((GqlDelegateArgument<?>) argument).isShouldUseVariables();
             return generateModelArguments(argument.getValue(),
-                    InputGenerationStrategy.nonNullsFields().getInputFieldsPickingStrategy());
+                    InputGenerationStrategy.nonNullsFields().getInputFieldsPickingStrategy(), withVariables);
         }
         return argument.getName() + ":" + StringUtil.generateEscapedValueString(argument.getValue());
     }

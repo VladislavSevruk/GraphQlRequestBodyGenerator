@@ -53,12 +53,13 @@ public abstract class AbstractGqlVariablesGenerator {
     }
 
     protected Map<String, Object> collectDelegatedValuesMap(InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            Object delegate, Class<?> delegateClass, Map<String, Object> operationVariables) {
+            Object delegate, Class<?> delegateClass, Map<String, Object> operationVariables, boolean withVariables) {
         if (Map.class.isAssignableFrom(delegateClass)) {
             log.debug("{} is map.", delegateClass.getName());
             return Collections.emptyMap();
         }
-        return collectDelegatedValuesForModel(delegate, delegateClass, inputFieldsPickingStrategy, operationVariables);
+        return collectDelegatedValuesForModel(delegate, delegateClass, inputFieldsPickingStrategy, operationVariables,
+                withVariables);
     }
 
     protected abstract Object getVariableValue(Object value, Field field, GqlVariableType variableType);
@@ -66,15 +67,16 @@ public abstract class AbstractGqlVariablesGenerator {
     protected abstract Object getVariableValue(Object value, Method method, GqlVariableType variableType);
 
     private void collectDelegatedValues(Object delegateObject, InputFieldsPickingStrategy inputFieldsPickingStrategy,
-            Map<String, Object> mutationValues) {
+            Map<String, Object> mutationValues, boolean withVariables) {
         if (delegateObject != null) {
             collectDelegatedValuesMap(inputFieldsPickingStrategy, delegateObject, delegateObject.getClass(),
-                    mutationValues);
+                    mutationValues, withVariables);
         }
     }
 
     private void collectDelegatedValuesByFields(Object value, Class<?> valueClass,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, Object> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, Object> mutationValues,
+            boolean withVariables) {
         for (Field field : valueClass.getDeclaredFields()) {
             if (field.isSynthetic() || !inputFieldMarkingStrategy.isMarkedField(field)) {
                 continue;
@@ -83,8 +85,8 @@ public abstract class AbstractGqlVariablesGenerator {
             if (field.getAnnotation(GqlDelegate.class) != null) {
                 log.debug("'{}' is delegate.", field.getName());
                 Object delegateObject = ArgumentValueUtil.getValue(field, value);
-                collectDelegatedValues(delegateObject, inputFieldsPickingStrategy, mutationValues);
-            } else if (field.getAnnotation(GqlVariableType.class) != null) {
+                collectDelegatedValues(delegateObject, inputFieldsPickingStrategy, mutationValues, withVariables);
+            } else if (withVariables && field.getAnnotation(GqlVariableType.class) != null) {
                 log.debug("'{}' is variable.", field.getName());
                 String fieldName = GqlNamePicker.getFieldName(field);
                 GqlVariableType variableType = field.getAnnotation(GqlVariableType.class);
@@ -95,12 +97,14 @@ public abstract class AbstractGqlVariablesGenerator {
         }
         Class<?> superclass = valueClass.getSuperclass();
         if (superclass != null && !Object.class.equals(superclass)) {
-            collectDelegatedValuesByFields(value, superclass, inputFieldsPickingStrategy, mutationValues);
+            collectDelegatedValuesByFields(value, superclass, inputFieldsPickingStrategy, mutationValues,
+                    withVariables);
         }
     }
 
     private void collectDelegatedValuesByMethods(Object value, Class<?> valueClass,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, Object> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, Object> mutationValues,
+            boolean withVariables) {
         for (Method method : valueClass.getMethods()) {
             GqlInput inputAnnotation = method.getAnnotation(GqlInput.class);
             GqlDelegate delegateAnnotation = method.getAnnotation(GqlDelegate.class);
@@ -111,8 +115,8 @@ public abstract class AbstractGqlVariablesGenerator {
             if (delegateAnnotation != null) {
                 log.debug("'{}' is delegate.", method.getName());
                 Object delegateObject = ArgumentValueUtil.getValueByMethod(value, method);
-                collectDelegatedValues(delegateObject, inputFieldsPickingStrategy, mutationValues);
-            } else if (method.getAnnotation(GqlVariableType.class) != null) {
+                collectDelegatedValues(delegateObject, inputFieldsPickingStrategy, mutationValues, withVariables);
+            } else if (withVariables && method.getAnnotation(GqlVariableType.class) != null) {
                 log.debug("'{}' is variable.", method.getName());
                 collectDelegatedValuesForMethodVariable(value, method, inputFieldsPickingStrategy, mutationValues);
             }
@@ -131,10 +135,11 @@ public abstract class AbstractGqlVariablesGenerator {
     }
 
     private Map<String, Object> collectDelegatedValuesForModel(Object value, Class<?> valueClass,
-            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, Object> mutationValues) {
+            InputFieldsPickingStrategy inputFieldsPickingStrategy, Map<String, Object> mutationValues,
+            boolean withVariables) {
         log.debug("Generating delegated variable values for {}", valueClass.getName());
-        collectDelegatedValuesByFields(value, valueClass, inputFieldsPickingStrategy, mutationValues);
-        collectDelegatedValuesByMethods(value, valueClass, inputFieldsPickingStrategy, mutationValues);
+        collectDelegatedValuesByFields(value, valueClass, inputFieldsPickingStrategy, mutationValues, withVariables);
+        collectDelegatedValuesByMethods(value, valueClass, inputFieldsPickingStrategy, mutationValues, withVariables);
         return mutationValues;
     }
 
