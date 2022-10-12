@@ -38,7 +38,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 class GqlRequestBodyGeneratorTest {
 
@@ -168,6 +170,58 @@ class GqlRequestBodyGeneratorTest {
         String expectedResult = "{\"variables\":{\"search\":{\"address\":\"AddressData\",\"name\":\"NameData\"}},"
                 + "\"query\":\"query gqlQueryAlias($search:AnnotatedVariableRequiredTestModel!){"
                 + "gqlQueryWithVariables(search:$search){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithArrayVariableArgumentTest() {
+        GqlVariableArgument<String[]> gqlVariable = GqlVariableArgument.of("variable",
+                new String[] { "value1", "value2"}, true);
+        String result =  GqlRequestBodyGenerator.query("testQuery")
+                .arguments(gqlVariable)
+                .selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"variables\":{\"variable\":[\"value1\",\"value2\"]}," +
+                "\"query\":\"query($variable:[String]!){testQuery(variable:$variable){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithArraysVariableArgumentTest() {
+        GqlVariableArgument<String[][]> gqlVariable = GqlVariableArgument.of("variable",
+                new String[][] { { "value1" }, { "value2" } }, true);
+        String result =  GqlRequestBodyGenerator.query("testQuery")
+                .arguments(gqlVariable)
+                .selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"variables\":{\"variable\":[[\"value1\"],[\"value2\"]]}," +
+                "\"query\":\"query($variable:[[String]]!){testQuery(variable:$variable){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithListVariableArgumentTest() {
+        GqlVariableArgument<List<String>> gqlVariable = GqlVariableArgument.of("variable",
+                Arrays.asList("value1", "value2"), true);
+        String result =  GqlRequestBodyGenerator.query("testQuery")
+                .arguments(gqlVariable)
+                .selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"variables\":{\"variable\":[\"value1\",\"value2\"]}," +
+                "\"query\":\"query($variable:[String]!){testQuery(variable:$variable){selectionSetField}}\"}";
+        Assertions.assertEquals(expectedResult, result);
+    }
+
+    @Test
+    void queryWithCollectionsVariableArgumentTest() {
+        GqlVariableArgument<List<Set<String>>> gqlVariable = GqlVariableArgument.of("variable",
+                Arrays.asList(Collections.singleton("value1"), Collections.singleton("value2")), true);
+        String result =  GqlRequestBodyGenerator.query("testQuery")
+                .arguments(gqlVariable)
+                .selectionSet(SimpleSelectionSetTestModel.class)
+                .generate();
+        String expectedResult = "{\"variables\":{\"variable\":[[\"value1\"],[\"value2\"]]}," +
+                "\"query\":\"query($variable:[[String]]!){testQuery(variable:$variable){selectionSetField}}\"}";
         Assertions.assertEquals(expectedResult, result);
     }
 }

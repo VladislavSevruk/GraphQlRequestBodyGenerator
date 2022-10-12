@@ -34,6 +34,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -82,21 +83,7 @@ public final class GqlNamePicker {
      * @return <code>String</code> with GraphQL type name.
      */
     public static String getGqlTypeName(Object value) {
-        Class<?> clazz = PrimitiveWrapperUtil.wrap(value.getClass());
-        if (CharSequence.class.isAssignableFrom(clazz)) {
-            return "String";
-        }
-        if (Boolean.class.isAssignableFrom(clazz)) {
-            return "Boolean";
-        }
-        if (Long.class.equals(clazz) || Integer.class.equals(clazz) || Short.class.equals(clazz) || Byte.class
-                .equals(clazz) || BigInteger.class.equals(clazz)) {
-            return "Int";
-        }
-        if (Double.class.equals(clazz) || Float.class.equals(clazz) || BigDecimal.class.equals(clazz)) {
-            return "Float";
-        }
-        return value.getClass().getSimpleName();
+        return getGqlTypeName(value.getClass(), value);
     }
 
     /**
@@ -143,5 +130,34 @@ public final class GqlNamePicker {
 
     private static String generateArgumentValue(GqlFieldArgument argument) {
         return argument.name() + ":" + argument.value();
+    }
+
+    private static String getGqlTypeName(Class<?> clazz, Object value) {
+        clazz = PrimitiveWrapperUtil.wrap(clazz);
+        if (clazz.isArray()) {
+            Object[] array = (Object[]) value;
+            Object elementValue = array != null && array.length != 0 ? array[0] : null;
+            return "[" + getGqlTypeName(clazz.getComponentType(), elementValue) + "]";
+        }
+        if (Collection.class.isAssignableFrom(clazz)) {
+            Collection<?> collection = (Collection<?>) value;
+            Class<?> elementsClass = collection != null ? ClassUtil.getCommonClass(collection) : Object.class;
+            Object elementValue = collection != null  && !collection.isEmpty() ? collection.iterator().next() : null;
+            return "[" + getGqlTypeName(elementsClass, elementValue) + "]";
+        }
+        if (CharSequence.class.isAssignableFrom(clazz)) {
+            return "String";
+        }
+        if (Boolean.class.isAssignableFrom(clazz)) {
+            return "Boolean";
+        }
+        if (Long.class.equals(clazz) || Integer.class.equals(clazz) || Short.class.equals(clazz) || Byte.class
+                .equals(clazz) || BigInteger.class.equals(clazz)) {
+            return "Int";
+        }
+        if (Double.class.equals(clazz) || Float.class.equals(clazz) || BigDecimal.class.equals(clazz)) {
+            return "Float";
+        }
+        return clazz.getSimpleName();
     }
 }
