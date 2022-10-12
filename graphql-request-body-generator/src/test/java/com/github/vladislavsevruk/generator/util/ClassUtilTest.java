@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,25 +27,38 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 class ClassUtilTest {
 
     @Test
     void getCommonClassDifferentSubclassesListTest() {
-        List<Number> emptyList = Arrays.asList(1, 2L);
-        Assertions.assertEquals(Number.class, ClassUtil.getCommonClass(emptyList));
+        List<Number> list = Arrays.asList(1, 2L);
+        Assertions.assertEquals(Number.class, ClassUtil.getCommonClass(list));
     }
 
     @Test
     void getCommonClassNoCommonSuperclassListTest() {
-        List<Object> emptyList = Arrays.asList(1, "text");
-        Assertions.assertEquals(Object.class, ClassUtil.getCommonClass(emptyList));
+        List<Object> list = Arrays.asList(1, "text");
+        Assertions.assertEquals(Object.class, ClassUtil.getCommonClass(list));
     }
 
     @Test
     void getCommonClassSameSubclassesListTest() {
-        List<Number> emptyList = Arrays.asList(1, 2);
-        Assertions.assertEquals(Integer.class, ClassUtil.getCommonClass(emptyList));
+        List<Number> list = Arrays.asList(1, 2);
+        Assertions.assertEquals(Integer.class, ClassUtil.getCommonClass(list));
+    }
+
+    @Test
+    void getCommonClassEmptyListTest() {
+        List<Number> emptyList = Collections.emptyList();
+        Assertions.assertEquals(Object.class, ClassUtil.getCommonClass(emptyList));
+    }
+
+    @Test
+    void getCommonClassListWithObjectTest() {
+        List<?> emptyList = Arrays.asList(1, new Object());
+        Assertions.assertEquals(Object.class, ClassUtil.getCommonClass(emptyList));
     }
 }

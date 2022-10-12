@@ -132,18 +132,24 @@ public final class GqlNamePicker {
         return argument.name() + ":" + argument.value();
     }
 
+    private static String getGqlArrayTypeName(Class<?> clazz, Object[] array) {
+        Object elementValue = array != null && array.length != 0 ? array[0] : null;
+        return "[" + getGqlTypeName(clazz.getComponentType(), elementValue) + "]";
+    }
+
+    private static String getGqlArrayTypeName(Collection<?> collection) {
+        Class<?> elementsClass = collection != null ? ClassUtil.getCommonClass(collection) : Object.class;
+        Object elementValue = collection != null  && !collection.isEmpty() ? collection.iterator().next() : null;
+        return "[" + getGqlTypeName(elementsClass, elementValue) + "]";
+    }
+
     private static String getGqlTypeName(Class<?> clazz, Object value) {
         clazz = PrimitiveWrapperUtil.wrap(clazz);
         if (clazz.isArray()) {
-            Object[] array = (Object[]) value;
-            Object elementValue = array != null && array.length != 0 ? array[0] : null;
-            return "[" + getGqlTypeName(clazz.getComponentType(), elementValue) + "]";
+            return getGqlArrayTypeName(clazz, (Object[]) value);
         }
         if (Collection.class.isAssignableFrom(clazz)) {
-            Collection<?> collection = (Collection<?>) value;
-            Class<?> elementsClass = collection != null ? ClassUtil.getCommonClass(collection) : Object.class;
-            Object elementValue = collection != null  && !collection.isEmpty() ? collection.iterator().next() : null;
-            return "[" + getGqlTypeName(elementsClass, elementValue) + "]";
+            return getGqlArrayTypeName((Collection<?>) value);
         }
         if (CharSequence.class.isAssignableFrom(clazz)) {
             return "String";
