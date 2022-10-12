@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2020 Uladzislau Seuruk
+ * Copyright (c) 2020-2022 Uladzislau Seuruk
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,24 +21,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.github.vladislavsevruk.generator.strategy.marker;
+package com.github.vladislavsevruk.generator.util;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-class FieldMarkingStrategyManagerImplTest {
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-    @AfterEach
-    void reset() {
-        FieldMarkingStrategySourceManager.input().useAllExceptIgnoredFieldsStrategy();
+class ClassUtilTest {
+
+    @Test
+    void getCommonClassDifferentSubclassesListTest() {
+        List<Number> list = Arrays.asList(1, 2L);
+        Assertions.assertEquals(Number.class, ClassUtil.getCommonClass(list));
     }
 
     @Test
-    void useCustomStrategyTest() {
-        FieldMarkingStrategy mockedStrategy = Mockito.mock(FieldMarkingStrategy.class);
-        FieldMarkingStrategySourceManager.input().useCustomStrategy(mockedStrategy);
-        Assertions.assertSame(mockedStrategy, FieldMarkingStrategySourceManager.input().getStrategy());
+    void getCommonClassNoCommonSuperclassListTest() {
+        List<Object> list = Arrays.asList(1, "text");
+        Assertions.assertEquals(Object.class, ClassUtil.getCommonClass(list));
+    }
+
+    @Test
+    void getCommonClassSameSubclassesListTest() {
+        List<Number> list = Arrays.asList(1, 2);
+        Assertions.assertEquals(Integer.class, ClassUtil.getCommonClass(list));
+    }
+
+    @Test
+    void getCommonClassEmptyListTest() {
+        List<Number> emptyList = Collections.emptyList();
+        Assertions.assertEquals(Object.class, ClassUtil.getCommonClass(emptyList));
+    }
+
+    @Test
+    void getCommonClassListWithObjectTest() {
+        List<?> emptyList = Arrays.asList(1, new Object());
+        Assertions.assertEquals(Object.class, ClassUtil.getCommonClass(emptyList));
     }
 }
