@@ -46,7 +46,7 @@ public final class StringUtil {
      * @return <code>String</code> with generated escaped value.
      */
     public static String addQuotesForStringArgument(String value) {
-        return String.format("\"%s\"", escapeQuotes(value));
+        return String.format("\"%s\"", screenSpaceSymbols(escapeQuotes(value)));
     }
 
     /**
@@ -102,6 +102,16 @@ public final class StringUtil {
      */
     public static boolean isNotBlank(String value) {
         return value != null && !value.replaceAll("\\s", "").isEmpty();
+    }
+
+    /**
+     * Screens space symbols for received value.
+     *
+     * @param value <code>String</code> to screen.
+     * @return <code>String</code> with screened space symbols value.
+     */
+    public static String screenSpaceSymbols(String value) {
+        return value.replace("\n", "\\n").replace("\t", "\\t").replace("\r", "\\r");
     }
 
     private static List<String> convertToStringList(Object elements) {
