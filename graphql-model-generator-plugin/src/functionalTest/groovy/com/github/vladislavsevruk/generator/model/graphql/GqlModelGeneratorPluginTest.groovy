@@ -108,11 +108,11 @@ class GqlModelGeneratorPluginTest extends Specification {
         String[] expectedItems = ['.configurationHashSum', '.schemaHashSum', 'java']
         String graphqlModelsPath = "${testProjectDir.getAbsolutePath()}${File.separator}build${File.separator}generated\
 ${File.separator}sources${File.separator}graphqlModels${File.separator}"
-        new File(graphqlModelsPath).list() == expectedItems
+        new File(graphqlModelsPath).list().sort() == expectedItems
         String classesPath = "${graphqlModelsPath}java${File.separator}main${File.separator}com${File.separator}test\
 ${File.separator}"
         String[] expectedFileNames = ['GqlEnumTypeDto.java', 'GqlTestInputDto.java', 'GqlTestTypeDto.java']
-        new File(classesPath).list() == expectedFileNames
+        new File(classesPath).list().sort() == expectedFileNames
         new File(classesPath + expectedFileNames[0]).readLines().join("\n") == enumLines()
         new File(classesPath + expectedFileNames[1]).readLines().join("\n") == inputLines()
         new File(classesPath + expectedFileNames[2]).readLines().join("\n") == typeLines()
