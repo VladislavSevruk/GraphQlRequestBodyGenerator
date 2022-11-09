@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <Properties>
+        <Property name="basePatternLayout">%d{HH:mm:ss.SSS} [%-5p] (%F: %L - %M) - %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{${basePatternLayout}}"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <root level="warn">
+            <appender-ref ref="Console"/>
+        </root>
+    </Loggers>
+
+</Configuration>

@@ -9,6 +9,6 @@ gradleEnterprise {
     }
 }
 
-include 'graphql-request-body-generator-annotation', 'graphql-request-body-generator'
+include 'graphql-request-body-generator-annotation', 'graphql-request-body-generator', 'graphql-model-generator-plugin'
 
 rootProject.name = 'graphql-request-body-generator-base'
