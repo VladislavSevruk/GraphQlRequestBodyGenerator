@@ -26,7 +26,7 @@ package com.github.vladislavsevruk.generator.model.graphql.optimization;
 import com.github.vladislavsevruk.generator.model.graphql.extension.GqlModelGeneratorPluginExtension;
 import com.github.vladislavsevruk.generator.model.graphql.extension.PluginExtensionValueStringBuilder;
 import com.github.vladislavsevruk.generator.model.graphql.util.GqlModelPathBuilder;
-import com.github.vladislavsevruk.generator.model.graphql.util.Md5HashCalculator;
+import com.github.vladislavsevruk.generator.model.graphql.util.HashCalculator;
 import com.github.vladislavsevruk.generator.model.graphql.util.ReadWriteFileUtil;
 import org.gradle.api.Task;
 import org.gradle.api.specs.Spec;
@@ -52,7 +52,7 @@ public class ConfigurationUpToDateSpec<T extends Task> implements Spec<T> {
     @Override
     public boolean isSatisfiedBy(T element) {
         String valueString = new PluginExtensionValueStringBuilder().build(pluginExtension);
-        String schemaHashSum = Md5HashCalculator.calculateCheckSum(valueString);
+        String schemaHashSum = HashCalculator.calculateCheckSum(valueString);
         if (schemaHashSum == null) {
             return false;
         }

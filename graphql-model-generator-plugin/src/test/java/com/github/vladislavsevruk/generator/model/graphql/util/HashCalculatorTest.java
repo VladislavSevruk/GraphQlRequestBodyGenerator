@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class Md5HashCalculatorTest {
+class HashCalculatorTest {
 
     @Test
     void calculateCheckSumTest() {
         String content = "testValue";
-        String result1 = Md5HashCalculator.calculateCheckSum(content);
+        String result1 = HashCalculator.calculateCheckSum(content);
         assertTrue(result1.matches("[\\dA-F]{64}"));
-        String result2 = Md5HashCalculator.calculateCheckSum(content);
+        String result2 = HashCalculator.calculateCheckSum(content);
         assertEquals(result1, result2);
     }
 
@@ -49,10 +49,10 @@ class Md5HashCalculatorTest {
         String content = "testValue";
         try {
             ReadWriteFileUtil.replaceFileContent(filePath, content);
-            String result1 = Md5HashCalculator.calculateFileCheckSum(filePath);
+            String result1 = HashCalculator.calculateFileCheckSum(filePath);
             assertNotNull(result1);
             assertTrue(result1.matches("[\\dA-F]{64}"));
-            String result2 = Md5HashCalculator.calculateCheckSum(content);
+            String result2 = HashCalculator.calculateCheckSum(content);
             assertEquals(result1, result2);
         } finally {
             TestData.removeTempTestRssDir();
@@ -62,11 +62,11 @@ class Md5HashCalculatorTest {
     @Test
     void calculateNonExistentFileCheckSumTest() {
         String filePath = TestData.tempTestRssPath("calculateNonExistentFileCheckSumTestFile");
-        assertNull(Md5HashCalculator.calculateFileCheckSum(filePath));
+        assertNull(HashCalculator.calculateFileCheckSum(filePath));
     }
 
     @Test
     void calculateNullCheckSumTest() {
-        assertNull(Md5HashCalculator.calculateCheckSum(null));
+        assertNull(HashCalculator.calculateCheckSum(null));
     }
 }

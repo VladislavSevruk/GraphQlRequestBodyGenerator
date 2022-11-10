@@ -24,7 +24,7 @@
 package com.github.vladislavsevruk.generator.model.graphql.optimization;
 
 import com.github.vladislavsevruk.generator.model.graphql.util.GqlModelPathBuilder;
-import com.github.vladislavsevruk.generator.model.graphql.util.Md5HashCalculator;
+import com.github.vladislavsevruk.generator.model.graphql.util.HashCalculator;
 import com.github.vladislavsevruk.generator.model.graphql.util.ReadWriteFileUtil;
 import org.gradle.api.Task;
 import org.gradle.api.provider.Property;
@@ -50,7 +50,7 @@ public class SchemaUpToDateSpec<T extends Task> implements Spec<T> {
      */
     @Override
     public boolean isSatisfiedBy(T element) {
-        String schemaHashSum = Md5HashCalculator.calculateFileCheckSum(pathToSchemaFileProperty.get());
+        String schemaHashSum = HashCalculator.calculateFileCheckSum(pathToSchemaFileProperty.get());
         if (schemaHashSum == null) {
             return false;
         }
