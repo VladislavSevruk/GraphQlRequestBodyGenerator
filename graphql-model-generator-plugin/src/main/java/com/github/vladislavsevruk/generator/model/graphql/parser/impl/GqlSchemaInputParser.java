@@ -39,8 +39,9 @@ import java.util.regex.Pattern;
  */
 public class GqlSchemaInputParser extends GqlSchemaModelObjectParser {
 
-    private static final Pattern PATTERN = Pattern.compile("input\\s+(\\w+)(?>\\s*implements\\s*\\w+)?\\s*\\{\\s*"
-            + "((?>\\w+\\s*:\\s*\\[?\\s*\\w+\\s*!?\\s*]?\\s*!?\\s*,?\\s*)+)}");
+    private static final String TYPE_NAME_PATTERN = "input\\s+(\\w+)";
+    private static final Pattern PATTERN = Pattern.compile(TYPE_NAME_PATTERN + "\\s*\\{\\s*"
+            + "((?>\\w+\\s*:\\s*" + VALUE_TYPE_PATTERN + "\\s*,?\\s*)+)}");
 
     public GqlSchemaInputParser(GqlModelGeneratorPluginExtension pluginExtension,
             SchemaObjectStorage customEntitiesStorage) {

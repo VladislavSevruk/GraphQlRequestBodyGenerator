@@ -40,7 +40,6 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -72,13 +71,13 @@ class GqlSchemaUnionParserTest {
         SchemaObjectStorage schemaObjectStorage = Mockito.mock(SchemaObjectStorage.class);
         SchemaObject schemaObject1 = new GqlSchemaType("com.test", "SimpleType", new ArrayList<>(),
                 Collections.emptyList());
-        when(schemaObjectStorage.get(eq("SimpleType"))).thenReturn(schemaObject1);
+        when(schemaObjectStorage.get("SimpleType")).thenReturn(schemaObject1);
         DelayedSchemaObjectInterfaceStorage interfaceStorage = Mockito.mock(DelayedSchemaObjectInterfaceStorage.class);
         GqlSchemaUnionParser parser = new GqlSchemaUnionParser(pluginExtension, schemaObjectStorage, interfaceStorage);
         String unionType = GraphQlSchemaGenerator.getMultiUnion();
         GqlSchemaUnion schemaUnion = parser.parse(unionType);
-        verify(schemaObjectStorage).get(eq("SimpleType"));
-        when(schemaObjectStorage.get(eq("MultiUnion"))).thenReturn(schemaUnion);
+        verify(schemaObjectStorage).get("SimpleType");
+        when(schemaObjectStorage.get("MultiUnion")).thenReturn(schemaUnion);
         Assertions.assertEquals(1, schemaObject1.getInterfaces().size());
         Assertions.assertEquals(schemaUnion, schemaObject1.getInterfaces().iterator().next());
         Assertions.assertNotNull(schemaUnion);
@@ -91,7 +90,7 @@ class GqlSchemaUnionParserTest {
         Assertions.assertNotNull(schemaUnion.getUnionTypes());
         Assertions.assertEquals(2, schemaUnion.getUnionTypes().length);
         SchemaObject schemaObject2 = Mockito.mock(SchemaObject.class);
-        when(schemaObjectStorage.get(eq("ComplexType"))).thenReturn(schemaObject2);
+        when(schemaObjectStorage.get("ComplexType")).thenReturn(schemaObject2);
         Assertions.assertEquals("simple_type", schemaUnion.getUnionTypes()[0].getRawSchemaName());
         Assertions.assertEquals(schemaObject1, schemaUnion.getUnionTypes()[0].getType());
         Assertions.assertEquals("ComplexType", schemaUnion.getUnionTypes()[1].getRawSchemaName());
@@ -118,7 +117,7 @@ class GqlSchemaUnionParserTest {
         Assertions.assertEquals(1, schemaUnion.getUnionTypes().length);
         SchemaObject schemaObject = new GqlSchemaType("com.test", "SimpleType", new ArrayList<>(),
                 Collections.emptyList());
-        when(schemaObjectStorage.get(eq("SimpleType"))).thenReturn(schemaObject);
+        when(schemaObjectStorage.get("SimpleType")).thenReturn(schemaObject);
         Assertions.assertEquals("simple_type", schemaUnion.getUnionTypes()[0].getRawSchemaName());
         Assertions.assertEquals(schemaObject, schemaUnion.getUnionTypes()[0].getType());
     }
@@ -135,8 +134,8 @@ class GqlSchemaUnionParserTest {
         GqlSchemaUnion schemaUnion = parser.parse(unionType);
         Assertions.assertNotNull(schemaUnion);
         Assertions.assertEquals("MultiUnionPojo", schemaUnion.getName());
-        verify(schemaObjectStorage).get(eq("SimpleTypePojo"));
-        verify(schemaObjectStorage).get(eq("ComplexTypePojo"));
+        verify(schemaObjectStorage).get("SimpleTypePojo");
+        verify(schemaObjectStorage).get("ComplexTypePojo");
     }
 
     @Test
@@ -153,7 +152,7 @@ class GqlSchemaUnionParserTest {
         GqlSchemaUnion schemaUnion = parser.parse(unionType);
         Assertions.assertNotNull(schemaUnion);
         Assertions.assertEquals("TestSingleUnionPojo", schemaUnion.getName());
-        verify(schemaObjectStorage).get(eq("TestSimpleTypePojo"));
+        verify(schemaObjectStorage).get("TestSimpleTypePojo");
     }
 
     @Test
@@ -168,7 +167,7 @@ class GqlSchemaUnionParserTest {
         GqlSchemaUnion schemaUnion = parser.parse(unionType);
         Assertions.assertNotNull(schemaUnion);
         Assertions.assertEquals("TestSingleUnion", schemaUnion.getName());
-        verify(schemaObjectStorage).get(eq("TestSimpleType"));
+        verify(schemaObjectStorage).get("TestSimpleType");
     }
 
     @Test
@@ -187,8 +186,8 @@ class GqlSchemaUnionParserTest {
         GqlSchemaUnion schemaUnion = parser.parse(unionType);
         Assertions.assertNotNull(schemaUnion);
         Assertions.assertEquals("Testmulti_unionPojo", schemaUnion.getName());
-        verify(schemaObjectStorage).get(eq("Testsimple_typePojo"));
-        verify(schemaObjectStorage).get(eq("TestComplexTypePojo"));
+        verify(schemaObjectStorage).get("Testsimple_typePojo");
+        verify(schemaObjectStorage).get("TestComplexTypePojo");
     }
 
     @Test
@@ -203,8 +202,8 @@ class GqlSchemaUnionParserTest {
         GqlSchemaUnion schemaUnion = parser.parse(unionType);
         Assertions.assertNotNull(schemaUnion);
         Assertions.assertEquals("multi_union", schemaUnion.getName());
-        verify(schemaObjectStorage).get(eq("simple_type"));
-        verify(schemaObjectStorage).get(eq("ComplexType"));
+        verify(schemaObjectStorage).get("simple_type");
+        verify(schemaObjectStorage).get("ComplexType");
     }
 
     @Test

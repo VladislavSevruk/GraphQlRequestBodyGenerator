@@ -33,11 +33,15 @@ import com.github.vladislavsevruk.generator.model.graphql.type.GqlSchemaObject;
 import com.github.vladislavsevruk.generator.model.graphql.type.GqlSchemaUnion;
 import com.github.vladislavsevruk.generator.model.graphql.type.GqlSchemaUnionType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -88,31 +92,12 @@ class GqlFieldImportGeneratorTest {
         verifyThereIsNoImportLines(config, schemaObject);
     }
 
-    @Test
-    void generateForSchemaWithNonNullGqlUnionTest() {
+    @ParameterizedTest
+    @MethodSource("unionParameters")
+    void generateForSchemaWithGqlUnionTest(String rawName, boolean nonNull) {
         JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
         GqlSchemaUnion union = new GqlSchemaUnion("com.test", "TestUnion", new GqlSchemaUnionType[0]);
-        SchemaField field = new GqlSchemaField("testName", "testName", union, true);
-        SchemaObject schemaObject = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
-                Collections.singletonList(field));
-        verifyThereIsImportLine(config, schemaObject);
-    }
-
-    @Test
-    void generateForSchemaWithNonNullGqlUnionWithOverriddenNameTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        GqlSchemaUnion union = new GqlSchemaUnion("com.test", "TestUnion", new GqlSchemaUnionType[0]);
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", union, true);
-        SchemaObject schemaObject = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
-                Collections.singletonList(field));
-        verifyThereIsImportLine(config, schemaObject);
-    }
-
-    @Test
-    void generateForSchemaWithOverriddenGqlUnionNameTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        GqlSchemaUnion union = new GqlSchemaUnion("com.test", "TestUnion", new GqlSchemaUnionType[0]);
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", union, false);
+        SchemaField field = new GqlSchemaField("testName", rawName, union, nonNull);
         SchemaObject schemaObject = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
                 Collections.singletonList(field));
         verifyThereIsImportLine(config, schemaObject);
@@ -127,6 +112,11 @@ class GqlFieldImportGeneratorTest {
         SchemaObject schemaObject = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
                 Arrays.asList(field1, field2));
         verifyThereIsNoImportLines(config, schemaObject);
+    }
+
+    static Stream<Arguments> unionParameters() {
+        return Stream.of(Arguments.of("testName", true), Arguments.of("rawTestName", true),
+                Arguments.of("rawTestName", false));
     }
 
     private void verifyThereIsImportLine(JavaClassGeneratorConfig config, SchemaObject schemaObject) {

@@ -47,6 +47,7 @@ public class GqlSchemaTypeResolver extends AbstractGqlTypeResolver {
     }
 
     private SchemaEntity pickEnum(SchemaEntity schemaEntity) {
-        return pluginExtension.getUseStringsInsteadOfEnums().get() ? CommonJavaSchemaEntity.STRING : schemaEntity;
+        return Boolean.TRUE.equals(pluginExtension.getUseStringsInsteadOfEnums().get()) ? CommonJavaSchemaEntity.STRING
+                : schemaEntity;
     }
 }

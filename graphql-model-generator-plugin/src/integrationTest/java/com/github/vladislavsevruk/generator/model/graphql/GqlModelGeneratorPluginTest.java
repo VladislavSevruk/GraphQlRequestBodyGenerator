@@ -54,7 +54,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -75,8 +74,8 @@ class GqlModelGeneratorPluginTest {
     private void mockExtension(Project project) {
         GqlModelGeneratorPluginExtension extension = TestExtensionUtil.mockPluginExtension();
         ExtensionContainer extensionContainer = Mockito.mock(ExtensionContainer.class);
-        when(extensionContainer.create(eq("graphqlModelGenerator"),
-                eq(GqlModelGeneratorPluginExtension.class))).thenReturn(extension);
+        when(extensionContainer.create("graphqlModelGenerator", GqlModelGeneratorPluginExtension.class)).thenReturn(
+                extension);
         when(project.getExtensions()).thenReturn(extensionContainer);
     }
 
@@ -84,7 +83,7 @@ class GqlModelGeneratorPluginTest {
     private void mockGraphqlModelsTaskCreation(Project project) {
         Task task = Mockito.mock(Task.class);
         when(task.doLast(any(GenerateGraphqlModelsAction.class))).thenReturn(task);
-        when(project.task(eq("generateGraphqlModels"))).thenReturn(task);
+        when(project.task("generateGraphqlModels")).thenReturn(task);
         TaskOutputs taskOutputs = Mockito.mock(TaskOutputs.class);
         doNothing().when(taskOutputs).cacheIf(any(Spec.class));
         doNothing().when(taskOutputs).upToDateWhen(any(EagerAndSpec.class));
@@ -99,11 +98,11 @@ class GqlModelGeneratorPluginTest {
     private SourceSet mockMainSourceSet(Project project) {
         SourceSet sourceSet = Mockito.mock(SourceSet.class);
         SourceSetContainer sourceSetContainer = Mockito.mock(SourceSetContainer.class);
-        when(sourceSetContainer.getByName(eq(SourceSet.MAIN_SOURCE_SET_NAME))).thenReturn(sourceSet);
+        when(sourceSetContainer.getByName(SourceSet.MAIN_SOURCE_SET_NAME)).thenReturn(sourceSet);
         JavaPluginConvention javaPluginConvention = Mockito.mock(JavaPluginConvention.class);
         when(javaPluginConvention.getSourceSets()).thenReturn(sourceSetContainer);
         Convention convention = Mockito.mock(Convention.class);
-        when(convention.getPlugin(eq(JavaPluginConvention.class))).thenReturn(javaPluginConvention);
+        when(convention.getPlugin(JavaPluginConvention.class)).thenReturn(javaPluginConvention);
         when(project.getConvention()).thenReturn(convention);
         SourceDirectorySet sourceDirectorySet = Mockito.mock(SourceDirectorySet.class);
         File rssDir = new File("test" + File.separator + "rss" + File.separator + "dir");
@@ -118,7 +117,7 @@ class GqlModelGeneratorPluginTest {
         String modelDirPath =
                 String.join(File.separator, targetPath, "generated", "sources", "graphqlModels", "java", "main")
                         + File.separator;
-        when(sourceDirectorySet.srcDir(eq(modelDirPath))).thenReturn(sourceDirectorySet);
+        when(sourceDirectorySet.srcDir(modelDirPath)).thenReturn(sourceDirectorySet);
         when(sourceSet.java(any(Action.class))).then(invocation -> {
             ((Action<? super SourceDirectorySet>) invocation.getArguments()[0]).execute(sourceDirectorySet);
             return null;

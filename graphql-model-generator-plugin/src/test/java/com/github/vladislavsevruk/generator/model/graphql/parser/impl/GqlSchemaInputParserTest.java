@@ -44,7 +44,6 @@ import org.mockito.Mockito;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 class GqlSchemaInputParserTest {
@@ -76,7 +75,7 @@ class GqlSchemaInputParserTest {
         when(pluginExtension.getEntitiesPostfix()).thenReturn(postfixProperty);
         SchemaObjectStorage schemaObjectStorage = Mockito.mock(SchemaObjectStorage.class);
         GqlSchemaEnum schemaEnum = new GqlSchemaEnum("com.test", "ComplexEnumTypePojo", Collections.emptyList());
-        when(schemaObjectStorage.get(eq("ComplexEnumTypePojo"))).thenReturn(schemaEnum);
+        when(schemaObjectStorage.get("ComplexEnumTypePojo")).thenReturn(schemaEnum);
         GqlSchemaInputParser parser = new GqlSchemaInputParser(pluginExtension, schemaObjectStorage);
         String objectType = GraphQlSchemaGenerator.getComplexInput();
         GqlSchemaInput schemaInput = parser.parse(objectType);
@@ -87,7 +86,7 @@ class GqlSchemaInputParserTest {
         Assertions.assertNotNull(fields);
         Assertions.assertEquals(4, fields.size());
         SchemaObject schemaObject2 = Mockito.mock(SchemaObject.class);
-        when(schemaObjectStorage.get(eq("SimpleInputPojo"))).thenReturn(schemaObject2);
+        when(schemaObjectStorage.get("SimpleInputPojo")).thenReturn(schemaObject2);
         GqlSchemaField field = (GqlSchemaField) fields.get(0);
         Assertions.assertEquals("value", field.getName());
         Assertions.assertEquals("value", field.getRawSchemaName());
@@ -125,7 +124,7 @@ class GqlSchemaInputParserTest {
         when(pluginExtension.getEntitiesPostfix()).thenReturn(postfixProperty);
         SchemaObjectStorage schemaObjectStorage = Mockito.mock(SchemaObjectStorage.class);
         GqlSchemaEnum schemaEnum = new GqlSchemaEnum("com.test", "TestComplexEnumTypePojo", Collections.emptyList());
-        when(schemaObjectStorage.get(eq("TestComplexEnumTypePojo"))).thenReturn(schemaEnum);
+        when(schemaObjectStorage.get("TestComplexEnumTypePojo")).thenReturn(schemaEnum);
         GqlSchemaInputParser parser = new GqlSchemaInputParser(pluginExtension, schemaObjectStorage);
         String objectType = GraphQlSchemaGenerator.getComplexInput();
         GqlSchemaInput schemaInput = parser.parse(objectType);
@@ -136,7 +135,7 @@ class GqlSchemaInputParserTest {
         Assertions.assertNotNull(fields);
         Assertions.assertEquals(4, fields.size());
         SchemaObject schemaObject2 = Mockito.mock(SchemaObject.class);
-        when(schemaObjectStorage.get(eq("TestSimpleInputPojo"))).thenReturn(schemaObject2);
+        when(schemaObjectStorage.get("TestSimpleInputPojo")).thenReturn(schemaObject2);
         GqlSchemaField field = (GqlSchemaField) fields.get(0);
         Assertions.assertEquals("value", field.getName());
         Assertions.assertEquals("value", field.getRawSchemaName());
@@ -172,7 +171,7 @@ class GqlSchemaInputParserTest {
         when(pluginExtension.getEntitiesPrefix()).thenReturn(prefixProperty);
         SchemaObjectStorage schemaObjectStorage = Mockito.mock(SchemaObjectStorage.class);
         GqlSchemaEnum schemaEnum = new GqlSchemaEnum("com.test", "TestComplexEnumType", Collections.emptyList());
-        when(schemaObjectStorage.get(eq("TestComplexEnumType"))).thenReturn(schemaEnum);
+        when(schemaObjectStorage.get("TestComplexEnumType")).thenReturn(schemaEnum);
         GqlSchemaInputParser parser = new GqlSchemaInputParser(pluginExtension, schemaObjectStorage);
         String objectType = GraphQlSchemaGenerator.getComplexInput();
         GqlSchemaInput schemaInput = parser.parse(objectType);
@@ -183,7 +182,7 @@ class GqlSchemaInputParserTest {
         Assertions.assertNotNull(fields);
         Assertions.assertEquals(4, fields.size());
         SchemaObject schemaObject2 = Mockito.mock(SchemaObject.class);
-        when(schemaObjectStorage.get(eq("TestSimpleInput"))).thenReturn(schemaObject2);
+        when(schemaObjectStorage.get("TestSimpleInput")).thenReturn(schemaObject2);
         GqlSchemaField field = (GqlSchemaField) fields.get(0);
         Assertions.assertEquals("value", field.getName());
         Assertions.assertEquals("value", field.getRawSchemaName());
@@ -223,7 +222,7 @@ class GqlSchemaInputParserTest {
         when(pluginExtension.getEntitiesPostfix()).thenReturn(postfixProperty);
         SchemaObjectStorage schemaObjectStorage = Mockito.mock(SchemaObjectStorage.class);
         GqlSchemaEnum schemaEnum = new GqlSchemaEnum("com.test", "TestComplexEnumTypePojo", Collections.emptyList());
-        when(schemaObjectStorage.get(eq("TestComplexEnumTypePojo"))).thenReturn(schemaEnum);
+        when(schemaObjectStorage.get("TestComplexEnumTypePojo")).thenReturn(schemaEnum);
         GqlSchemaInputParser parser = new GqlSchemaInputParser(pluginExtension, schemaObjectStorage);
         String objectType = GraphQlSchemaGenerator.getComplexInput();
         GqlSchemaInput schemaInput = parser.parse(objectType);
@@ -234,7 +233,7 @@ class GqlSchemaInputParserTest {
         Assertions.assertNotNull(fields);
         Assertions.assertEquals(4, fields.size());
         SchemaObject schemaObject2 = Mockito.mock(SchemaObject.class);
-        when(schemaObjectStorage.get(eq("Testsimple_inputPojo"))).thenReturn(schemaObject2);
+        when(schemaObjectStorage.get("Testsimple_inputPojo")).thenReturn(schemaObject2);
         GqlSchemaField field = (GqlSchemaField) fields.get(0);
         Assertions.assertEquals("value", field.getName());
         Assertions.assertEquals("value", field.getRawSchemaName());
@@ -268,7 +267,7 @@ class GqlSchemaInputParserTest {
         when(pluginExtension.getUseStringsInsteadOfEnums()).thenReturn(useStringsInsteadOfEnums);
         SchemaObjectStorage schemaObjectStorage = Mockito.mock(SchemaObjectStorage.class);
         GqlSchemaEnum schemaEnum = new GqlSchemaEnum("com.test", "ComplexEnumType", Collections.emptyList());
-        when(schemaObjectStorage.get(eq("ComplexEnumType"))).thenReturn(schemaEnum);
+        when(schemaObjectStorage.get("ComplexEnumType")).thenReturn(schemaEnum);
         GqlSchemaInputParser parser = new GqlSchemaInputParser(pluginExtension, schemaObjectStorage);
         String objectType = GraphQlSchemaGenerator.getComplexInput();
         GqlSchemaInput schemaInput = parser.parse(objectType);
@@ -282,43 +281,11 @@ class GqlSchemaInputParserTest {
         Assertions.assertNotNull(fields);
         Assertions.assertEquals(4, fields.size());
         SchemaObject schemaObject2 = Mockito.mock(SchemaObject.class);
-        when(schemaObjectStorage.get(eq("SimpleInput"))).thenReturn(schemaObject2);
-        GqlSchemaField field = (GqlSchemaField) fields.get(0);
-        Assertions.assertEquals("value", field.getName());
-        Assertions.assertEquals("value", field.getRawSchemaName());
-        Assertions.assertEquals("value", field.getNameForJackson());
-        Assertions.assertFalse(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(schemaObject2, field.getType());
-        Assertions.assertNull(field.getUnionTypes());
-        field = (GqlSchemaField) fields.get(1);
-        Assertions.assertEquals("values", field.getName());
-        Assertions.assertEquals("values", field.getRawSchemaName());
-        Assertions.assertEquals("values", field.getNameForJackson());
-        Assertions.assertTrue(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
-        Assertions.assertEquals(schemaObject2,
-                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
-        Assertions.assertNull(field.getUnionTypes());
-        field = (GqlSchemaField) fields.get(2);
-        Assertions.assertEquals("values2", field.getName());
-        Assertions.assertEquals("values2", field.getRawSchemaName());
-        Assertions.assertEquals("values2", field.getNameForJackson());
-        Assertions.assertFalse(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
-        Assertions.assertEquals(schemaObject2,
-                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
-        Assertions.assertNull(field.getUnionTypes());
-        field = (GqlSchemaField) fields.get(3);
-        Assertions.assertEquals("value3", field.getName());
-        Assertions.assertEquals("value3", field.getRawSchemaName());
-        Assertions.assertEquals("value3", field.getNameForJackson());
-        Assertions.assertFalse(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(schemaEnum, field.getType());
-        Assertions.assertNull(field.getUnionTypes());
+        when(schemaObjectStorage.get("SimpleInput")).thenReturn(schemaObject2);
+        verifyComplexObjectField1((GqlSchemaField) fields.get(0), schemaObject2);
+        verifyComplexObjectField2((GqlSchemaField) fields.get(1), schemaObject2);
+        verifyComplexObjectField3((GqlSchemaField) fields.get(2), schemaObject2);
+        verifyComplexObjectField4((GqlSchemaField) fields.get(3), schemaEnum);
     }
 
     @Test
@@ -374,50 +341,11 @@ class GqlSchemaInputParserTest {
         List<SchemaField> fields = schemaInput.getFields();
         Assertions.assertNotNull(fields);
         Assertions.assertEquals(5, fields.size());
-        GqlSchemaField field = (GqlSchemaField) fields.get(0);
-        Assertions.assertEquals("id", field.getName());
-        Assertions.assertEquals("id", field.getRawSchemaName());
-        Assertions.assertEquals("id", field.getNameForJackson());
-        Assertions.assertTrue(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(PrimitiveSchemaEntity.INT, field.getType());
-        Assertions.assertNull(field.getUnionTypes());
-        field = (GqlSchemaField) fields.get(1);
-        Assertions.assertEquals("values", field.getName());
-        Assertions.assertEquals("values", field.getRawSchemaName());
-        Assertions.assertEquals("values", field.getNameForJackson());
-        Assertions.assertTrue(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
-        Assertions.assertEquals(CommonJavaSchemaEntity.STRING,
-                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
-        Assertions.assertNull(field.getUnionTypes());
-        field = (GqlSchemaField) fields.get(2);
-        Assertions.assertEquals("values2", field.getName());
-        Assertions.assertEquals("values_2", field.getRawSchemaName());
-        Assertions.assertEquals("values_2", field.getNameForJackson());
-        Assertions.assertFalse(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
-        Assertions.assertEquals(CommonJavaSchemaEntity.INTEGER,
-                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
-        Assertions.assertNull(field.getUnionTypes());
-        field = (GqlSchemaField) fields.get(3);
-        Assertions.assertEquals("valUe3", field.getName());
-        Assertions.assertEquals("val_ue3", field.getRawSchemaName());
-        Assertions.assertEquals("val_ue3", field.getNameForJackson());
-        Assertions.assertTrue(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(PrimitiveSchemaEntity.BOOLEAN, field.getType());
-        Assertions.assertNull(field.getUnionTypes());
-        field = (GqlSchemaField) fields.get(4);
-        Assertions.assertEquals("value4", field.getName());
-        Assertions.assertEquals("value4", field.getRawSchemaName());
-        Assertions.assertEquals("value4", field.getNameForJackson());
-        Assertions.assertFalse(field.isNonNull());
-        Assertions.assertFalse(field.isUnion());
-        Assertions.assertEquals(PrimitiveSchemaEntity.DOUBLE, field.getType());
-        Assertions.assertNull(field.getUnionTypes());
+        verifySimpleObjectField1((GqlSchemaField) fields.get(0));
+        verifySimpleObjectField2((GqlSchemaField) fields.get(1));
+        verifySimpleObjectField3((GqlSchemaField) fields.get(2));
+        verifySimpleObjectField4((GqlSchemaField) fields.get(3));
+        verifySimpleObjectField5((GqlSchemaField) fields.get(4));
     }
 
     @Test
@@ -429,5 +357,103 @@ class GqlSchemaInputParserTest {
         GqlEntityParsingException exception = Assertions.assertThrows(GqlEntityParsingException.class,
                 () -> parser.parse(notInputType));
         Assertions.assertEquals("Cannot parse to input entity: " + notInputType, exception.getMessage());
+    }
+
+    private void verifyComplexObjectField1(GqlSchemaField field, SchemaObject schemaObject) {
+        Assertions.assertEquals("value", field.getName());
+        Assertions.assertEquals("value", field.getRawSchemaName());
+        Assertions.assertEquals("value", field.getNameForJackson());
+        Assertions.assertFalse(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(schemaObject, field.getType());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifyComplexObjectField2(GqlSchemaField field, SchemaObject schemaObject) {
+        Assertions.assertEquals("values", field.getName());
+        Assertions.assertEquals("values", field.getRawSchemaName());
+        Assertions.assertEquals("values", field.getNameForJackson());
+        Assertions.assertTrue(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
+        Assertions.assertEquals(schemaObject,
+                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifyComplexObjectField3(GqlSchemaField field, SchemaObject schemaObject) {
+        Assertions.assertEquals("values2", field.getName());
+        Assertions.assertEquals("values2", field.getRawSchemaName());
+        Assertions.assertEquals("values2", field.getNameForJackson());
+        Assertions.assertFalse(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
+        Assertions.assertEquals(schemaObject,
+                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifyComplexObjectField4(GqlSchemaField field, SchemaObject schemaObject) {
+        Assertions.assertEquals("value3", field.getName());
+        Assertions.assertEquals("value3", field.getRawSchemaName());
+        Assertions.assertEquals("value3", field.getNameForJackson());
+        Assertions.assertFalse(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(schemaObject, field.getType());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifySimpleObjectField1(GqlSchemaField field) {
+        Assertions.assertEquals("id", field.getName());
+        Assertions.assertEquals("id", field.getRawSchemaName());
+        Assertions.assertEquals("id", field.getNameForJackson());
+        Assertions.assertTrue(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(PrimitiveSchemaEntity.INT, field.getType());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifySimpleObjectField2(GqlSchemaField field) {
+        Assertions.assertEquals("values", field.getName());
+        Assertions.assertEquals("values", field.getRawSchemaName());
+        Assertions.assertEquals("values", field.getNameForJackson());
+        Assertions.assertTrue(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
+        Assertions.assertEquals(CommonJavaSchemaEntity.STRING,
+                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifySimpleObjectField3(GqlSchemaField field) {
+        Assertions.assertEquals("values2", field.getName());
+        Assertions.assertEquals("values_2", field.getRawSchemaName());
+        Assertions.assertEquals("values_2", field.getNameForJackson());
+        Assertions.assertFalse(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(ArraySchemaEntity.class, field.getType().getClass());
+        Assertions.assertEquals(CommonJavaSchemaEntity.INTEGER,
+                ((ArraySchemaEntity) field.getType()).getElementTypes().iterator().next());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifySimpleObjectField4(GqlSchemaField field) {
+        Assertions.assertEquals("valUe3", field.getName());
+        Assertions.assertEquals("val_ue3", field.getRawSchemaName());
+        Assertions.assertEquals("val_ue3", field.getNameForJackson());
+        Assertions.assertTrue(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(PrimitiveSchemaEntity.BOOLEAN, field.getType());
+        Assertions.assertNull(field.getUnionTypes());
+    }
+
+    private void verifySimpleObjectField5(GqlSchemaField field) {
+        Assertions.assertEquals("value4", field.getName());
+        Assertions.assertEquals("value4", field.getRawSchemaName());
+        Assertions.assertEquals("value4", field.getNameForJackson());
+        Assertions.assertFalse(field.isNonNull());
+        Assertions.assertFalse(field.isUnion());
+        Assertions.assertEquals(PrimitiveSchemaEntity.DOUBLE, field.getType());
+        Assertions.assertNull(field.getUnionTypes());
     }
 }

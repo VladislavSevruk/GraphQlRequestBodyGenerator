@@ -47,9 +47,7 @@ public class DelayedSchemaObjectInterfaceStorageImpl implements DelayedSchemaObj
      */
     @Override
     public void add(String name, Supplier<SchemaEntity> delayedInterfaceSupplier) {
-        if (!delayedSuppliers.containsKey(name)) {
-            delayedSuppliers.put(name, new ArrayList<>(3));
-        }
+        delayedSuppliers.computeIfAbsent(name, key -> new ArrayList<>(3));
         delayedSuppliers.get(name).add(delayedInterfaceSupplier);
     }
 

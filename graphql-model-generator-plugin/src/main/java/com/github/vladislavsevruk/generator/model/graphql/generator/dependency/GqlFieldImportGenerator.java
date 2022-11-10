@@ -43,7 +43,7 @@ public class GqlFieldImportGenerator implements ClassElementCollectionGenerator 
     public Collection<String> generate(JavaClassGeneratorConfig config, SchemaObject schemaObject) {
         if (schemaObject.getFields().stream()
                 .filter(schemaField -> GqlSchemaField.class.isAssignableFrom(schemaField.getClass()))
-                .map(schemaField -> (GqlSchemaField) schemaField)
+                .map(GqlSchemaField.class::cast)
                 .anyMatch(schemaField -> !schemaField.isUnion() || nonSimpleUnion(schemaField))) {
             return Collections.singleton("import com.github.vladislavsevruk.generator.annotation.GqlField;\n");
         }

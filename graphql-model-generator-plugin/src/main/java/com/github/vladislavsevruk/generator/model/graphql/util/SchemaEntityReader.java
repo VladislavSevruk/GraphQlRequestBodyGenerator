@@ -26,6 +26,7 @@ package com.github.vladislavsevruk.generator.model.graphql.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -41,7 +42,7 @@ public class SchemaEntityReader implements AutoCloseable, Iterator<String> {
             "^\\s*(?>type|input|enum|interface)\\s+\\w+" + DIRECTIVE_PATTERN
                     + "?(?>\\s*implements\\s*\\w+\\s*)?\\s*\\{[^}]+}");
     private static final Pattern UNION_PATTERN = Pattern.compile(
-            "^\\s*union\\s+\\w+" + DIRECTIVE_PATTERN + "?\\s*=\\s*\\w+(\\s*\\|\\s*\\w+)*");
+            "^\\s*union\\s+\\w+" + DIRECTIVE_PATTERN + "?\\s*=\\s*\\w+(\\s*\\|\\s*\\w+)*+");
     private final Scanner scanner;
     private String nextEntity = null;
 
@@ -76,6 +77,9 @@ public class SchemaEntityReader implements AutoCloseable, Iterator<String> {
      */
     @Override
     public String next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
         if (Objects.nonNull(nextEntity)) {
             nextEntity = removeNonEntityAtStart(nextEntity);
         }

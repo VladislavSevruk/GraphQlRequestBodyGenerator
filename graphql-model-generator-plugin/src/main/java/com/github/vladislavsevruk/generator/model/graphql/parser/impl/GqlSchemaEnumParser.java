@@ -64,7 +64,7 @@ public class GqlSchemaEnumParser extends BaseGqlSchemaObjectParser {
         }
         String name = modifyName(matcher.group(1));
         List<String> values = Arrays.asList(matcher.group(2).trim().split("\\s*,\\s*|\\s+"));
-        if (pluginExtension.getUpdateNamesToJavaStyle().get()) {
+        if (Boolean.TRUE.equals(pluginExtension.getUpdateNamesToJavaStyle().get())) {
             name = EntityNameUtil.getJavaFormatClassName(name);
             values = values.stream().map(String::toUpperCase).collect(Collectors.toList());
         }

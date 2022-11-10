@@ -44,13 +44,14 @@ import java.util.regex.Pattern;
  */
 public abstract class GqlSchemaModelObjectParser extends BaseGqlSchemaObjectParser {
 
+    protected static final String VALUE_TYPE_PATTERN = "\\[?\\s*\\w+\\s*!?\\s*]?\\s*!?";
     private static final Pattern PATTERN = Pattern.compile(
-            "(\\w+)\\s*:\\s*(\\[?\\s*\\w+\\s*!?\\s*]?\\s*!?)(?>\\s*,?\\s*)?([\\w\\W]*)");
+            "(\\w+)\\s*:\\s*(" + VALUE_TYPE_PATTERN + "\\s*)(?>,\\s*)?((?s).*)");
 
     protected final SchemaObjectStorage customEntitiesStorage;
     protected final GqlTypeResolver gqlTypeResolver;
 
-    public GqlSchemaModelObjectParser(GqlModelGeneratorPluginExtension pluginExtension,
+    protected GqlSchemaModelObjectParser(GqlModelGeneratorPluginExtension pluginExtension,
             SchemaObjectStorage customEntitiesStorage, GqlTypeResolver gqlTypeResolver) {
         super(pluginExtension);
         this.customEntitiesStorage = customEntitiesStorage;
@@ -111,6 +112,7 @@ public abstract class GqlSchemaModelObjectParser extends BaseGqlSchemaObjectPars
     }
 
     private String modifyFieldName(String name) {
-        return pluginExtension.getUpdateNamesToJavaStyle().get() ? EntityNameUtil.getJavaFormatFieldName(name) : name;
+        return Boolean.TRUE.equals(pluginExtension.getUpdateNamesToJavaStyle().get())
+                ? EntityNameUtil.getJavaFormatFieldName(name) : name;
     }
 }

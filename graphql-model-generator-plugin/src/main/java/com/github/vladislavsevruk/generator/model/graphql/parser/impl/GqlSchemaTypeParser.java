@@ -43,8 +43,11 @@ import java.util.regex.Pattern;
  */
 public class GqlSchemaTypeParser extends GqlSchemaModelObjectParser {
 
-    private static final Pattern PATTERN = Pattern.compile("type\\s+(\\w+)(?>\\s*implements\\s+[\\w\\s,]+)?\\s*\\{"
-            + "\\s*((?>\\w+\\s*:\\s*\\[?\\s*\\w+\\s*!?\\s*]?\\s*!?\\s*,?\\s*)+)}");
+    private static final String TYPE_NAME_PATTERN = "type\\s+(\\w+)";
+    private static final String INTERFACES_PATTERN = "(?>\\s*implements\\s+[\\w\\s,]+)?";
+    private static final Pattern PATTERN = Pattern.compile(
+            TYPE_NAME_PATTERN + INTERFACES_PATTERN + "\\s*\\{\\s*((?>\\w+\\s*:\\s*" + VALUE_TYPE_PATTERN
+                    + "\\s*,?\\s*)+)}");
 
     private final DelayedSchemaObjectInterfaceStorage delayedSchemaObjectInterfaceStorage;
 

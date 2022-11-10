@@ -34,12 +34,13 @@ public abstract class BaseGqlSchemaObjectParser implements GqlSchemaObjectParser
 
     protected final GqlModelGeneratorPluginExtension pluginExtension;
 
-    public BaseGqlSchemaObjectParser(GqlModelGeneratorPluginExtension pluginExtension) {
+    protected BaseGqlSchemaObjectParser(GqlModelGeneratorPluginExtension pluginExtension) {
         this.pluginExtension = pluginExtension;
     }
 
     protected String modifyName(String name) {
-        name = pluginExtension.getUpdateNamesToJavaStyle().get() ? EntityNameUtil.getJavaFormatClassName(name) : name;
+        name = Boolean.TRUE.equals(pluginExtension.getUpdateNamesToJavaStyle().get())
+                ? EntityNameUtil.getJavaFormatClassName(name) : name;
         return String.format("%s%s%s", pluginExtension.getEntitiesPrefix().get(), name,
                 pluginExtension.getEntitiesPostfix().get());
     }

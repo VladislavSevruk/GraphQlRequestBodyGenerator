@@ -64,7 +64,7 @@ public class GqlSchemaParserImpl implements GqlSchemaParser {
     }
 
     private List<String> filterOutQueryAndMutationDeclarations(List<String> entities) {
-        return entities.stream().filter(entity -> !entity.matches("type\\s+(Query|Mutation)\\s+[\\w\\W]+"))
+        return entities.stream().filter(entity -> !entity.matches("type\\s+(Query|Mutation)\\s+(?s).+"))
                 .collect(Collectors.toList());
     }
 

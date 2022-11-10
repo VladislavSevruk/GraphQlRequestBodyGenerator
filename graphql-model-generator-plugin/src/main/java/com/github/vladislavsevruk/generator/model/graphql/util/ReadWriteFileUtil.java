@@ -29,6 +29,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Optional;
 
 /**
@@ -93,8 +94,11 @@ public final class ReadWriteFileUtil {
                 }
             });
         }
-        String postfix = file.delete() ? "" : "n't";
-        log.debug("{} was{} removed", file.getAbsolutePath(), postfix);
+        try {
+            Files.delete(file.toPath());
+        } catch (IOException ioEx) {
+            log.warn(String.format("%s wasn't removed", file.getAbsolutePath()), ioEx);
+        }
     }
 
     /**

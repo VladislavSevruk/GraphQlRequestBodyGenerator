@@ -38,9 +38,13 @@ import com.github.vladislavsevruk.generator.model.graphql.type.GqlSchemaUnion;
 import com.github.vladislavsevruk.generator.model.graphql.type.GqlSchemaUnionType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 
 import java.util.Collections;
+import java.util.stream.Stream;
 
 class GqlFieldAnnotationGeneratorTest {
 
@@ -62,37 +66,31 @@ class GqlFieldAnnotationGeneratorTest {
         verifyAnnotationWasGenerated(config, field);
     }
 
-    @Test
-    void generateForGqlFieldWithOverriddenNameAndSelectionSetTest() {
+    @ParameterizedTest
+    @MethodSource("fieldParameters")
+    void generateForGqlFieldTest(String rawName, boolean nonNull, String expectedParameters) {
+        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
+        SchemaField field = new GqlSchemaField("testName", rawName, CommonJavaSchemaEntity.BOOLEAN, nonNull);
+        verifyAnnotationWasGenerated(config, field, expectedParameters);
+    }
+
+    @ParameterizedTest
+    @MethodSource("fieldWithSelectionSetParameters")
+    void generateForGqlFieldWithSelectionSetTest(String rawName, boolean nonNull, String expectedParameters) {
         JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
         GqlSchemaObject object = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
                 Collections.emptyList());
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", object, false);
-        verifyAnnotationWasGenerated(config, field, "withSelectionSet = true, name = \"rawTestName\"");
+        SchemaField field = new GqlSchemaField("testName", rawName, object, nonNull);
+        verifyAnnotationWasGenerated(config, field, expectedParameters);
     }
 
-    @Test
-    void generateForGqlFieldWithOverriddenNameTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", CommonJavaSchemaEntity.BOOLEAN, false);
-        verifyAnnotationWasGenerated(config, field, "name = \"rawTestName\"");
-    }
-
-    @Test
-    void generateForGqlFieldWithSelectionSetTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        GqlSchemaObject object = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
-                Collections.emptyList());
-        SchemaField field = new GqlSchemaField("testName", "testName", object, false);
-        verifyAnnotationWasGenerated(config, field, "withSelectionSet = true");
-    }
-
-    @Test
-    void generateForGqlUnionWithOverriddenNameTest() {
+    @ParameterizedTest
+    @MethodSource("unionParameters")
+    void generateForGqlUnionTest(String rawName, boolean nonNull, String expectedParameters) {
         JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
         GqlSchemaUnion union = new GqlSchemaUnion("com.test", "TestUnion", new GqlSchemaUnionType[0]);
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", union, false);
-        verifyAnnotationWasGenerated(config, field, "name = \"rawTestName\"");
+        SchemaField field = new GqlSchemaField("testName", rawName, union, nonNull);
+        verifyAnnotationWasGenerated(config, field, expectedParameters);
     }
 
     @Test
@@ -130,54 +128,6 @@ class GqlFieldAnnotationGeneratorTest {
     }
 
     @Test
-    void generateForNonNullGqlFieldTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        SchemaField field = new GqlSchemaField("testName", "testName", CommonJavaSchemaEntity.BOOLEAN, true);
-        verifyAnnotationWasGenerated(config, field, "nonNull = true");
-    }
-
-    @Test
-    void generateForNonNullGqlFieldWithOverriddenNameAndSelectionSetTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        GqlSchemaObject object = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
-                Collections.emptyList());
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", object, true);
-        verifyAnnotationWasGenerated(config, field, "nonNull = true, withSelectionSet = true, name = \"rawTestName\"");
-    }
-
-    @Test
-    void generateForNonNullGqlFieldWithOverriddenNameTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", CommonJavaSchemaEntity.BOOLEAN, true);
-        verifyAnnotationWasGenerated(config, field, "nonNull = true, name = \"rawTestName\"");
-    }
-
-    @Test
-    void generateForNonNullGqlFieldWithSelectionSetTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        GqlSchemaObject object = new GqlSchemaObject("com.test", "TestObject", null, Collections.emptyList(),
-                Collections.emptyList());
-        SchemaField field = new GqlSchemaField("testName", "testName", object, true);
-        verifyAnnotationWasGenerated(config, field, "nonNull = true, withSelectionSet = true");
-    }
-
-    @Test
-    void generateForNonNullGqlUnionTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        GqlSchemaUnion union = new GqlSchemaUnion("com.test", "TestUnion", new GqlSchemaUnionType[0]);
-        SchemaField field = new GqlSchemaField("testName", "testName", union, true);
-        verifyAnnotationWasGenerated(config, field, "nonNull = true");
-    }
-
-    @Test
-    void generateForNonNullGqlUnionWithOverriddenNameTest() {
-        JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
-        GqlSchemaUnion union = new GqlSchemaUnion("com.test", "TestUnion", new GqlSchemaUnionType[0]);
-        SchemaField field = new GqlSchemaField("testName", "rawTestName", union, true);
-        verifyAnnotationWasGenerated(config, field, "nonNull = true, name = \"rawTestName\"");
-    }
-
-    @Test
     void generateForScalarGqlFieldTest() {
         JavaClassGeneratorConfig config = JavaClassGeneratorConfig.builder().build();
         SchemaField field = new GqlSchemaField("testName", "testName", CommonJavaSchemaEntity.BOOLEAN, false);
@@ -190,6 +140,25 @@ class GqlFieldAnnotationGeneratorTest {
         GqlSchemaUnion union = new GqlSchemaUnion("com.test", "TestUnion", new GqlSchemaUnionType[0]);
         SchemaField field = new GqlSchemaField("testName", "testName", union, false);
         verifyAnnotationWasNotGenerated(config, field);
+    }
+
+    static Stream<Arguments> fieldParameters() {
+        return Stream.of(Arguments.of("rawTestName", false, "name = \"rawTestName\""),
+                Arguments.of("rawTestName", true, "nonNull = true, name = \"rawTestName\""),
+                Arguments.of("testName", true, "nonNull = true"));
+    }
+
+    static Stream<Arguments> fieldWithSelectionSetParameters() {
+        return Stream.of(Arguments.of("rawTestName", false, "withSelectionSet = true, name = \"rawTestName\""),
+                Arguments.of("testName", false, "withSelectionSet = true"),
+                Arguments.of("rawTestName", true, "nonNull = true, withSelectionSet = true, name = \"rawTestName\""),
+                Arguments.of("testName", true, "nonNull = true, withSelectionSet = true"));
+    }
+
+    static Stream<Arguments> unionParameters() {
+        return Stream.of(Arguments.of("rawTestName", false, "name = \"rawTestName\""),
+                Arguments.of("testName", true, "nonNull = true"),
+                Arguments.of("rawTestName", true, "nonNull = true, name = \"rawTestName\""));
     }
 
     private void verifyAnnotationWasGenerated(JavaClassGeneratorConfig config, SchemaField field) {
