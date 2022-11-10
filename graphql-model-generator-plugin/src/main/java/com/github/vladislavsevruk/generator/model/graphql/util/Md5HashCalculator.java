@@ -39,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 @Slf4j
 public final class Md5HashCalculator {
 
+    private static final String ALGORITHM_NAME = "SHA-256";
     private static final char[] HEX_SYMBOLS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D',
             'E', 'F' };
 
@@ -56,7 +57,7 @@ public final class Md5HashCalculator {
             return null;
         }
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM_NAME);
             return calculateCheckSum(messageDigest, content);
         } catch (NoSuchAlgorithmException nsaEx) {
             log.warn("Failed to calculate hash sum", nsaEx);
@@ -76,7 +77,7 @@ public final class Md5HashCalculator {
             return null;
         }
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+            MessageDigest messageDigest = MessageDigest.getInstance(ALGORITHM_NAME);
             return calculateFileCheckSum(messageDigest, schemaFile);
         } catch (NoSuchAlgorithmException nsaEx) {
             log.warn("Failed to calculate hash sum", nsaEx);

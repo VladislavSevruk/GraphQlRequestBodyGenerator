@@ -37,7 +37,7 @@ class Md5HashCalculatorTest {
     void calculateCheckSumTest() {
         String content = "testValue";
         String result1 = Md5HashCalculator.calculateCheckSum(content);
-        assertTrue(result1.matches("[\\dA-F]{32}"));
+        assertTrue(result1.matches("[\\dA-F]{64}"));
         String result2 = Md5HashCalculator.calculateCheckSum(content);
         assertEquals(result1, result2);
     }
@@ -51,7 +51,7 @@ class Md5HashCalculatorTest {
             ReadWriteFileUtil.replaceFileContent(filePath, content);
             String result1 = Md5HashCalculator.calculateFileCheckSum(filePath);
             assertNotNull(result1);
-            assertTrue(result1.matches("[\\dA-F]{32}"));
+            assertTrue(result1.matches("[\\dA-F]{64}"));
             String result2 = Md5HashCalculator.calculateCheckSum(content);
             assertEquals(result1, result2);
         } finally {

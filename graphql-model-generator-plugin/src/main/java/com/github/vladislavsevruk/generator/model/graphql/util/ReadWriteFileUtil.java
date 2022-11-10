@@ -58,7 +58,7 @@ public final class ReadWriteFileUtil {
             int read = 0;
             StringBuilder stringBuilder = new StringBuilder();
             while (read != -1) {
-                char[] buffer = new char[32];
+                char[] buffer = new char[64];
                 read = fileReader.read(buffer, 0, buffer.length);
                 stringBuilder.append(buffer);
             }
