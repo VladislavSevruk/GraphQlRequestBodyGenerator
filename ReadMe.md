@@ -91,7 +91,7 @@ For automatic generation of POJO models at your project you can use following op
 Add the following plugin to your ``build.gradle``:
 ```groovy
 plugins {
-  id 'com.github.vladislavsevruk.graphql-model-generator-plugin' version '1.0.0'
+  id 'io.github.vladislavsevruk.graphql-model-generator-plugin' version '1.0.0'
 }
 ```
 This plugin will add additional ``generateGraphqlModels`` task before ``javaCompile`` that will automatically generate

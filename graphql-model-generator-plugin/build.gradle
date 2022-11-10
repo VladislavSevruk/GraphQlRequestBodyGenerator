@@ -6,7 +6,7 @@ plugins {
 
 pluginBundle {
     website = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator'
-    vcsUrl = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator.git'
+    vcsUrl = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator'
     tags = ['graphql-client', 'graphql', 'generator', 'annotations', 'request-body', 'graphql-annotations']
 }
 
