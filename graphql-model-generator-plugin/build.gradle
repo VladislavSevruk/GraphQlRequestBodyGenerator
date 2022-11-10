@@ -125,7 +125,7 @@ dependencies {
 }
 
 jacocoTestReport {
-    dependsOn test
+    dependsOn test, integrationTest, functionalTest
     executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
     reports {
         xml.enabled true
