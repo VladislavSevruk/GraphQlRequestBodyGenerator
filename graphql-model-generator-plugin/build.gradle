@@ -1,6 +1,13 @@
 plugins {
     id 'java-gradle-plugin'
     id 'groovy'
+    id 'com.gradle.plugin-publish' version '1.0.0'
+}
+
+pluginBundle {
+    website = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator'
+    vcsUrl = 'https://github.com/VladislavSevruk/GraphQlRequestBodyGenerator.git'
+    tags = ['graphql-client', 'graphql', 'generator', 'annotations', 'request-body', 'graphql-annotations']
 }
 
 publishing {
@@ -83,8 +90,10 @@ functionalTest {
 
 gradlePlugin {
     plugins {
-        simplePlugin {
+        graphQlModelGeneratorPlugin {
             id = "${group}.${project.name}"
+            displayName = 'GraphQL Model Generator Plugin'
+            description = 'This plugin helps to generate java POJO models for GraphQL Request Body Generator library.'
             implementationClass = 'com.github.vladislavsevruk.generator.model.graphql.GqlModelGeneratorPlugin'
         }
     }
