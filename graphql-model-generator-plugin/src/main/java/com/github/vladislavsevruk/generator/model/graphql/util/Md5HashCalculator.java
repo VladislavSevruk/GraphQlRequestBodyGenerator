@@ -23,6 +23,8 @@
  */
 package com.github.vladislavsevruk.generator.model.graphql.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Calculates MD5 hash sum and converts it to hex format.
  */
+@Slf4j
 public final class Md5HashCalculator {
 
     private static final char[] HEX_SYMBOLS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D',
@@ -56,7 +59,7 @@ public final class Md5HashCalculator {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             return calculateCheckSum(messageDigest, content);
         } catch (NoSuchAlgorithmException nsaEx) {
-            nsaEx.printStackTrace();
+            log.warn("Failed to calculate hash sum", nsaEx);
             return null;
         }
     }
@@ -76,7 +79,7 @@ public final class Md5HashCalculator {
             MessageDigest messageDigest = MessageDigest.getInstance("MD5");
             return calculateFileCheckSum(messageDigest, schemaFile);
         } catch (NoSuchAlgorithmException nsaEx) {
-            nsaEx.printStackTrace();
+            log.warn("Failed to calculate hash sum", nsaEx);
             return null;
         }
     }
@@ -96,7 +99,7 @@ public final class Md5HashCalculator {
             }
             return toHexForm(messageDigest.digest());
         } catch (IOException ioEx) {
-            ioEx.printStackTrace();
+            log.warn("Failed to calculate file hash sum", ioEx);
             return null;
         }
     }

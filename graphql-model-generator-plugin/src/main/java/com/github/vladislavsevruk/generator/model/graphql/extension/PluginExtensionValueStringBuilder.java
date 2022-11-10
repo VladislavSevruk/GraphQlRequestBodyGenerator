@@ -23,6 +23,7 @@
  */
 package com.github.vladislavsevruk.generator.model.graphql.extension;
 
+import lombok.extern.slf4j.Slf4j;
 import org.gradle.api.provider.Property;
 
 import java.lang.reflect.Method;
@@ -30,6 +31,7 @@ import java.lang.reflect.Method;
 /**
  * Builds string representation of configuration values.
  */
+@Slf4j
 public class PluginExtensionValueStringBuilder {
 
     /**
@@ -53,7 +55,7 @@ public class PluginExtensionValueStringBuilder {
                     Object value = ((Property<?>) method.invoke(pluginExtension)).get();
                     builder.append(method.getName()).append(":").append(value);
                 } catch (ReflectiveOperationException roEx) {
-                    roEx.printStackTrace();
+                    log.warn("Issue happened during configuration check", roEx);
                 }
             }
         }

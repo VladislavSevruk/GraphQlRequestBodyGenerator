@@ -64,7 +64,7 @@ public final class ReadWriteFileUtil {
             }
             return stringBuilder.toString().trim();
         } catch (IOException ioEx) {
-            ioEx.printStackTrace();
+            log.warn("Failed to read file content", ioEx);
             return null;
         }
     }
