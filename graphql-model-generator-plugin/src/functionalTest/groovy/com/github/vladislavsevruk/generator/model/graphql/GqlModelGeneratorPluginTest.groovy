@@ -41,7 +41,7 @@ class GqlModelGeneratorPluginTest extends Specification {
         buildFile << """
             plugins {
                 id 'java-library'
-                id 'com.github.vladislavsevruk.graphql-model-generator-plugin'
+                id 'io.github.vladislavsevruk.graphql-model-generator-plugin'
             }
         """
         schemaFile = new File(testProjectDir, 'schema.graphqls')

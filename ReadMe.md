@@ -2,6 +2,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=VladislavSevruk_GraphQlRequestBodyGenerator&metric=alert_status)](https://sonarcloud.io/dashboard?id=VladislavSevruk_GraphQlRequestBodyGenerator)
 [![Code Coverage](https://sonarcloud.io/api/project_badges/measure?project=VladislavSevruk_GraphQlRequestBodyGenerator&metric=coverage)](https://sonarcloud.io/component_measures?id=VladislavSevruk_GraphQlRequestBodyGenerator&metric=coverage)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vladislavsevruk/graphql-request-body-generator/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vladislavsevruk/graphql-request-body-generator)
+[![Gradle Plugin Portal](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/io/github/vladislavsevruk/graphql-model-generator-plugin/io.github.vladislavsevruk.graphql-model-generator-plugin.gradle.plugin/maven-metadata.xml.svg?colorB=4ac41c&label=gradle%20plugin)](https://plugins.gradle.org/plugin/io.github.vladislavsevruk.graphql-model-generator-plugin)
 
 # GraphQL Request Body Generator
 This utility library helps to generate request body for [GraphQL](http://spec.graphql.org/June2018/) queries using POJOs.
@@ -91,7 +92,7 @@ For automatic generation of POJO models at your project you can use following op
 Add the following plugin to your ``build.gradle``:
 ```groovy
 plugins {
-  id 'com.github.vladislavsevruk.graphql-model-generator-plugin' version '1.0.0'
+  id 'io.github.vladislavsevruk.graphql-model-generator-plugin' version '1.0.0'
 }
 ```
 This plugin will add additional ``generateGraphqlModels`` task before ``javaCompile`` that will automatically generate
