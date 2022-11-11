@@ -13,16 +13,19 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
 * [Usage](#usage)
   * [Field marking strategy](#field-marking-strategy)
   * [Prepare POJO model](#prepare-pojo-model)
-    * [Selection set](#selection-set)
-      * [GqlField](#gqlfield)
-      * [GqlDelegate](#gqldelegate)
-      * [GqlUnion](#gqlunion)
-      * [GqlIgnore](#gqlignore)
-    * [Input object value](#input-object-value)
-      * [GqlField](#gqlfield-1)
-      * [GqlInput](#gqlinput)
-      * [GqlDelegate](#gqldelegate-1)
-      * [GqlIgnore](#gqlignore-1)
+    * [Automatic generation](#automatic-generation)
+      * [Gradle plugin](#gradle-plugin)
+    * [Manual generation](#manual-generation)
+      * [Selection set](#selection-set)
+        * [GqlField](#gqlfield)
+        * [GqlDelegate](#gqldelegate)
+        * [GqlUnion](#gqlunion)
+        * [GqlIgnore](#gqlignore)
+      * [Input object value](#input-object-value)
+        * [GqlField](#gqlfield-1)
+        * [GqlInput](#gqlinput)
+        * [GqlDelegate](#gqldelegate-1)
+        * [GqlIgnore](#gqlignore-1)
   * [Generate request body](#generate-request-body)
     * [Operation selection set](#operation-selection-set)
     * [Loop breaking strategy](#loop-breaking-strategy)
@@ -38,7 +41,7 @@ This utility library helps to generate request body for [GraphQL](http://spec.gr
 To add library to your project perform next steps:
 
 ### Maven
-Add the following dependency to your pom.xml:
+Add the following dependency to your ``pom.xml``:
 ```xml
 <dependency>
       <groupId>com.github.vladislavsevruk</groupId>
@@ -47,7 +50,7 @@ Add the following dependency to your pom.xml:
 </dependency>
 ```
 ### Gradle
-Add the following dependency to your build.gradle:
+Add the following dependency to your ``build.gradle``:
 ```groovy
 implementation 'com.github.vladislavsevruk:graphql-request-body-generator:1.0.16'
 ```
@@ -80,6 +83,68 @@ FieldMarkingStrategySourceManager.selectionSet().useCustomStrategy(field -> true
 ### Prepare POJO model
 Then we need to prepare POJO models that will be used for GraphQL operation generation according to chosen field marking
 strategy.
+
+### Automatic generation
+For automatic generation of POJO models at your project you can use following options:
+
+### Gradle plugin
+Add the following plugin to your ``build.gradle``:
+```groovy
+plugins {
+  id 'io.github.vladislavsevruk.graphql-model-generator-plugin' version '1.0.0'
+}
+```
+This plugin will add additional ``generateGraphqlModels`` task before ``javaCompile`` that will automatically generate
+POJO models based on GraphQL schema file. Generation results can be customized using followed options of
+``graphqlModelGenerator`` extension:
+
+```groovy
+import com.github.vladislavsevruk.generator.model.graphql.constant.*
+
+graphqlModelGenerator {
+  addJacksonAnnotations = false
+  entitiesPrefix = ''
+  entitiesPostfix = ''
+  pathToSchemaFile = '/path/to/schema.graphqls'
+  targetPackage = 'com.myorg'
+  treatArrayAs = ElementSequence.LIST
+  treatFloatAs = GqlFloatType.DOUBLE
+  treatIdAs = GqlIntType.STRING
+  treatIntAs = GqlIntType.INTEGER
+  updateNamesToJavaStyle = true
+  useLombokAnnotations = false
+  usePrimitivesInsteadOfWrappers = false
+  useStringsInsteadOfEnums = false
+}
+```
+
+* __addJacksonAnnotations__ reflects if jackson annotations should be added to fields for proper mapping using Jackson 
+library. Default value is ``false``;
+* __entitiesPrefix__ is used for adding specific prefix to generated POJO model names. Default value is empty string;
+* __entitiesPostfix__ is used for adding specific postfix to generated POJO model names. Default value is empty string;
+* __pathToSchemaFile__ is used for setting location of GraphQL schema file. Default location is 
+``src/main/resources/graphql/schema.graphqls``;
+* __targetPackage__ is used for setting specific package name for generated POJO models. Default value is
+``com.github.vladislavsevruk.model``;
+* __treatArrayAs__ is used for setting entity that should be used for GraphQL array type generation. Can be one of 
+* following values: ``ARRAY``, ``COLLECTION``, ``ITERABLE``, ``LIST``, ``SET``. Default value is ``LIST``;
+* __treatFloatAs__ is used for setting entity that should be used for GraphQL array type generation. Can be one of
+* following values: ``BIG_DECIMAL``, ``DOUBLE``, ``FLOAT``, ``STRING``. Default value is ``DOUBLE``;
+* __treatIdAs__ is used for setting entity that should be used for GraphQL array type generation. Can be one of
+* following values: ``BIG_INTEGER``, ``INTEGER``, ``LONG``, ``STRING``. Default value is ``STRING``;
+* __treatIntAs__ is used for setting entity that should be used for GraphQL array type generation. Can be one of
+* following values: ``BIG_INTEGER``, ``INTEGER``, ``LONG``, ``STRING``. Default value is ``INTEGER``;
+* __updateNamesToJavaStyle__ reflects if entities and fields from GraphQL schema should be updated to follow default 
+java convention (upper camel case for classes and lower camel case for fields). Default value is ``true``;
+* __useLombokAnnotations__ reflects if lombok annotations should be used for POJO methods generation instead of 
+ones generated by this plugin. Default value is ``false``;
+* __usePrimitivesInsteadOfWrappers__ reflects if java primitives should be used for GraphQL scalar types instead of 
+java primitive wrapper classes. Default value is ``false``;
+* __useStringsInsteadOfEnums__ reflects if GraphQL enum fields at type entities should be converted to string type.
+Default value is ``false``;
+
+### Manual generation
+However, you still can create and customize model by yourself following rules described below.
 
 ### Selection set
 Selection set generation is based only on fields that are declared at class or it superclasses and doesn't involve
