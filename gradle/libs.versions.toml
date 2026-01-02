@@ -1,0 +1,31 @@
+[versions]
+junit = "5.13.4"
+junitPlatform = "1.13.4"
+log4j = "2.25.3"
+lombok = "1.18.40"
+mockito = "5.19.0"
+javaClassGenerator = "1.0.0"
+typeResolver = "1.0.3"
+jackson = "2.20.0"
+spock = "2.4-M6-groovy-4.0"
+gradlePluginPublish = "2.0.0"
+
+[libraries]
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
+junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit" }
+junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version.ref = "junitPlatform" }
+log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }
+log4j-core = { group = "org.apache.logging.log4j", name = "log4j-core", version.ref = "log4j" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+mockito-junit-jupiter = { group = "org.mockito", name = "mockito-junit-jupiter", version.ref = "mockito" }
+java-clazz-generator = { group = "com.github.vladislavsevruk", name = "java-class-generator", version.ref = "javaClassGenerator" }
+type-resolver = { group = "com.github.vladislavsevruk", name = "type-resolver", version.ref = "typeResolver" }
+spock-bom = { group = "org.spockframework", name = "spock-bom", version.ref = "spock" }
+spock-core = { group = "org.spockframework", name = "spock-core" }
+jackson-databind = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
+
+[plugins]
+java-gradle-plugin = { id = "java-gradle-plugin" }
+gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradlePluginPublish" }
