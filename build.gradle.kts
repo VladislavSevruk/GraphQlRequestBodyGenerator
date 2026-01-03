@@ -1,11 +1,22 @@
 plugins {
     java
+    alias(libs.plugins.sonarqube)
     id("test-report-aggregation")
     id("jacoco-report-aggregation")
 }
 
 repositories {
     mavenCentral()
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "VladislavSevruk_GraphQlRequestBodyGenerator")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${project.layout.buildDirectory.asFile.get()}/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml"
+        )
+    }
 }
 
 val testReportData by configurations.creating {
