@@ -12,8 +12,6 @@ jobs:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/openjdk
       - image: cimg/openjdk:11.0
-    
-    working_directory: ~/repo
 
     # Specify service dependencies here if necessary
     # CircleCI maintains a library of pre-built images
@@ -33,7 +31,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "build.gradle" }}
+            - v1-dependencies-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
@@ -44,7 +42,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle" }}
+          key: v1-dependencies-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
 
       - run:
           name: Run tests and SonarQube analysis
