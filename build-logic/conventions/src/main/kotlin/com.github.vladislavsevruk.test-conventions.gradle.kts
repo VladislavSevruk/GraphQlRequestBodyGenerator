@@ -1,13 +1,6 @@
 plugins {
-    org.sonarqube
     java
     jacoco
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "VladislavSevruk_GraphQlRequestBodyGenerator")
-    }
 }
 
 tasks.jacocoTestReport {
