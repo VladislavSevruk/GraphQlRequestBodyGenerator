@@ -1,0 +1,73 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/reference/configuration-reference
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#jobs-overview & https://circleci.com/docs/reference/configuration-reference/#jobs
+jobs:
+  build:
+    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/guides/execution-managed/executor-intro/ & https://circleci.com/docs/reference/configuration-reference/#executor-job
+    docker:
+      # Specify the version you desire here
+      # See: https://circleci.com/developer/images/image/cimg/openjdk
+      - image: cimg/openjdk:11.0
+    
+    working_directory: ~/repo
+
+    # Specify service dependencies here if necessary
+    # CircleCI maintains a library of pre-built images
+    # documented at https://circleci.com/docs/circleci-images/
+    # - image: circleci/postgres:9.4
+
+    environment:
+      SONAR_ORGANIZATION: vladislavsevruk
+      SONAR_TOKEN: To37eu/nIZ3lmxyEx4lbD3CZ5IRXee6nsHnL4yRYvHi9L9pfrKEP2kx+kJ7AiacktJi19c/TEqQGZp4wu/9YDnpumTttc9hdepeQTtMYB4iqBkEjpgoCPu9fqmrYx5QpRamPDVFAH1N3N3hQmBePqJq4pfbdfKbRhoGLuHM7b8icSMq9Kv/eM+ltZroicLkCnnBZSY+7TCBQe9gxXVsbCl3agxYEHz4H8wvGcv2XRTzXEpW2mpDS+dfi9L92jez9QeRWly+q+P4Vwp6XxiKJS889sh9Iku0ciPU3/Ds9lojWZHaalIoKPoZSiJrI5B/5p6TbE5dPsE8LKYmUxE/Jzc115I5pZeZ7L0S9PiDysP8tut0X52518s/hfPOEdSAhJbWdjil2TSH3mad4x3cUgOifGsVrKMIt8VrfVxMk9sk0s7VjAnBQ9ispLLGA863h07NRiDujXDqWwCntqKMOV+ZYZFU+1OY5D6KMailu0IYUMBrnhzVuJpjd7CvrBWo2gVl8oUByug320vLEFgLCC6qwmU1KgABAGB2zxrB8xjIGt8eMdEci0Zw7Wa2KdCgNZDQ/i8FjJ0VmuDEJn+0pG086p3inM4UjA11yghd3Hcg1pyq9PtqGhzP6DWF1eOPCfneXVLutQVaKXFXmdPx6ZKGWL33Nv5aF6pQJJx+OwOk=
+
+    # Add steps to the job
+    # See: https://circleci.com/docs/guides/orchestrate/jobs-steps/#steps-overview & https://circleci.com/docs/reference/configuration-reference/#steps
+    steps:
+      # Checkout the code as the first step.
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "build.gradle" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+      - run:
+          name: Download dependencies
+          command: ./gradlew dependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: v1-dependencies-{{ checksum "build.gradle" }}
+
+      - run:
+          name: Run tests and SonarQube analysis
+          command: ./gradlew clean jacocoTestReport sonarqube
+
+      - run:
+          name: Build with dependency scan
+          command: ./gradlew build --scan -s
+
+      - store_test_results:
+          paths:
+            - graphql-model-generator-plugin/build/test-results
+            - graphql-request-body-generator/build/test-results
+
+      - store_artifacts:
+          paths:
+            - graphql-model-generator-plugin/build/reports
+            - graphql-request-body-generator/build/reports
+
+
+
+
+
+
+
+
