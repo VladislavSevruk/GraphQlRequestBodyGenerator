@@ -33,7 +33,6 @@ import com.github.vladislavsevruk.generator.model.graphql.optimization.EagerAndS
 import com.github.vladislavsevruk.generator.model.graphql.optimization.GenerateGraphqlModelsAction;
 import com.github.vladislavsevruk.generator.model.graphql.optimization.SchemaUpToDateSpec;
 import com.github.vladislavsevruk.generator.model.graphql.util.GqlModelPathBuilder;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -44,7 +43,6 @@ import org.gradle.api.tasks.SourceSet;
 /**
  * Gradle plugin for automatic GraphQL models generation.
  */
-@NonNullApi
 public class GqlModelGeneratorPlugin implements Plugin<Project> {
 
     private static final String COMPILE_JAVA_TASK_NAME = "compileJava";
@@ -58,7 +56,7 @@ public class GqlModelGeneratorPlugin implements Plugin<Project> {
     public void apply(Project project) {
         SourceSet sourceSet = getMainSourceSet(project);
         GqlModelGeneratorPluginExtension extension = createExtension(project, sourceSet);
-        String targetPath = project.getBuildDir().getPath();
+        String targetPath = project.getLayout().getBuildDirectory().get().getAsFile().getPath();
         sourceSet.java(set -> set.srcDir(GqlModelPathBuilder.buildModelSrcJavaPath(targetPath)));
         setGqlModelClassContentGenerator();
         createGraphqlModelsTask(project, extension, targetPath);
@@ -73,7 +71,7 @@ public class GqlModelGeneratorPlugin implements Plugin<Project> {
 
     private void createGraphqlModelsTask(Project project, GqlModelGeneratorPluginExtension extension,
             String targetPath) {
-        Task generateGraphqlModelsTask = project.task(TASK_NAME)
+        Task generateGraphqlModelsTask = project.getTasks().named(TASK_NAME).get()
                 .doLast(new GenerateGraphqlModelsAction<>(extension, targetPath));
         generateGraphqlModelsTask.getOutputs().cacheIf(task -> true);
         generateGraphqlModelsTask.getOutputs().upToDateWhen(getUpToDateSpec(extension, targetPath));
