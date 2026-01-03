@@ -55,14 +55,10 @@ jobs:
           command: ./gradlew build --scan -s
 
       - store_test_results:
-          paths:
-            - graphql-model-generator-plugin/build/test-results
-            - graphql-request-body-generator/build/test-results
+          path: build/test-results
 
       - store_artifacts:
-          paths:
-            - graphql-model-generator-plugin/build/reports
-            - graphql-request-body-generator/build/reports
+          path: build/reports
 
 
 
