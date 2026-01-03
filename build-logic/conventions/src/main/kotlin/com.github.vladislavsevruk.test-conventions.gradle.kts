@@ -22,10 +22,21 @@ tasks.jacocoTestReport {
 
 val mockitoAgent = configurations.create("mockitoAgent")
 tasks.withType<Test>().configureEach {
+    reports.html.required = false
     useJUnit()
     useJUnitPlatform()
     maxHeapSize = "64m"
     jvmArgs("-javaagent:${mockitoAgent.asPath}")
+}
+
+configurations.create("binaryTestResultsElements") {
+    isCanBeResolved = false
+    isCanBeConsumed = true
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named("test-report-data"))
+    }
+    outgoing.artifact(tasks.test.map { task -> task.getBinaryResultsDirectory().get() })
 }
 
 val libs = versionCatalogs.named("libs")

@@ -42,18 +42,15 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }
+          key: v1-dependencies-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
 
       - run:
           name: Run tests and SonarQube analysis
-          command: ./gradlew clean testCodeCoverageReport sonarqube --continue
+          command: ./gradlew clean testSuiteAggregateTestReport testCodeCoverageReport sonarqube --continue
 
       - run:
           name: Build with dependency scan
           command: ./gradlew build --scan -s
-
-      - store_test_results:
-          path: build/test-results
 
       - store_artifacts:
           path: build/reports
