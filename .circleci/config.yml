@@ -31,7 +31,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+            - v1-dependencies-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
@@ -42,11 +42,11 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle
-          key: v1-dependencies-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }}
+          key: v1-dependencies-{{ checksum "build.gradle.kts" }}-{{ checksum "settings.gradle.kts" }}-{{ checksum "gradle/libs.versions.toml" }
 
       - run:
           name: Run tests and SonarQube analysis
-          command: ./gradlew clean jacocoTestReport sonarqube
+          command: ./gradlew clean testCodeCoverageReport sonarqube --continue
 
       - run:
           name: Build with dependency scan

@@ -15,6 +15,7 @@ tasks.jacocoTestReport {
     executionData.setFrom(fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec"))
     reports {
         xml.required = true
+        csv.required = false
         html.required = true
     }
 }
