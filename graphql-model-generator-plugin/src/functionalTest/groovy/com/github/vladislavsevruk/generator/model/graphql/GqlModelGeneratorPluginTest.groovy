@@ -37,7 +37,7 @@ class GqlModelGeneratorPluginTest extends Specification {
     File schemaFile
 
     void setup() {
-        buildFile = new File(testProjectDir, 'build.gradle')
+        buildFile = new File(testProjectDir, 'build.gradle.kts')
         buildFile << """
             plugins {
                 id 'java-library'
