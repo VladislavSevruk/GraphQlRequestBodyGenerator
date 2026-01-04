@@ -34,7 +34,6 @@ import com.github.vladislavsevruk.generator.model.graphql.parser.GqlSchemaParser
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implements <code>GqlSchemaParser</code>.
@@ -64,8 +63,9 @@ public class GqlSchemaParserImpl implements GqlSchemaParser {
     }
 
     private List<String> filterOutQueryAndMutationDeclarations(List<String> entities) {
-        return entities.stream().filter(entity -> !entity.matches("type\\s+(Query|Mutation)\\s+(?s).+"))
-                .collect(Collectors.toList());
+        return entities.stream()
+                .filter(entity -> !entity.matches("type\\s+(Query|Mutation)\\s+(?s).+"))
+                .toList();
     }
 
     private SchemaObjectStorage parseEntities(List<String> entities) {

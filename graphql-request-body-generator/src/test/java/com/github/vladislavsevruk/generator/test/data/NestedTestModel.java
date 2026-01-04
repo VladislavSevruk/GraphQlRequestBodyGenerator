@@ -36,6 +36,7 @@ public class NestedTestModel {
     private Long fieldWithFieldAnnotation;
     @GqlIgnore
     private Long fieldWithIgnoreAnnotation;
+    @SuppressWarnings("unused")
     private Long fieldWithoutAnnotations;
     @GqlField(name = "idField")
     private Long id;

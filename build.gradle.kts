@@ -35,6 +35,8 @@ dependencies {
 }
 
 tasks.register<TestReport>("testSuiteAggregateTestReport") {
+    group = "verification"
+    description = "Aggregates tests suite reports from modules to root build directory"
     destinationDirectory = reporting.baseDirectory.dir("test-results")
     // Use test results from testReportData configuration
     testResults.from(testReportData)
