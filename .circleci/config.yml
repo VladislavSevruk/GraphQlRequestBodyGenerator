@@ -25,6 +25,11 @@ jobs:
       # Checkout the code as the first step.
       - checkout
 
+      # Refetch git history to get required blobs for sonar scan
+      - run:
+          name: Refetching blobs
+          command: git fetch --no-filter --refetch
+
       # Download and cache dependencies
       - restore_cache:
           keys:

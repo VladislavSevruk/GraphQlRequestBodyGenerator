@@ -9,7 +9,7 @@ typeResolver = "1.0.3"
 jackson = "2.20.0"
 spock = "2.4-M6-groovy-4.0"
 gradlePluginPublish = "2.0.0"
-sonarqube = "7.2.2.6593"
+sonarqube = "7.2.0.6526"
 
 [libraries]
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit" }
