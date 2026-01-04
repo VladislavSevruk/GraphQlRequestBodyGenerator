@@ -37,6 +37,7 @@ public class InheritedTestModel extends GenericTestModel<NestedTestModel> {
     private NestedTestModel newEntityAtDescendant;
     @GqlField
     private Long newFieldAtDescendant;
+    @SuppressWarnings("unused")
     private Long newFieldWithoutAnnotationAtDescendant;
     @GqlIgnore
     private Long newIgnoredFieldAtDescendant;

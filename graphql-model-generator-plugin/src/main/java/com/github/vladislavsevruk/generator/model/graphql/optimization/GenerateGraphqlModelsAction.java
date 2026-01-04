@@ -30,7 +30,6 @@ import com.github.vladislavsevruk.generator.model.graphql.parser.impl.GqlSchemaP
 import com.github.vladislavsevruk.generator.model.graphql.util.GqlModelPathBuilder;
 import com.github.vladislavsevruk.generator.model.graphql.util.ReadWriteFileUtil;
 import org.gradle.api.Action;
-import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
 
 /**
@@ -38,7 +37,6 @@ import org.gradle.api.Task;
  *
  * @param <T> The type of object which this action accepts.
  */
-@NonNullApi
 public class GenerateGraphqlModelsAction<T extends Task> implements Action<T> {
 
     private final GqlModelGenerator modelGenerator = new GqlModelGenerator();

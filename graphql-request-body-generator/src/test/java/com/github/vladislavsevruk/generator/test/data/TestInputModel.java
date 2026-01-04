@@ -34,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Setter
 public class TestInputModel {
@@ -267,6 +266,7 @@ public class TestInputModel {
         return getNonMatchingValue(fieldWithInputPrivateMethod);
     }
 
+    @SuppressWarnings("unused")
     private String getFieldWithPrivateMethod() {
         return getNonMatchingValue(fieldWithPrivateMethod);
     }
@@ -288,7 +288,7 @@ public class TestInputModel {
         if (fieldValue == null) {
             return null;
         }
-        return fieldValue.stream().map(value -> value + 1).collect(Collectors.toList());
+        return fieldValue.stream().map(value -> value + 1).toList();
     }
 
     private Long getNonMatchingValue(Long fieldValue) {
@@ -313,6 +313,7 @@ public class TestInputModel {
         return getMap(methodName, methodName + " method");
     }
 
+    @SuppressWarnings("unused")
     private NestedTestInputModel getNonMatchingValue(NestedTestInputModel fieldValue) {
         if (fieldValue == null) {
             return null;

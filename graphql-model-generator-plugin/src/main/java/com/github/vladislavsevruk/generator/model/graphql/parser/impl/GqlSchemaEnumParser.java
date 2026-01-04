@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Parses string with GraphQL enum entity.
@@ -66,7 +65,7 @@ public class GqlSchemaEnumParser extends BaseGqlSchemaObjectParser {
         List<String> values = Arrays.asList(matcher.group(2).trim().split("\\s*,\\s*|\\s+"));
         if (Boolean.TRUE.equals(pluginExtension.getUpdateNamesToJavaStyle().get())) {
             name = EntityNameUtil.getJavaFormatClassName(name);
-            values = values.stream().map(String::toUpperCase).collect(Collectors.toList());
+            values = values.stream().map(String::toUpperCase).toList();
         }
         return new GqlSchemaEnum(pluginExtension.getTargetPackage().get(), name, values);
     }

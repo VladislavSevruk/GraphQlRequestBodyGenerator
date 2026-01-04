@@ -93,7 +93,8 @@ public class BaseGqlArgumentsGenerator {
             boolean withVariables) {
         Map<String, String> modelValues = collectValuesMap(value, value.getClass(),
                 inputFieldsPickingStrategy, new LinkedHashMap<>(), withVariables);
-        return modelValues.entrySet().stream().map(entry -> entry.getKey() + ":" + entry.getValue())
+        return modelValues.entrySet().stream()
+                .map(entry -> entry.getKey() + ":" + entry.getValue())
                 .collect(Collectors.joining(DELIMITER));
     }
 
@@ -242,9 +243,9 @@ public class BaseGqlArgumentsGenerator {
 
     private List<String> convertToStringList(Object value, InputFieldsPickingStrategy inputFieldsPickingStrategy,
             boolean withVariables) {
-        return StreamUtil.createStream(value).map(item -> generateArgumentModelValue(item, inputFieldsPickingStrategy,
-                        withVariables))
-                .collect(Collectors.toList());
+        return StreamUtil.createStream(value)
+                .map(item -> generateArgumentModelValue(item, inputFieldsPickingStrategy, withVariables))
+                .toList();
     }
 
     private boolean isSimpleType(Class<?> valueClass) {

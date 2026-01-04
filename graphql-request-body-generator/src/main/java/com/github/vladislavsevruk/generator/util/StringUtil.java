@@ -26,7 +26,6 @@ package com.github.vladislavsevruk.generator.util;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Contains utility methods for escaped strings generation.
@@ -116,7 +115,13 @@ public final class StringUtil {
 
     private static List<String> convertToStringList(Object elements) {
         return StreamUtil.createStream(elements)
-                .map(value -> CharSequence.class.isAssignableFrom(value.getClass()) ? addQuotesForStringArgument(
-                        value.toString()) : value.toString()).collect(Collectors.toList());
+                .map(StringUtil::convertToString)
+                .toList();
+    }
+
+    private static String convertToString(Object value) {
+        return CharSequence.class.isAssignableFrom(value.getClass())
+                ? addQuotesForStringArgument(value.toString())
+                : value.toString();
     }
 }

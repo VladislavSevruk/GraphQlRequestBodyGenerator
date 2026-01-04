@@ -67,7 +67,7 @@ public final class ArgumentValueUtil {
      * @return <code>Object</code> received from field.
      */
     public static Object getValueByField(Object value, Field field) {
-        boolean isAccessible = field.isAccessible();
+        boolean isAccessible = field.canAccess(value);
         try {
             field.setAccessible(true);
             return field.get(value);
