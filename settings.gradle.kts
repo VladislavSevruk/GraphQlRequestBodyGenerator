@@ -14,6 +14,7 @@ develocity {
 }
 
 include(
+    "token-parser-base",
     "graphql-request-body-generator-annotation",
     "graphql-request-body-generator",
     "graphql-model-generator-plugin"

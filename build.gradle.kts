@@ -28,8 +28,10 @@ val testReportData by configurations.creating {
 }
 
 dependencies {
+    testReportData(project(":token-parser-base"))
     testReportData(project(":graphql-request-body-generator"))
     testReportData(project(":graphql-model-generator-plugin"))
+    jacocoAggregation(project(":token-parser-base"))
     jacocoAggregation(project(":graphql-request-body-generator"))
     jacocoAggregation(project(":graphql-model-generator-plugin"))
 }

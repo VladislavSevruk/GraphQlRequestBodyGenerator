@@ -3,6 +3,7 @@ import kotlin.String
 
 plugins {
     `java-library`
+    id("io.freefair.lombok")
 }
 
 val javaVersion: JavaVersion = JavaVersion.toVersion(if (project.hasProperty("javaVersion"))
