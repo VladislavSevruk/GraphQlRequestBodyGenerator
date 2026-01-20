@@ -23,32 +23,26 @@
  */
 package com.github.vladislavsevruk.parsing.simple;
 
-import com.github.vladislavsevruk.parsing.TokenNode;
 import com.github.vladislavsevruk.parsing.TokenParsingResult;
 import com.github.vladislavsevruk.parsing.simple.ConstantTokenParser.ConstantTokenNode;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ConstantTokenParserTest {
     @Test
     void parseNoPredicateConstantNotEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc");
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("abcd", 0, true, tokenNode);
+        result = parser.parse("abcd", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("abcd", 1, false, tokenNode);
+        result = parser.parse("abcd", 1, false);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
-        result = parser.parse("abcd", 1, true, tokenNode);
+        result = parser.parse("abcd", 1, true);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
@@ -56,18 +50,16 @@ class ConstantTokenParserTest {
 
     @Test
     void parseNoPredicateConstantEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc");
-        TokenParsingResult result = parser.parse("abc", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abc", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("abc", 0, true, tokenNode);
+        result = parser.parse("abc", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("abc", 1, false, tokenNode);
+        result = parser.parse("abc", 1, false);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
-        result = parser.parse("abc", 1, true, tokenNode);
+        result = parser.parse("abc", 1, true);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
@@ -75,34 +67,30 @@ class ConstantTokenParserTest {
 
     @Test
     void parseNoPredicateConstantPartEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc");
-        TokenParsingResult result = parser.parse("ab", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("ab", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 0, true, tokenNode);
+        result = parser.parse("ab", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, false, tokenNode);
+        result = parser.parse("ab", 1, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMoreTokensNeeded());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
     void parseMatchingPredicateConstantNotEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc", character -> true);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("abcd", 0, true, tokenNode);
+        result = parser.parse("abcd", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("abcd", 1, false, tokenNode);
+        result = parser.parse("abcd", 1, false);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
-        result = parser.parse("abcd", 1, true, tokenNode);
+        result = parser.parse("abcd", 1, true);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
@@ -110,84 +98,74 @@ class ConstantTokenParserTest {
 
     @Test
     void parseMatchingPredicateConstantEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc", character -> true);
-        TokenParsingResult result = parser.parse("abc", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abc", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("abc", 0, true, tokenNode);
+        result = parser.parse("abc", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("abc", 1, false, tokenNode);
+        result = parser.parse("abc", 1, false);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
-        result = parser.parse("abc", 1, true, tokenNode);
+        result = parser.parse("abc", 1, true);
         assertTrue(result.isMoreTokensNeeded());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
     void parseMatchingPredicateConstantPartEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc", character -> true);
-        TokenParsingResult result = parser.parse("ab", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("ab", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 0, true, tokenNode);
+        result = parser.parse("ab", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, false, tokenNode);
+        result = parser.parse("ab", 1, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMoreTokensNeeded());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
     void parseMismatchingPredicateConstantNotEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc", character -> false);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("abcd", 0, true, tokenNode);
+        result = parser.parse("abcd", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("abcd", 1, false, tokenNode);
+        result = parser.parse("abcd", 1, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("abcd", 1, true, tokenNode);
+        result = parser.parse("abcd", 1, true);
         assertTrue(result.isMismatched());
     }
 
     @Test
     void parseMismatchingPredicateConstantEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc", character -> false);
-        TokenParsingResult result = parser.parse("abc", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abc", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("abc", 0, true, tokenNode);
+        result = parser.parse("abc", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("abc", 1, false, tokenNode);
+        result = parser.parse("abc", 1, false);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isCompleted());
         assertEquals("bc", result.getToken().toString());
-        result = parser.parse("abc", 1, true, tokenNode);
+        result = parser.parse("abc", 1, true);
         assertTrue(result.isMoreTokensNeeded());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
     void parseMismatchingPredicateConstantPartEndTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(false);
         ConstantTokenParser<String, ConstantTokenNode> parser = ConstantTokenParser.constant("bc", character -> false);
-        TokenParsingResult result = parser.parse("ab", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("ab", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 0, true, tokenNode);
+        result = parser.parse("ab", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, false, tokenNode);
+        result = parser.parse("ab", 1, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMoreTokensNeeded());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 }

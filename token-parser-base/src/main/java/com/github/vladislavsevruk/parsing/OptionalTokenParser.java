@@ -53,7 +53,7 @@ public final class OptionalTokenParser implements TokenParser {
      * {@inheritDoc}
      */
     @Override
-    public TokenParsingResult parse(CharSequence content, int startIndex, boolean hasMoreTokens, TokenNode parentNode) {
-        return delegate.parse(content, startIndex, hasMoreTokens, parentNode).orElse(empty(), startIndex);
+    public TokenParsingResult parse(CharSequence content, int startIndex, boolean hasMoreTokens) {
+        return delegate.parse(content, startIndex, hasMoreTokens).orElse(empty(), startIndex);
     }
 }

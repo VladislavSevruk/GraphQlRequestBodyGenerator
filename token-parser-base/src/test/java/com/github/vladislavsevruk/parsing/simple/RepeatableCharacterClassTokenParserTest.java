@@ -45,35 +45,35 @@ class RepeatableCharacterClassTokenParserTest {
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate);
         TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abc", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abc", 0, false);
         assertTrue(result.isMatched());
         assertEquals(1, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 0, true, tokenNode);
+        result = parser.parse("abc", 0, true);
         assertTrue(result.isMatched());
         assertEquals(1, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 1, false, tokenNode);
+        result = parser.parse("abc", 1, false);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 1, true, tokenNode);
+        result = parser.parse("abc", 1, true);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 2, false, tokenNode);
+        result = parser.parse("abc", 2, false);
         assertTrue(result.isMatched());
         assertEquals(3, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 2, true, tokenNode);
+        result = parser.parse("abc", 2, true);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(2, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
@@ -83,35 +83,35 @@ class RepeatableCharacterClassTokenParserTest {
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate);
         TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 0, true, tokenNode);
+        result = parser.parse("abcd", 0, true);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 1, false, tokenNode);
+        result = parser.parse("abcd", 1, false);
         assertTrue(result.isMatched());
         assertEquals(3, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 1, true, tokenNode);
+        result = parser.parse("abcd", 1, true);
         assertTrue(result.isMatched());
         assertEquals(3, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 2, false, tokenNode);
+        result = parser.parse("abcd", 2, false);
         assertTrue(result.isMatched());
         assertEquals(4, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 2, true, tokenNode);
+        result = parser.parse("abcd", 2, true);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(2, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
@@ -119,14 +119,13 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> predicate = character -> false;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 0, true, tokenNode);
+        result = parser.parse("ab", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, false, tokenNode);
+        result = parser.parse("ab", 1, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMismatched());
     }
 
@@ -137,36 +136,35 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> lookaheadPredicate = character -> true;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate, lookaheadPredicate);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abc", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abc", 0, false);
         assertTrue(result.isMatched());
         assertEquals(1, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 0, true, tokenNode);
+        result = parser.parse("abc", 0, true);
         assertTrue(result.isMatched());
         assertEquals(1, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 1, false, tokenNode);
+        result = parser.parse("abc", 1, false);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 1, true, tokenNode);
+        result = parser.parse("abc", 1, true);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 2, false, tokenNode);
+        result = parser.parse("abc", 2, false);
         assertTrue(result.isMatched());
         assertEquals(3, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 2, true, tokenNode);
+        result = parser.parse("abc", 2, true);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(2, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
@@ -176,36 +174,35 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> lookaheadPredicate = character -> true;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate, lookaheadPredicate);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 0, true, tokenNode);
+        result = parser.parse("abcd", 0, true);
         assertTrue(result.isMatched());
         assertEquals(2, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 1, false, tokenNode);
+        result = parser.parse("abcd", 1, false);
         assertTrue(result.isMatched());
         assertEquals(3, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 1, true, tokenNode);
+        result = parser.parse("abcd", 1, true);
         assertTrue(result.isMatched());
         assertEquals(3, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 2, false, tokenNode);
+        result = parser.parse("abcd", 2, false);
         assertTrue(result.isMatched());
         assertEquals(4, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 2, true, tokenNode);
+        result = parser.parse("abcd", 2, true);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(2, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
@@ -214,14 +211,13 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> lookaheadPredicate = character -> true;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate, lookaheadPredicate);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 0, true, tokenNode);
+        result = parser.parse("ab", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, false, tokenNode);
+        result = parser.parse("ab", 1, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMismatched());
     }
 
@@ -232,28 +228,27 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> lookaheadPredicate = character -> false;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate, lookaheadPredicate);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abc", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abc", 0, false);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 0, true, tokenNode);
+        result = parser.parse("abc", 0, true);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 1, false, tokenNode);
+        result = parser.parse("abc", 1, false);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 1, true, tokenNode);
+        result = parser.parse("abc", 1, true);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 2, false, tokenNode);
+        result = parser.parse("abc", 2, false);
         assertTrue(result.isMatched());
         assertEquals(3, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(false);
-        result = parser.parse("abc", 2, true, tokenNode);
+        result = parser.parse("abc", 2, true);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(2, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
@@ -263,28 +258,27 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> lookaheadPredicate = character -> false;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate, lookaheadPredicate);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 0, true, tokenNode);
+        result = parser.parse("abcd", 0, true);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 1, false, tokenNode);
+        result = parser.parse("abcd", 1, false);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 1, true, tokenNode);
+        result = parser.parse("abcd", 1, true);
         assertTrue(result.isMismatched());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 2, false, tokenNode);
+        result = parser.parse("abcd", 2, false);
         assertTrue(result.isMatched());
         assertEquals(4, result.getLastIndex());
         assertTrue(result.getToken().isEmpty());
         when(predicate.test(any())).thenReturn(true).thenReturn(true).thenReturn(false);
-        result = parser.parse("abcd", 2, true, tokenNode);
+        result = parser.parse("abcd", 2, true);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(2, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 
     @Test
@@ -293,14 +287,13 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> lookaheadPredicate = character -> false;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate, lookaheadPredicate);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abcd", 0, false, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 0, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 0, true, tokenNode);
+        result = parser.parse("ab", 0, true);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, false, tokenNode);
+        result = parser.parse("ab", 1, false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMismatched());
     }
 
@@ -311,10 +304,9 @@ class RepeatableCharacterClassTokenParserTest {
         Predicate<Character> lookaheadPredicate = character -> false;
         RepeatableCharacterClassTokenParser<TokenNode> parser
                 = RepeatableCharacterClassTokenParser.repeatableCharacterClass(predicate, empty(), lookaheadPredicate, false);
-        TokenNode tokenNode = mock(TokenNode.class);
-        TokenParsingResult result = parser.parse("abcd", 2, true, tokenNode);
+        TokenParsingResult result = parser.parse("abcd", 2, true);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(4, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
     }
 }

@@ -34,6 +34,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import static com.github.vladislavsevruk.parsing.simple.SimpleTokenNode.empty;
+
 /**
  * Detects whether specific constant is present at received position of provided input. Parsing result will never have
  * intermediate state, meaning that associated {@link TokenNode} will only be created if desired token was fully
@@ -111,16 +113,11 @@ public class ConstantTokenParser<T extends CharSequence, U extends TokenNode> im
      * @param content       input to process
      * @param startIndex    position (inclusive) of input to start parsing from
      * @param hasMoreTokens identifies if additional input can be provided by request
-     * @param parentNode    parent token node
      * @return parsing result of provided input from received start position
      * @throws IndexOutOfBoundsException if the {@code index} argument is negative or not less than {@code length}
      */
     @Override
-    public TokenParsingResult parse(CharSequence content,
-                                    final int startIndex,
-                                    final boolean hasMoreTokens,
-                                    TokenNode parentNode)
-    {
+    public TokenParsingResult parse(CharSequence content, final int startIndex, final boolean hasMoreTokens) {
         int expectedRegionEnd = startIndex + token.length();
         boolean canCheckWholeToken = expectedRegionEnd <= content.length();
         if (!canCheckWholeToken && !hasMoreTokens) {
@@ -133,13 +130,13 @@ public class ConstantTokenParser<T extends CharSequence, U extends TokenNode> im
             }
         }
         if (!canCheckWholeToken) {
-            return TokenParsingResult.needMoreTokens(parentNode, startIndex);
+            return TokenParsingResult.needMoreTokens(empty(), startIndex);
         }
         if (lookaheadPredicate == null) {
             return match(expectedRegionEnd);
         }
         if (expectedRegionEnd == content.length()) {
-            return hasMoreTokens ? TokenParsingResult.needMoreTokens(parentNode, startIndex) : match(expectedRegionEnd);
+            return hasMoreTokens ? TokenParsingResult.needMoreTokens(empty(), startIndex) : match(expectedRegionEnd);
         }
         return lookaheadPredicate.test(content.charAt(expectedRegionEnd))
                 ? match(expectedRegionEnd)

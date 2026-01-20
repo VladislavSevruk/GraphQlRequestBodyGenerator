@@ -23,28 +23,25 @@
  */
 package com.github.vladislavsevruk.parsing.simple;
 
-import com.github.vladislavsevruk.parsing.TokenNode;
 import com.github.vladislavsevruk.parsing.TokenParsingResult;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 
 class SingleSymbolTokenParserTest {
     @Test
     void parseTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
         SingleSymbolTokenParser parser = SingleSymbolTokenParser.symbol('b');
-        TokenParsingResult result = parser.parse("ab", false, tokenNode);
+        TokenParsingResult result = parser.parse("ab", false);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", true, tokenNode);
+        result = parser.parse("ab", true);
         assertTrue(result.isMismatched());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isEmpty());
         assertEquals(2, result.getLastIndex());
-        result = parser.parse("ab", 1, true, tokenNode);
+        result = parser.parse("ab", 1, true);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isEmpty());
         assertEquals(2, result.getLastIndex());

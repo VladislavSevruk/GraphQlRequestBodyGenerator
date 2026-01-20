@@ -34,9 +34,9 @@ import static org.mockito.Mockito.when;
 class OptionalTokenParserTest {
     @Test
     void optionalParserTokenDelegateMismatchTest() {
-        TokenParser delegate = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
+        TokenParser delegate = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
         OptionalTokenParser optionalTokenParser = OptionalTokenParser.optional(delegate);
-        TokenParsingResult result = optionalTokenParser.parse("ab", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = optionalTokenParser.parse("ab", 1, false);
         assertTrue(result.isMatched());
         assertTrue(result.getToken().isEmpty());
         assertEquals(1, result.getLastIndex());
@@ -46,9 +46,9 @@ class OptionalTokenParserTest {
     void optionalParserTokenDelegateNeedMoreTokensTest() {
         TokenNode tokenNode = mock(TokenNode.class);
         when(tokenNode.isCompleted()).thenReturn(false);
-        TokenParser delegate = (content, index, hasMoreInput, node) -> TokenParsingResult.needMoreTokens(tokenNode, 2);
+        TokenParser delegate = (content, index, hasMoreInput) -> TokenParsingResult.needMoreTokens(tokenNode, 2);
         OptionalTokenParser optionalTokenParser = OptionalTokenParser.optional(delegate);
-        TokenParsingResult result = optionalTokenParser.parse("abc", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = optionalTokenParser.parse("abc", 1, false);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(tokenNode, result.getToken());
         assertFalse(result.getToken().isEmpty());
@@ -59,9 +59,9 @@ class OptionalTokenParserTest {
     void optionalParserTokenDelegateMatchTest() {
         TokenNode tokenNode = mock(TokenNode.class);
         when(tokenNode.isCompleted()).thenReturn(true);
-        TokenParser delegate = (content, index, hasMoreInput, node) -> TokenParsingResult.match(tokenNode, 2);
+        TokenParser delegate = (content, index, hasMoreInput) -> TokenParsingResult.match(tokenNode, 2);
         OptionalTokenParser optionalTokenParser = OptionalTokenParser.optional(delegate);
-        TokenParsingResult result = optionalTokenParser.parse("abc", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = optionalTokenParser.parse("abc", 1, false);
         assertTrue(result.isMatched());
         assertEquals(tokenNode, result.getToken());
         assertFalse(result.getToken().isEmpty());

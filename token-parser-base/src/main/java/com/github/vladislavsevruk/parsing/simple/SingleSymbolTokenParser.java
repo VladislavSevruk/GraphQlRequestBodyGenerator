@@ -23,7 +23,6 @@
  */
 package com.github.vladislavsevruk.parsing.simple;
 
-import com.github.vladislavsevruk.parsing.TokenNode;
 import com.github.vladislavsevruk.parsing.TokenParser;
 import com.github.vladislavsevruk.parsing.TokenParsingResult;
 
@@ -57,15 +56,10 @@ public class SingleSymbolTokenParser implements TokenParser {
      * @param content       input to process
      * @param startIndex    position (inclusive) of input to start parsing from
      * @param hasMoreTokens identifies if additional input can be provided by request
-     * @param parentNode    parent token node or root node if parsing document root
      * @return result of symbol detection at provided input at received start position
      */
     @Override
-    public TokenParsingResult parse(CharSequence content,
-                                    final int startIndex,
-                                    final boolean hasMoreTokens,
-                                    TokenNode parentNode)
-    {
+    public TokenParsingResult parse(CharSequence content, final int startIndex, final boolean hasMoreTokens) {
         return content.charAt(startIndex) == token
                 ? TokenParsingResult.match(empty(), startIndex + 1)
                 : TokenParsingResult.mismatch();

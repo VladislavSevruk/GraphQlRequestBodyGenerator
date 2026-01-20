@@ -149,9 +149,7 @@ class ReaderTokenParserTest {
         }
         return invocation -> {
             char[] arg = invocation.getArgument(0, char[].class);
-            for (int i = 0; i < chars.length; ++i) {
-                arg[i] = chars[i];
-            }
+            System.arraycopy(chars, 0, arg, 0, chars.length);
             return chars.length;
         };
     }

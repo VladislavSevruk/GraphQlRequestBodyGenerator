@@ -131,9 +131,7 @@ public final class TokenParsingUtil {
         return appendContentAroundIndex(messageBuilder, content, index).toString();
     }
 
-    private static StringBuilder appendContentAroundIndex(StringBuilder messageBuilder,
-                                                          CharSequence content,
-                                                          int index)
+    private static StringBuilder appendContentAroundIndex(StringBuilder messageBuilder, CharSequence content, int index)
     {
         if (content.isEmpty()) {
             return messageBuilder;

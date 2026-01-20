@@ -56,13 +56,9 @@ public class AnyOfTokenParser implements TokenParser {
      * {@inheritDoc}
      */
     @Override
-    public TokenParsingResult parse(CharSequence content,
-                                    final int startIndex,
-                                    final boolean hasMoreTokens,
-                                    TokenNode parentNode)
-    {
+    public TokenParsingResult parse(CharSequence content, final int startIndex, final boolean hasMoreTokens) {
         for (TokenParser delegate : delegates) {
-            TokenParsingResult lastResult = delegate.parse(content, startIndex, hasMoreTokens, parentNode);
+            TokenParsingResult lastResult = delegate.parse(content, startIndex, hasMoreTokens);
             if (!lastResult.isMismatched()) {
                 return lastResult;
             }

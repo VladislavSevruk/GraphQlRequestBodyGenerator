@@ -39,16 +39,16 @@ class AnyOfTokenParserTest {
 
     @Test
     void anyOfParserOnlyOneDelegateTest() {
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
         assertThrows(IllegalArgumentException.class, () -> AnyOfTokenParser.anyOf(delegate1));
     }
 
     @Test
     void anyOfParserTokenBothDelegatesMismatchTest() {
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
-        TokenParser delegate2 = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
+        TokenParser delegate2 = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
         AnyOfTokenParser anyOfTokenParser = AnyOfTokenParser.anyOf(delegate1, delegate2);
-        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false);
         assertTrue(result.isMismatched());
     }
 
@@ -56,11 +56,11 @@ class AnyOfTokenParserTest {
     void anyOfParserTokenBothDelegatesMatchTest() {
         TokenNode tokenNode1 = mock(TokenNode.class);
         when(tokenNode1.isCompleted()).thenReturn(true);
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.match(tokenNode1, 2);
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.match(tokenNode1, 2);
         TokenNode tokenNode2 = mock(TokenNode.class);
-        TokenParser delegate2 = (content, index, hasMoreInput, node) -> TokenParsingResult.match(tokenNode2, 3);
+        TokenParser delegate2 = (content, index, hasMoreInput) -> TokenParsingResult.match(tokenNode2, 3);
         AnyOfTokenParser anyOfTokenParser = AnyOfTokenParser.anyOf(delegate1, delegate2);
-        TokenParsingResult result = anyOfTokenParser.parse("abcd", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = anyOfTokenParser.parse("abcd", 1, false);
         assertTrue(result.isMatched());
         assertEquals(tokenNode1, result.getToken());
         assertEquals(2, result.getLastIndex());
@@ -70,13 +70,11 @@ class AnyOfTokenParserTest {
     void anyOfParserTokenBothDelegatesNeedMoreInputTest() {
         TokenNode tokenNode1 = mock(TokenNode.class);
         when(tokenNode1.isCompleted()).thenReturn(false);
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.needMoreTokens(tokenNode1,
-                2);
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.needMoreTokens(tokenNode1, 2);
         TokenNode tokenNode2 = mock(TokenNode.class);
-        TokenParser delegate2 = (content, index, hasMoreInput, node) -> TokenParsingResult.needMoreTokens(tokenNode2,
-                3);
+        TokenParser delegate2 = (content, index, hasMoreInput) -> TokenParsingResult.needMoreTokens(tokenNode2, 3);
         AnyOfTokenParser anyOfTokenParser = AnyOfTokenParser.anyOf(delegate1, delegate2);
-        TokenParsingResult result = anyOfTokenParser.parse("abcd", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = anyOfTokenParser.parse("abcd", 1, false);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(tokenNode1, result.getToken());
         assertEquals(2, result.getLastIndex());
@@ -86,10 +84,10 @@ class AnyOfTokenParserTest {
     void anyOfParserTokenFirstDelegateMatchTest() {
         TokenNode tokenNode1 = mock(TokenNode.class);
         when(tokenNode1.isCompleted()).thenReturn(true);
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.match(tokenNode1, 2);
-        TokenParser delegate2 = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.match(tokenNode1, 2);
+        TokenParser delegate2 = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
         AnyOfTokenParser anyOfTokenParser = AnyOfTokenParser.anyOf(delegate1, delegate2);
-        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false);
         assertTrue(result.isMatched());
         assertEquals(tokenNode1, result.getToken());
         assertEquals(2, result.getLastIndex());
@@ -99,12 +97,11 @@ class AnyOfTokenParserTest {
     void anyOfParserTokenFirstDelegateNeedMoreInputTest() {
         TokenNode tokenNode1 = mock(TokenNode.class);
         when(tokenNode1.isCompleted()).thenReturn(false);
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.needMoreTokens(tokenNode1,
-                2);
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.needMoreTokens(tokenNode1, 2);
         TokenNode tokenNode2 = mock(TokenNode.class);
-        TokenParser delegate2 = (content, index, hasMoreInput, node) -> TokenParsingResult.match(tokenNode2, 3);
+        TokenParser delegate2 = (content, index, hasMoreInput) -> TokenParsingResult.match(tokenNode2, 3);
         AnyOfTokenParser anyOfTokenParser = AnyOfTokenParser.anyOf(delegate1, delegate2);
-        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(tokenNode1, result.getToken());
         assertEquals(2, result.getLastIndex());
@@ -112,12 +109,12 @@ class AnyOfTokenParserTest {
 
     @Test
     void anyOfParserTokenSecondDelegateMatchTest() {
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
         TokenNode tokenNode2 = mock(TokenNode.class);
         when(tokenNode2.isCompleted()).thenReturn(true);
-        TokenParser delegate2 = (content, index, hasMoreInput, node) -> TokenParsingResult.match(tokenNode2, 3);
+        TokenParser delegate2 = (content, index, hasMoreInput) -> TokenParsingResult.match(tokenNode2, 3);
         AnyOfTokenParser anyOfTokenParser = AnyOfTokenParser.anyOf(delegate1, delegate2);
-        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false);
         assertTrue(result.isMatched());
         assertEquals(tokenNode2, result.getToken());
         assertEquals(3, result.getLastIndex());
@@ -125,13 +122,12 @@ class AnyOfTokenParserTest {
 
     @Test
     void anyOfParserTokenSecondDelegateNeedMoreInputTest() {
-        TokenParser delegate1 = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
+        TokenParser delegate1 = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
         TokenNode tokenNode2 = mock(TokenNode.class);
         when(tokenNode2.isCompleted()).thenReturn(false);
-        TokenParser delegate2 = (content, index, hasMoreInput, node) -> TokenParsingResult.needMoreTokens(tokenNode2,
-                3);
+        TokenParser delegate2 = (content, index, hasMoreInput) -> TokenParsingResult.needMoreTokens(tokenNode2, 3);
         AnyOfTokenParser anyOfTokenParser = AnyOfTokenParser.anyOf(delegate1, delegate2);
-        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false, mock(TokenNode.class));
+        TokenParsingResult result = anyOfTokenParser.parse("ab", 1, false);
         assertTrue(result.isMoreTokensNeeded());
         assertEquals(tokenNode2, result.getToken());
         assertEquals(3, result.getLastIndex());

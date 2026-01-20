@@ -154,16 +154,11 @@ public class RepeatableCharacterClassTokenParser<T extends TokenNode> implements
      * @param content       input to process
      * @param startIndex    position (inclusive) of input to start parsing from
      * @param hasMoreTokens identifies if additional input can be provided by request
-     * @param parentNode    parent token node
      * @return parsing result of provided input from received start position
      * @throws IndexOutOfBoundsException if the {@code index} argument is negative or not less than {@code length}
      */
     @Override
-    public TokenParsingResult parse(CharSequence content,
-                                    final int startIndex,
-                                    final boolean hasMoreTokens,
-                                    TokenNode parentNode)
-    {
+    public TokenParsingResult parse(CharSequence content, final int startIndex, final boolean hasMoreTokens) {
         int indexAfterLastParsed = -1;
         for (int index = startIndex; index < content.length(); ++index) {
             if (!predicate.test(content.charAt(index))) {
@@ -176,7 +171,8 @@ public class RepeatableCharacterClassTokenParser<T extends TokenNode> implements
         }
         if (indexAfterLastParsed == content.length()) {
             if (hasMoreTokens) {
-                return TokenParsingResult.needMoreTokens(parentNode, isSignificant ? startIndex : content.length());
+                int lastIndex = isSignificant ? startIndex : content.length();
+                return TokenParsingResult.needMoreTokens(SimpleTokenNode.empty(), lastIndex);
             }
             return match(content, startIndex, content.length());
         }

@@ -27,32 +27,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class TokenParserTest {
     @Test
     void optionalParserTest() {
-        TokenParser tokenParser = (content, index, hasMoreInput, node) -> TokenParsingResult.mismatch();
+        TokenParser tokenParser = (content, index, hasMoreInput) -> TokenParsingResult.mismatch();
         assertFalse(tokenParser.isOptional());
         TokenParser optionalTokenParser = tokenParser.optional();
         assertTrue(optionalTokenParser.isOptional());
-    }
-
-    @Test
-    void notOverriddenDefaultMethodsTest() {
-        TokenNode tokenNode = mock(TokenNode.class);
-        when(tokenNode.isCompleted()).thenReturn(true);
-        TokenParser tokenParser = (content, index, hasMoreInput, node) -> TokenParsingResult.match(node, index);
-        assertThrows(UnsupportedOperationException.class, () -> tokenParser.parse("ab"));
-        assertThrows(UnsupportedOperationException.class, () -> tokenParser.parse("ab", true));
-        assertThrows(UnsupportedOperationException.class, () -> tokenParser.parse("ab", 1, false));
-        TokenParsingResult result = tokenParser.parse("ab", true, tokenNode);
+        TokenParsingResult result = optionalTokenParser.parse("ab");
         assertTrue(result.isMatched());
         assertEquals(0, result.getLastIndex());
-        assertSame(tokenNode, result.getToken());
+        assertTrue(result.getToken().isEmpty());
+        result = optionalTokenParser.parse("abc", 1, true);
+        assertTrue(result.isMatched());
+        assertEquals(1, result.getLastIndex());
+        assertTrue(result.getToken().isEmpty());
     }
 }

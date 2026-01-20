@@ -114,7 +114,7 @@ public final class TokenParsingResult {
         if (lastIndex < 0) {
             throw new IllegalArgumentException("Index cannot be negative");
         }
-        if (token.isCompleted()) {
+        if (token.isCompleted() && !token.isEmpty()) {
             throw new IllegalArgumentException("Token node is already completed");
         }
         return POOL.get(token, lastIndex, true);
